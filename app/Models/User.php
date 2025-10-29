@@ -21,6 +21,10 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role', 
+        'phone_number', 
+        'address', 
+        'is_active', 
     ];
 
     /**
@@ -44,5 +48,47 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    // === RELASI UNTUK PEMBALAP ===
+
+    // Satu Pembalap memiliki BANYAK pengajuan KIS
+    public function kisApplications()
+    {
+        return $this->hasMany(KisApplication::class, 'pembalap_user_id');
+    }
+
+    // Satu Pembalap memiliki SATU lisensi KIS (yang aktif)
+    public function kisLicense()
+    {
+        return $this->hasOne(KisLicense::class, 'pembalap_user_id');
+    }
+
+    // Satu Pembalap memiliki BANYAK pendaftaran event (CV-nya)
+    public function eventRegistrations()
+    {
+        return $this->hasMany(EventRegistration::class, 'pembalap_user_id');
+    }
+
+    // === RELASI UNTUK PENGURUS IMI ===
+
+    // Satu Pengurus telah memproses BANYAK pengajuan KIS
+    public function processedKisApplications()
+    {
+        return $this->hasMany(KisApplication::class, 'processed_by_user_id');
+    }
+
+    // Satu Pengurus telah membuat BANYAK event
+    public function createdEvents()
+    {
+        return $this->hasMany(Event::class, 'created_by_user_id');
+    }
+
+    // === RELASI UMUM ===
+    
+    // Satu User (bisa siapa saja) telah membuat BANYAK log
+    public function logs()
+    {
+        return $this->hasMany(Log::class, 'user_id');
     }
 }
