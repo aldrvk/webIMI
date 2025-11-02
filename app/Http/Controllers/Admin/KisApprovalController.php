@@ -23,10 +23,9 @@ class KisApprovalController extends Controller
     }
     public function show(KisApplication $application)
     {
-        // Pastikan kita juga memuat relasi pembalap untuk menampilkan namanya
-        $application->load('pembalap'); 
+        $application->load(['pembalap', 'pembalap.profile', 'pembalap.profile.club']); 
 
-        // Kirim data aplikasi ke view detail
+        // 3. Kirim data aplikasi ke view detail
         return view('admin.kis.show', [
             'application' => $application // Kirim objek aplikasi
         ]);
@@ -89,4 +88,6 @@ class KisApprovalController extends Controller
 
         return redirect()->route('admin.kis.index')->with('status', "Pengajuan KIS #{$application->id} berhasil ditolak.");
     }
+
+    
 }

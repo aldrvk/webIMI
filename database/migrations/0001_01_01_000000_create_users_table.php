@@ -8,29 +8,26 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
      */
     public function up(): void
     {
-        // HANYA MEMBUAT TABEL 'users'
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name'); // Nama lengkap (Sesuai KTP)
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-
-            // Kolom Kustom
+            
+            // Kolom PERAN (ROLE) sesuai desain final kita
             $table->enum('role', [
-                'pembalap',
-                'pengurus_imi',
-                'pimpinan_imi',
-                'penyelenggara_event',
+                'pembalap', 
+                'pengurus_imi', 
+                'pimpinan_imi', 
+                'penyelenggara_event', 
                 'super_admin'
-            ])->default('pembalap');
-            $table->string('phone_number', 20)->nullable();
-            $table->text('address')->nullable();
-            $table->boolean('is_active')->default(true);
-
+            ])->default('pembalap'); 
+            
             $table->rememberToken();
             $table->timestamps();
         });
@@ -41,7 +38,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // HANYA MENGHAPUS TABEL 'users'
         Schema::dropIfExists('users');
     }
 };

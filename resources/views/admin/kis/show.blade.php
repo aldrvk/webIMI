@@ -10,30 +10,58 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100 space-y-6">
 
-                    {{-- Section: Informasi Pembalap --}}
+                    {{-- Section: Informasi Pembalap (DIPERBARUI) --}}
                     <div>
                         <h3 class="text-lg font-medium border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">Informasi Pembalap</h3>
-                        <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm">
-                            <div class="col-span-1">
-                                <dt class="font-medium text-gray-500 dark:text-gray-400">Nama Lengkap:</dt>
-                                <dd class="text-gray-900 dark:text-gray-100">{{ $application->pembalap->name ?? 'N/A' }}</dd>
-                            </div>
-                            <div class="col-span-1">
-                                <dt class="font-medium text-gray-500 dark:text-gray-400">Email:</dt>
-                                <dd class="text-gray-900 dark:text-gray-100">{{ $application->pembalap->email ?? 'N/A' }}</dd>
-                            </div>
-                             <div class="col-span-1">
-                                <dt class="font-medium text-gray-500 dark:text-gray-400">No. Telepon:</dt>
-                                <dd class="text-gray-900 dark:text-gray-100">{{ $application->pembalap->phone_number ?? '-' }}</dd>
-                            </div>
-                             {{-- Add other pembalap details if needed --}}
-                        </dl>
+                        {{-- Cek apakah profil ada --}}
+                        @if ($application->pembalap->profile)
+                            @php $profile = $application->pembalap->profile; @endphp
+                            <dl class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-3 text-sm">
+                                <div class="col-span-1">
+                                    <dt class="font-medium text-gray-500 dark:text-gray-400">Nama Lengkap:</dt>
+                                    <dd class="text-gray-900 dark:text-gray-100">{{ $application->pembalap->name }}</dd>
+                                </div>
+                                <div class="col-span-1">
+                                    <dt class="font-medium text-gray-500 dark:text-gray-400">Email:</dt>
+                                    <dd class="text-gray-900 dark:text-gray-100">{{ $application->pembalap->email }}</dd>
+                                </div>
+                                <div class="col-span-1">
+                                    <dt class="font-medium text-gray-500 dark:text-gray-400">No. Telepon:</dt>
+                                    <dd class="text-gray-900 dark:text-gray-100">{{ $profile->phone_number ?? '-' }}</dd>
+                                </div>
+                                <div class="col-span-1">
+                                    <dt class="font-medium text-gray-500 dark:text-gray-400">Klub Afiliasi:</dt>
+                                    <dd class="text-gray-900 dark:text-gray-100">{{ $profile->club->nama_klub ?? 'N/A' }}</dd>
+                                </div>
+                                <div class="col-span-1">
+                                    <dt class="font-medium text-gray-500 dark:text-gray-400">No. KTP/SIM:</dt>
+                                    <dd class="text-gray-900 dark:text-gray-100">{{ $profile->no_ktp_sim ?? '-' }}</dd>
+                                </div>
+                                <div class="col-span-1">
+                                    <dt class="font-medium text-gray-500 dark:text-gray-400">Tempat, Tgl Lahir:</dt>
+                                    <dd class="text-gray-900 dark:text-gray-100">
+                                        {{ $profile->tempat_lahir ?? '-' }}, 
+                                        {{ $profile->tanggal_lahir ? \Carbon\Carbon::parse($profile->tanggal_lahir)->translatedFormat('d F Y') : '-' }}
+                                    </dd>
+                                </div>
+                                 <div class="col-span-1">
+                                    <dt class="font-medium text-gray-500 dark:text-gray-400">Gol. Darah:</dt>
+                                    <dd class="text-gray-900 dark:text-gray-100">{{ $profile->golongan_darah ?? '-' }}</dd>
+                                </div>
+                                <div class="col-span-2">
+                                    <dt class="font-medium text-gray-500 dark:text-gray-400">Alamat:</dt>
+                                    <dd class="text-gray-900 dark:text-gray-100">{{ $profile->address ?? '-' }}</dd>
+                                </div>
+                            </dl>
+                        @else
+                             <p class="text-red-500">Error: Data profil pembalap tidak ditemukan.</p>
+                        @endif
                     </div>
 
                     {{-- Section: Informasi Pengajuan --}}
                     <div>
                         <h3 class="text-lg font-medium border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">Detail Pengajuan</h3>
-                         <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                         <dl class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-2 text-sm">
                             <div class="col-span-1">
                                 <dt class="font-medium text-gray-500 dark:text-gray-400">ID Pengajuan:</dt>
                                 <dd class="text-gray-900 dark:text-gray-100">{{ $application->id }}</dd>
@@ -45,7 +73,7 @@
                             <div class="col-span-1">
                                 <dt class="font-medium text-gray-500 dark:text-gray-400">Status Saat Ini:</dt>
                                 <dd>
-                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                     <span class="px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full 
                                         @if($application->status == 'Pending') bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300 @endif
                                         @if($application->status == 'Approved') bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300 @endif
                                         @if($application->status == 'Rejected') bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300 @endif
@@ -60,22 +88,25 @@
                     {{-- Section: Dokumen Pendukung --}}
                     <div>
                          <h3 class="text-lg font-medium border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">Dokumen Pendukung</h3>
-                         <div class="space-y-3 text-sm">
-                            <div>
+                         <div class="flex flex-wrap gap-4 text-sm">
+                            {{-- Card Surat Sehat --}}
+                            <div class="flex-shrink-0">
                                 <span class="font-medium text-gray-500 dark:text-gray-400">Surat Keterangan Sehat:</span>
                                 @if($application->file_surat_sehat_url)
-                                    {{-- Use asset() helper assuming files are in storage/app/public --}}
-                                    <a href="{{ asset('storage/' . $application->file_surat_sehat_url) }}" target="_blank" class="ml-2 text-blue-600 dark:text-blue-500 hover:underline">[Lihat File]</a>
+                                    <a href="{{ asset('storage/' . $application->file_surat_sehat_url) }}" target="_blank" 
+                                       class="ml-2 text-blue-600 dark:text-blue-500 hover:underline font-medium">[Lihat File]</a>
                                 @else
-                                    <span class="ml-2 text-gray-400 dark:text-gray-500">Tidak ada file</span>
+                                    <span class="ml-2 text-gray-400 dark:text-gray-500">[Tidak Ada File]</span>
                                 @endif
                             </div>
-                             <div>
+                             {{-- Card Bukti Bayar --}}
+                             <div class="flex-shrink-0">
                                 <span class="font-medium text-gray-500 dark:text-gray-400">Bukti Pembayaran:</span>
                                  @if($application->file_bukti_bayar_url)
-                                    <a href="{{ asset('storage/' . $application->file_bukti_bayar_url) }}" target="_blank" class="ml-2 text-blue-600 dark:text-blue-500 hover:underline">[Lihat File]</a>
+                                    <a href="{{ asset('storage/' . $application->file_bukti_bayar_url) }}" target="_blank" 
+                                       class="ml-2 text-blue-600 dark:text-blue-500 hover:underline font-medium">[Lihat File]</a>
                                 @else
-                                     <span class="ml-2 text-gray-400 dark:text-gray-500">Tidak ada file</span>
+                                     <span class="ml-2 text-gray-400 dark:text-gray-500">[Tidak Ada File]</span>
                                 @endif
                             </div>
                          </div>
@@ -123,7 +154,6 @@
                                         <div class="mb-4">
                                             <label for="rejection_reason" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan Alasan Penolakan (Wajib)</label>
                                             <textarea id="rejection_reason" name="rejection_reason" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Contoh: Bukti pembayaran tidak valid." required></textarea>
-                                             {{-- Display validation error specifically for rejection_reason --}}
                                              @error('rejection_reason')
                                                 <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                                              @enderror
@@ -138,12 +168,11 @@
                                 </div>
                             </div>
                         </div>
-
-                    @endif
+                    @endif {{-- Akhir @if($application->status == 'Pending') --}}
 
                      {{-- Back Button --}}
                     <div class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
-                        <a href="{{ route('admin.kis.index') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">&larr; Kembali ke Daftar Pengajuan</a>
+                        <a href="{{ route('admin.kis.index') }}" class="text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">&larr; Kembali ke Daftar Pengajuan</a>
                     </div>
 
                 </div>

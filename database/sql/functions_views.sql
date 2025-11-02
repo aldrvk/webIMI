@@ -1,3 +1,6 @@
+DROP FUNCTION IF EXISTS `Func_GetPembalapTotalPoints`;
+DROP VIEW IF EXISTS `View_Leaderboard`;
+
 CREATE FUNCTION `Func_GetPembalapTotalPoints`(
     p_pembalap_user_id BIGINT
 )
@@ -10,7 +13,7 @@ BEGIN
     FROM event_registrations
     WHERE pembalap_user_id = p_pembalap_user_id;
     RETURN total_points;
-END; 
+END;
 
 CREATE VIEW `View_Leaderboard` AS
 SELECT 
@@ -24,4 +27,4 @@ GROUP BY
     er.pembalap_user_id, u.name, er.category
 ORDER BY 
     er.category ASC,
-    total_poin DESC
+    total_poin DESC;

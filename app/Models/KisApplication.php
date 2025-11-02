@@ -22,4 +22,9 @@ class KisApplication extends Model
     {
         return $this->belongsTo(User::class, 'processed_by_user_id');
     }
+
+    public function category()
+    {
+        return $this->belongsTo(KisCategory::class, 'kis_category_id'); // <-- Perbaikan!
+    }
 }

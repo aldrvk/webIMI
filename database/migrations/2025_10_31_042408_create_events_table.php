@@ -17,8 +17,16 @@ return new class extends Migration
             $table->date('event_date');
             $table->string('location');
             $table->text('description')->nullable();
+            
+            // Siapa Klub yang menyelenggarakan/mengajukan
+            $table->foreignId('proposing_club_id')->constrained('clubs');
+
+            // Siapa Pengurus IMI yang mempublikasikan data ini
             $table->foreignId('created_by_user_id')->constrained('users');
-            $table->boolean('is_active')->default(true);
+            
+            // Boolean untuk 'Tampilkan/Sembunyikan' dari Pembalap
+            $table->boolean('is_published')->default(true); 
+            
             $table->timestamps();
         });
     }
