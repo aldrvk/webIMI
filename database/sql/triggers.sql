@@ -4,7 +4,6 @@ DROP TRIGGER IF EXISTS `log_kis_application_insert`;
 DROP TRIGGER IF EXISTS `log_kis_application_update`;
 DROP TRIGGER IF EXISTS `log_event_insert`;
 
--- BUAT TRIGGER BARU
 
 -- TRIGGER 1: Otomatis membuat/memperbarui KIS License
 DROP TRIGGER IF EXISTS `auto_create_kis_license_on_approval`;

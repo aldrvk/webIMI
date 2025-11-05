@@ -39,6 +39,15 @@ class DashboardController extends Controller
                                                                 ->first();
                 }
             }
+            
+            if($data['hasActiveKis']) {
+                $data['upcomingEvents'] = Event::where('is_published', true)
+                                        ->where('event_date', '>=', now()->toDateString())
+                                        ->with('proposingClub')
+                                        ->orderBy('event_date', 'asc') 
+                                        ->take(5) // Ambil 5 event terdekat
+                                        ->get();
+            }
         }
 
         // --- LOGIKA UNTUK PENGURUS & PIMPINAN ---

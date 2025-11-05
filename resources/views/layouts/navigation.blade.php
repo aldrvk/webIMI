@@ -75,7 +75,7 @@
                         <li>
                             <a href="{{ route('admin.events.index') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('admin.events.*') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent">Manajemen Event</a>
                         </li>
-                         <li>
+                         <li>   
                             <a href="{{ route('admin.kis.index') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('admin.kis.*') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent">Persetujuan KIS</a>
                         </li>
                          <li>
@@ -89,18 +89,28 @@
                             <a href="{{ route('dashboard') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('dashboard') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent" aria-current="page">Dashboard</a>
                         </li>
                         
-                        {{-- Jika profil belum ada, ATAU KIS ditolak --}}
+                        {{-- Link AJUKAN KIS (Tampil jika Belum Aktif/Belum Ada) --}}
                         @if(!$profileExists || ($profileExists && !$hasActiveKis && !$hasPendingKis))
                             <li>
                                 <a href="{{ route('kis.apply') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('kis.apply') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent">Ajukan KIS</a>
                             </li>
                         @endif
                         
-                        {{-- Jika KIS sudah Aktif --}}
-                        @if($hasActiveKis)
-                            <li><a href="#" class="block py-2 px-3 rounded md:p-0 text-gray-900 dark:text-white md:bg-transparent">Kalender Event</a></li>
-                            <li><a href="#" class="block py-2 px-3 rounded md:p-0 text-gray-900 dark:text-white md:bg-transparent">Papan Peringkat</a></li>
-                        @endif
+                        {{-- Link Papan Peringkat (GAMIFIKASI) --}}
+                        <li>
+                            <a href="{{ route('leaderboard.index') }}" 
+                               class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('leaderboard.index') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent hover:text-blue-700 dark:hover:text-blue-500">
+                                Papan Peringkat
+                            </a>
+                        </li>
+                         {{-- Link Kalender Event (GAMIFIKASI) --}}
+                         <li>
+                            <a href="{{ route('events.index') }}" 
+                            class="block py-2 px-3 rounded md:p-0 text-gray-900 dark:text-white md:bg-transparent {{ $hasActiveKis ? 'hover:text-blue-700' : 'cursor-not-allowed opacity-50' }} {{ request()->routeIs('events.index') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} ">
+                            Kalender Event
+                            </a>
+                        </li>
+
                     @endif
 
                 @else 

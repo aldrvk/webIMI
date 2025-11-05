@@ -7,7 +7,9 @@ use App\Http\Controllers\Admin\IuranApprovalController;
 use App\Http\Controllers\Admin\KisApprovalController;
 use App\Http\Controllers\Admin\PembalapController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EventControllerPembalap;
 use App\Http\Controllers\KisApplicationController;
+use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicIuranController;
 use Illuminate\Support\Facades\Route;
@@ -33,12 +35,19 @@ Route::post('/iuran/store', [PublicIuranController::class, 'store'])->name('iura
 Route::get('/dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])->name('dashboard');
 Route::middleware('auth')->group(function () {
+
     // Route Pembalap 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/kis/apply', [KisApplicationController::class, 'create'])->name('kis.apply');
     Route::post('/kis/apply', [KisApplicationController::class, 'store'])->name('kis.store');
+    Route::get('/events', [EventControllerPembalap::class, 'index'])
+        ->middleware('kis.active')
+        ->name('events.index');
+    Route::get('/leaderboard', [LeaderboardController::class, 'index'])
+        ->middleware('kis.active')
+        ->name('leaderboard.index');
 
     // Route Pengurus IMI
     Route::middleware('role:pengurus_imi')->prefix('admin')->name('admin.')->group(function () {
@@ -47,13 +56,9 @@ Route::middleware('auth')->group(function () {
         Route::patch('/kis-approvals/{application}/approve', [KisApprovalController::class, 'approve'])->name('kis.approve');
         Route::patch('/kis-approvals/{application}/reject', [KisApprovalController::class, 'reject'])->name('kis.reject');
 
-        // Rute untuk MENAMPILKAN form buat event
         Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
-        // Rute untuk MENYIMPAN event baru
         Route::post('/events', [EventController::class, 'store'])->name('events.store');
-        // Rute untuk menampilkan DAFTAR event (Persetujuan Event)
         Route::get('/events', [EventController::class, 'index'])->name('events.index');
-        // Rute untuk MANAJEMEN CLUB baru
         Route::resource('clubs', ClubController::class);
 
         Route::get('/iuran-approvals', [IuranApprovalController::class, 'index'])->name('iuran.index');
