@@ -136,7 +136,7 @@
                                     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Event Mendatang</h3>
                                     <div class="space-y-4">
                                         @forelse($upcomingEvents as $event)
-                                            <div class="block p-5 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                                            <div class="block p-6 bg-gray-50 border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700">
                                                 <div class="flex flex-col md:flex-row md:justify-between">
                                                     <div>
                                                         <span class="text-sm font-medium bg-blue-100 text-blue-800 rounded px-2.5 py-0.5 dark:bg-gray-700 dark:text-blue-400">
@@ -147,7 +147,7 @@
                                                         <p class="text-sm font-normal text-gray-500 dark:text-gray-500">Penyelenggara: {{ $event->proposingClub->nama_klub ?? 'N/A' }}</p>
                                                     </div>
                                                     <div class="mt-4 md:mt-0 md:flex md:items-center">
-                                                    <a href="#" class="inline-flex items-center px-4 py-2 bg-green-700 border border-transparent rounded-md ...">
+                                                    <a href="#" class="inline-flex items-center px-4 py-2 bg-green-700 border border-transparent rounded-md text-white">
                                                     Daftar Event
                                                 </a>
                                                     </div>

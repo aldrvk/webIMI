@@ -16,7 +16,7 @@
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         {{-- Logo (Tetap Sama) --}}
         <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
-            <img src="https://flowbite.com/docs/images/logo.svg" class="h-8" alt="App Logo" /> {{-- Ganti Logo Anda --}}
+            <img src="{{ asset('storage/assets/imi_family.svg') }}" class="h-8" alt="App Logo" /> {{-- Ganti Logo Anda --}}
             <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">{{ config('app.name', 'Laravel') }}</span>
         </a>
 

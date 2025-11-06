@@ -8,8 +8,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             
-            {{-- --- GRID UTAMA (KIRI & KANAN) --- --}}
-            {{-- Grid 1 kolom di HP, 5 kolom di desktop (3 untuk Kalender, 2 untuk Daftar) --}}
+            {{-- --- GRID UTAMA (KIRI 3/5 & KANAN 2/5) --- --}}
             <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
 
                 {{-- --- KOLOM KIRI (KALENDER VISUAL) --- --}}
@@ -49,12 +48,11 @@
                                     @php
                                         $isCurrentMonth = $currentDay->month == $currentMonth;
                                         $isToday = $currentDay->isToday();
-                                        // Cek apakah ada event di hari ini
                                         $eventsOnThisDay = $isCurrentMonth ? $eventsByDay->get($currentDay->day) : null;
                                     @endphp
 
                                     {{-- Sel Kalender (Hari) --}}
-                                    <div class="h-20 p-2 border-r border-b border-gray-200 dark:border-gray-700 {{ $isCurrentMonth ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900 opacity-60' }}">
+                                    <div class="h-28 p-2 border-r border-b border-gray-200 dark:border-gray-700 {{ $isCurrentMonth ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-900 opacity-60' }} overflow-hidden">
                                         <div class="flex justify-between items-center">
                                             {{-- Nomor Tanggal --}}
                                             <time datetime="{{ $currentDay->format('Y-m-d') }}"
@@ -66,24 +64,24 @@
                                             {{-- TANDA EVENT (Titik Biru) --}}
                                             @if($isCurrentMonth && $eventsOnThisDay)
                                                 <div class="flex space-x-1">
-                                                    @foreach($eventsOnThisDay->take(3) as $event) {{-- Batasi 3 titik --}}
+                                                    @foreach($eventsOnThisDay->take(3) as $event) 
                                                         <span class="w-2 h-2 bg-blue-500 rounded-full" title="{{ $event->event_name }}"></span>
                                                     @endforeach
                                                 </div>
                                             @endif
                                         </div>
-
-                                        {{-- Daftar Event (di dalam sel) --}}
-                                @if($isCurrentMonth && $eventsOnThisDay)
-                                    <div class="mt-1 space-y-1 overflow-y-auto max-h-20">
-                                        @foreach($eventsOnThisDay as $event)
-                                        {{-- TODO: Ganti '#' dengan route('events.show', $event->id) --}}
-                                        <a href="#" class="block text-xs p-1 truncate bg-blue-100 text-blue-800 rounded hover:bg-blue-200 dark:bg-gray-700 dark:text-blue-400 dark:hover:bg-gray-600" title="{{ $event->event_name }}">
-                                            {{ $event->event_name }}
-                                        </a>
-                                        @endforeach
-                                    </div>
-                                @endif
+                                        
+                                        {{-- Daftar Event (Caption) --}}
+                                        @if($isCurrentMonth && $eventsOnThisDay)
+                                            <div class="mt-1 space-y-0.5">
+                                                @foreach($eventsOnThisDay as $event)
+                                                <a href="#" class="block text-xs p-1 truncate bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 dark:bg-gray-700 dark:text-blue-400 dark:hover:bg-gray-600" title="{{ $event->event_name }}">
+                                                    <span class="w-1.5 h-1.5 bg-blue-500 rounded-full inline-block me-1"></span>
+                                                    {{ $event->event_name }}
+                                                </a>
+                                                @endforeach
+                                            </div>
+                                        @endif
                                     </div>
                                     @php $currentDay->addDay(); @endphp
                                 @endfor
@@ -96,12 +94,19 @@
                 <div class="lg:col-span-2">
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                          <div class="p-6 text-gray-900 dark:text-gray-100">
-                            <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-gray-100">Daftar Event: {{ $monthName }}</h3>
+                            <h3 class="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Daftar Event: {{ $monthName }}</h3>
                             
                             <div class="space-y-4">
                                 {{-- Kita 'flatten' (ratakan) koleksi event yang sudah dikelompokkan --}}
                                 @forelse($eventsByDay->flatten()->sortBy('event_date') as $event) 
-                                    <div class="block p-5 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+                                    @php
+                                        // LOGIKA BARU: Cek apakah event sudah lewat
+                                        $isPast = \Carbon\Carbon::parse($event->event_date)->isPast();
+                                        $buttonText = $isPast ? 'Lihat Hasil' : 'Daftar Event';
+                                        $buttonClass = $isPast ? 'bg-gray-600 hover:bg-gray-700' : 'bg-green-700 hover:bg-green-600';
+                                        $buttonRoute = $isPast ? '#' : '#'; // TODO: Ganti dengan route lihat hasil & daftar
+                                    @endphp
+                                    <div class="block p-6 bg-gray-50 border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700">
                                         <div class="flex flex-col md:flex-row md:justify-between">
                                             {{-- Info Event --}}
                                             <div>
@@ -112,25 +117,23 @@
                                                 <p class="font-normal text-gray-700 dark:text-gray-400">{{ $event->location }}</p>
                                                 <p class="text-sm font-normal text-gray-500 dark:text-gray-500">Penyelenggara: {{ $event->proposingClub->nama_klub ?? 'N/A' }}</p>
                                             </div>
-                                           
-                                </div>
-                                 {{-- Tombol Aksi (Daftar) --}}
-                                 <div class="pt-2 mt-4 md:mt-0 md:flex md:items-center">
-                                                {{-- TODO: Buat rute dan logika pendaftaran event --}}
-                                                <a href="#" class="inline-flex items-center px-4 py-2 bg-green-700 border border-transparent rounded-md ...">
-                                                    Daftar Event
+                                            {{-- Tombol Aksi (Daftar/Hasil) --}}
+                                            <div class="mt-4 md:mt-0 md:flex md:items-center">
+                                                <a href="{{ $buttonRoute }}" class="inline-flex items-center px-4 py-2 {{ $buttonClass }} border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest focus:outline-none focus:ring-2 focus:ring-offset-2 transition ease-in-out duration-150">
+                                                    {{ $buttonText }}
                                                 </a>
                                             </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="text-gray-500 dark:text-gray-400">Tidak ada event yang dipublikasikan untuk bulan ini.</p>
+                                @endforelse
                             </div>
-                        @empty
-                            <p class="text-gray-500 dark:text-gray-400">Tidak ada event yang dipublikasikan untuk bulan ini.</p>
-                        @endforelse
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div> {{-- Akhir Kolom Kanan --}}
+                </div> {{-- Akhir Kolom Kanan --}}
 
-    </div> {{-- Akhir Grid Utama --}}
-</div>
-</div>
+            </div> {{-- Akhir Grid Utama --}}
+        </div>
+    </div>
 </x-app-layout>
