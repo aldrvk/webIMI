@@ -6,8 +6,10 @@ DROP TRIGGER IF EXISTS `log_event_insert`;
 
 
 -- TRIGGER 1: Otomatis membuat/memperbarui KIS License
+-- HAPUS TRIGGER LAMA DULU
 DROP TRIGGER IF EXISTS `auto_create_kis_license_on_approval`;
 
+-- BUAT ULANG TRIGGER DENGAN KODE YANG SUDAH DIPERBAIKI
 CREATE TRIGGER `auto_create_kis_license_on_approval`
 AFTER UPDATE ON `kis_applications`
 FOR EACH ROW
@@ -22,58 +24,58 @@ BEGIN
     -- Hanya jalankan jika status BARU adalah "Approved"
     IF NEW.status = 'Approved' AND OLD.status <> 'Approved' THEN
         
-        -- 1. LOGIKA NOMOR URUT (624)
-        -- Kita akan gunakan 'id' dari 'kis_licenses' sebagai nomor urut
-        -- (Ini adalah cara paling aman untuk jaminan keunikan)
-        -- Kita perlu 'INSERT' dummy dulu untuk mendapatkan ID berikutnya
+        -- 1. LOGIKA NOMOR URUT (Sama)
         
-        -- 2. LOGIKA KATEGORI (C2)
+        -- 2. LOGIKA KATEGORI (Sama)
         SELECT kode_kategori INTO v_kis_category_code
         FROM kis_categories
         WHERE id = NEW.kis_category_id;
         
-        -- 3. LOGIKA BULAN (VII)
+        -- 3. LOGIKA BULAN (Sama)
         SET v_kis_month_roman = 
             CASE MONTH(NOW())
-                WHEN 1 THEN 'I'
-                WHEN 2 THEN 'II'
-                WHEN 3 THEN 'III'
-                WHEN 4 THEN 'IV'
-                WHEN 5 THEN 'V'
-                WHEN 6 THEN 'VI'
-                WHEN 7 THEN 'VII'
-                WHEN 8 THEN 'VIII'
-                WHEN 9 THEN 'IX'
-                WHEN 10 THEN 'X'
-                WHEN 11 THEN 'XI'
-                WHEN 12 THEN 'XII'
+                WHEN 1 THEN 'I' WHEN 2 THEN 'II' WHEN 3 THEN 'III'
+                WHEN 4 THEN 'IV' WHEN 5 THEN 'V' WHEN 6 THEN 'VI'
+                WHEN 7 THEN 'VII' WHEN 8 THEN 'VIII' WHEN 9 THEN 'IX'
+                WHEN 10 THEN 'X' WHEN 11 THEN 'XI' WHEN 12 THEN 'XII'
             END;
             
-        -- 4. LOGIKA KEDALUWARSA (31 Des)
+        -- 4. LOGIKA KEDALUWARSA (Sama)
         SET v_expiry_date = CONCAT(YEAR(NOW()), '-12-31');
 
-        -- 5. Masukkan ke tabel KIS License
-        -- 'kis_number' akan diisi 'PENDING' dulu
+        -- 5. Masukkan ke tabel KIS License (DIPERBAIKI)
         INSERT INTO kis_licenses (
-            pembalap_user_id, application_id, kis_number, issued_date, 
-            expiry_date, created_at, updated_at
+            pembalap_user_id, 
+            application_id, 
+            kis_category_id,  -- <--- PERBAIKAN 1
+            kis_number, 
+            issued_date, 
+            expiry_date, 
+            created_at, 
+            updated_at
         )
         VALUES (
-            NEW.pembalap_user_id, NEW.id, 'PENDING', DATE(NOW()), 
-            v_expiry_date, NOW(), NOW()
+            NEW.pembalap_user_id, 
+            NEW.id, 
+            NEW.kis_category_id, -- <--- PERBAIKAN 2
+            'PENDING', 
+            DATE(NOW()), 
+            v_expiry_date, 
+            NOW(), 
+            NOW()
         )
         ON DUPLICATE KEY UPDATE
             application_id = NEW.id,
-            kis_number = 'PENDING', -- Set 'PENDING' dulu
+            kis_category_id = NEW.kis_category_id, -- <--- PERBAIKAN 3
+            kis_number = 'PENDING', 
             issued_date = DATE(NOW()),
             expiry_date = v_expiry_date,
             updated_at = NOW();
 
-        -- 6. Dapatkan ID yang baru saja di-insert
+        -- 6. Dapatkan ID yang baru saja di-insert (Sama)
         SET v_kis_number_seq = LAST_INSERT_ID();
         
-        -- 7. Buat Nomor KIS Final (Contoh: 624/C2/VII)
-        -- (Kita tambahkan MDN/VI/TAHUN agar mirip data asli)
+        -- 7. Buat Nomor KIS Final (Sama)
         SET v_kis_number_final = CONCAT(
             v_kis_number_seq, '/', 
             v_kis_category_code, '/MDN/',
@@ -81,7 +83,7 @@ BEGIN
             YEAR(NOW())
         );
 
-        -- 8. Perbarui 'kis_licenses' dengan nomor KIS final
+        -- 8. Perbarui 'kis_licenses' dengan nomor KIS final (Sama)
         UPDATE kis_licenses
         SET kis_number = v_kis_number_final
         WHERE id = v_kis_number_seq;

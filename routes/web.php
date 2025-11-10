@@ -8,11 +8,15 @@ use App\Http\Controllers\Admin\KisApprovalController;
 use App\Http\Controllers\Admin\PembalapController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventControllerPembalap;
+use App\Http\Controllers\EventRegistrationController;
 use App\Http\Controllers\KisApplicationController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicIuranController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Penyelenggara\DashboardController as PenyelenggaraDashboardController;
+use App\Http\Controllers\SuperAdmin\UserController as SuperAdminUserController;
+use App\Http\Controllers\Penyelenggara\EventResultController;
 
 /*
 |--------------------------------------------------------------------------
@@ -48,6 +52,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])
         ->middleware('kis.active')
         ->name('leaderboard.index');
+    Route::post('/events/{event}/register', [EventRegistrationController::class, 'store'])
+        ->name('events.register')
+        ->middleware('kis.active');
 
     // Route Pengurus IMI
     Route::middleware('role:pengurus_imi')->prefix('admin')->name('admin.')->group(function () {
@@ -56,9 +63,9 @@ Route::middleware('auth')->group(function () {
         Route::patch('/kis-approvals/{application}/approve', [KisApprovalController::class, 'approve'])->name('kis.approve');
         Route::patch('/kis-approvals/{application}/reject', [KisApprovalController::class, 'reject'])->name('kis.reject');
 
-        Route::get('/events/create', [EventController::class, 'create'])->name('events.create');
-        Route::post('/events', [EventController::class, 'store'])->name('events.store');
-        Route::get('/events', [EventController::class, 'index'])->name('events.index');
+        Route::resource('events', EventController::class)->only([
+            'index', 'create', 'store', 'edit', 'update' 
+        ]);
         Route::resource('clubs', ClubController::class);
 
         Route::get('/iuran-approvals', [IuranApprovalController::class, 'index'])->name('iuran.index');
@@ -73,6 +80,23 @@ Route::middleware('auth')->group(function () {
         Route::get('/pembalap/{profile}', [PembalapController::class, 'show'])->name('pembalap.show');
         Route::patch('/pembalap/{user}/deactivate', [PembalapController::class, 'deactivate'])->name('pembalap.deactivate');
         Route::patch('/pembalap/{user}/activate', [PembalapController::class, 'activate'])->name('pembalap.activate');
+    });
+
+    // Route Penyelenggara Event
+    Route::middleware('role:penyelenggara_event')->prefix('penyelenggara')->name('penyelenggara.')->group(function () {
+        
+        // Gunakan alias 'PenyelenggaraDashboardController' yang sudah kita buat
+        Route::get('/dashboard', [PenyelenggaraDashboardController::class, 'index'])->name('dashboard');
+        
+        Route::get('/events/{event}/results',   [EventResultController::class, 'edit'])->name('events.results.edit');
+        Route::post('/events/{event}/results', [EventResultController::class, 'update'])->name('events.results.update');
+    });
+
+    // Route Super Admin
+    Route::middleware('role:super_admin')->prefix('superadmin')->name('superadmin.')->group(function () {
+        // Rute CRUD untuk Manajemen User
+        Route::resource('users', SuperAdminUserController::class);
+        
     });
 
 });

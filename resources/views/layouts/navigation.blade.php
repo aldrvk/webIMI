@@ -81,12 +81,20 @@
                          <li>
                             <a href="{{ route('admin.iuran.index') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('admin.iuran.*') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent">Persetujuan Iuran</a>
                         </li>
-                        {{-- TODO: Tambah link Super Admin di sini --}}
+
+                        <!-- Super Admin -->
+                        @if($user->role === 'super_admin')
+                        <li>
+                            <a href="{{ route('superadmin.users.index') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('superadmin.users.*') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent">
+                                Manajemen User
+                            </a>
+                        </li>   
+                        @endif
 
                     {{-- Navigasi untuk PERAN PEMBALAP --}}
                     @elseif($user->role === 'pembalap')
                         <li>
-                            <a href="{{ route('dashboard') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('dashboard') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent" aria-current="page">Dashboard</a>
+                            <a href="{{ route('dashboard') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('dashboard') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent hover:text-blue-700 dark:hover:text-blue-500" aria-current="page">Dashboard</a>
                         </li>
                         
                         {{-- Link AJUKAN KIS (Tampil jika Belum Aktif/Belum Ada) --}}
@@ -100,14 +108,14 @@
                         <li>
                             <a href="{{ route('leaderboard.index') }}" 
                                class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('leaderboard.index') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent hover:text-blue-700 dark:hover:text-blue-500">
-                                Papan Peringkat
+                                Hasil Event
                             </a>
                         </li>
                          {{-- Link Kalender Event (GAMIFIKASI) --}}
                          <li>
                             <a href="{{ route('events.index') }}" 
-                            class="block py-2 px-3 rounded md:p-0 text-gray-900 dark:text-white md:bg-transparent {{ $hasActiveKis ? 'hover:text-blue-700' : 'cursor-not-allowed opacity-50' }} {{ request()->routeIs('events.index') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} ">
-                            Kalender Event
+                               class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('events.index') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent hover:text-blue-700 dark:hover:text-blue-500">
+                                Kalender Event
                             </a>
                         </li>
 
