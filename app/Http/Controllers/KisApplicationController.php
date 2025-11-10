@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Club;
 use App\Models\KisApplication;
 use App\Models\KisCategory;
+use App\Models\KisLicense;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -114,4 +115,26 @@ class KisApplicationController extends Controller
             return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan pada server. Gagal menyimpan data.');
         }
     }
+
+    public function approve(KisApplication $application)
+{
+    // ...logika validasi...
+
+    // SAAT MEMBUAT LISENSI
+    KisLicense::updateOrCreate(
+        ['user_id' => $application->user_id], 
+        [
+            'kis_number' => $this->generateKisNumber(), 
+            'expiry_date' => now()->addYear(),
+            'status' => 'active',
+            
+            // !! TAMBAHKAN BARIS INI !!
+            // Ambil category_id dari APLIKASI dan simpan ke LISENSI
+            'kis_category_id' => $application->kis_category_id 
+        ]
+    );
+    
+
+    return redirect()->back()->with('status', 'KIS berhasil disetujui.');
+}
 }

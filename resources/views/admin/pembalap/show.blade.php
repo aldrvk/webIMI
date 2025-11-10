@@ -11,12 +11,12 @@
             {{-- Bagian Alert (jika ada) --}}
             @if (session('status'))
                 <div class="flex items-center p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 border border-green-300 dark:border-green-800" role="alert">
-                   <span class="font-medium">Sukses!</span> {{ session('status') }}
+                   <span class="font-medium">Sukses! </span> {{ session('status') }}
                 </div>
             @endif
              @if (session('error'))
                  <div class="flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-red-300 dark:border-red-800" role="alert">
-                   <span class="font-medium">Error!</span> {{ session('error') }}
+                   <span class="font-medium">Error! </span> {{ session('error') }}
                 </div>
             @endif
             

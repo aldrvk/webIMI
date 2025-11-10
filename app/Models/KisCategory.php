@@ -17,4 +17,9 @@ class KisCategory extends Model
     {
         return $this->hasMany(KisApplication::class, 'kis_category_id');
     }
+
+    public function events()
+    {
+        return $this->belongsToMany(Event::class, 'event_kis_category');
+    }
 }

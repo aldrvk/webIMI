@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             ClubSeeder::class,
             KisCategorySeeder::class,
+            EventSeeder::class,
         ]);
     }
 }

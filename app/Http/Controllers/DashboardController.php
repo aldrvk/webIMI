@@ -18,12 +18,14 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $data = []; 
-        $data['user'] = $user; 
+        $data = []; // Data yang akan dikirim ke view
+        $data['user'] = $user;
 
-        // --- LOGIKA UNTUK PEMBALAP ---
+        // --- PILIH VIEW BERDASARKAN ROLE ---
+
+        // 1. ROLE: PEMBALAP
         if ($user->role === 'pembalap') {
-            $data['hasProfile'] = $user->profile()->exists(); 
+            $data['hasProfile'] = $user->profile()->exists();
             $data['hasActiveKis'] = false;
             $data['hasPendingKis'] = false;
             $data['latestRejectedApplication'] = null;
@@ -39,18 +41,29 @@ class DashboardController extends Controller
                                                                 ->first();
                 }
             }
+            
+            if($data['hasActiveKis']) {
+                $data['upcomingEvents'] = Event::where('is_published', true)
+                                        ->where('event_date', '>=', now()->toDateString())
+                                        ->with('proposingClub')
+                                        ->orderBy('event_date', 'asc') 
+                                        ->take(5) // Ambil 5 event terdekat
+                                        ->get();
+            } else {
+                 $data['upcomingEvents'] = collect(); // Kirim koleksi kosong jika KIS tdk aktif
+            }
+            
+            return view('dashboard-pembalap', $data); // <-- MENGARAHKAN KE VIEW PEMBALAP
         }
 
-        // --- LOGIKA UNTUK PENGURUS & PIMPINAN ---
+        // 2. ROLE: PENGURUS IMI, PIMPINAN, SUPER ADMIN
         if (in_array($user->role, ['pengurus_imi', 'pimpinan_imi', 'super_admin'])) {
             
-            // 1. Data KPI (4 Kartu)
             $data['pendingKisCount'] = KisApplication::where('status', 'Pending')->count();
             $data['pendingIuranCount'] = ClubDues::where('status', 'Pending')->count();
             $data['totalKlub'] = Club::count();
             $data['totalPembalap'] = PembalapProfile::count();
 
-            // 2. Data WIDGET "TO-DO LIST"
             $data['latestPendingKis'] = KisApplication::where('status', 'Pending')
                                             ->with('pembalap') 
                                             ->latest() 
@@ -63,17 +76,23 @@ class DashboardController extends Controller
                                             ->take(5)
                                             ->get();
             
-            // --- INI PERBAIKANNYA ---
-            // Widget 3: Event Terdekat (yang 'is_published' = true)
-            $data['upcomingEvents'] = Event::where('is_published', true) // <-- Menggunakan 'is_published'
+            $data['upcomingEvents'] = Event::where('is_published', true) 
                                         ->where('event_date', '>=', now()->toDateString())
                                         ->with('proposingClub')
-                                        ->orderBy('event_date', 'asc') // Urutkan tanggal terdekat
+                                        ->orderBy('event_date', 'asc')
                                         ->take(5)
                                         ->get();
-            // --- AKHIR PERBAIKAN ---
+            
+            return view('dashboard-admin', $data); // <-- MENGARAHKAN KE VIEW ADMIN
+        }
+        
+        // 3. ROLE: PENYELENGGARA EVENT
+        if ($user->role === 'penyelenggara_event') {
+            // Arahkan ke Rute Dashboard Penyelenggara yang sudah kita buat
+            return redirect()->route('penyelenggara.dashboard');
         }
 
-        return view('dashboard', $data);
+        // 4. Fallback (Jika ada role aneh)
+        return redirect('/')->with('error', 'Role tidak dikenali.');
     }
 }

@@ -84,7 +84,7 @@
                                         </th>
                                         <td class="px-6 py-4">{{ $profile->club->nama_klub ?? 'N/A' }}</td>
                                         <td class="px-6 py-4">{{ $profile->phone_number ?? '-' }}</td>
-                                        <td class="px-6 py-4 font-mono text-gray-700 dark:text-gray-300">{{ $kisNumber }}</td> {{-- DATA KIS BARU --}}
+                                        <td class="px-6 py-4 font-mono text-gray-700 dark:text-gray-300">{{ $kisNumber }}</td> 
                                         <td class="px-6 py-4">
                                         <span
                                                             class="px-2.5 py-0.5 inline-flex text-sm leading-5 font-semibold rounded-full 
@@ -106,7 +106,6 @@
                             </tbody>
                         </table>
                     </div>
-                     {{-- Link Pagination --}}
                      <div class="mt-4">
                         {{ $profiles->links() }}
                     </div>
