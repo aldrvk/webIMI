@@ -60,8 +60,8 @@ Database :
 - Manajemen Skema: Laravel Migrations
 
 Tambahan :
-- Manajemen Dependency (PHP): Composer
-- Manajemen Dependency (JS): NPM
+- Manajemen Dependency (PHP): Composer 2.8.8
+- Manajemen Dependency (JS): NPM 10.9.2
 - HTTP Client: Axios (versi 1.11.0)
 
 ## Nama Anggota
