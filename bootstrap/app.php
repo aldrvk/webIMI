@@ -14,6 +14,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role' => CheckRole::class,
+            'kis.active' => \App\Http\Middleware\CheckKisStatus::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

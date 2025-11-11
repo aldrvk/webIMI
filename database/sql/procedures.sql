@@ -1,5 +1,4 @@
 DROP PROCEDURE IF EXISTS `Proc_RegisterPembalapToEvent`;
-DROP PROCEDURE IF EXISTS `Proc_GetLeaderboard`;
 
 CREATE PROCEDURE `Proc_RegisterPembalapToEvent`(
     IN p_pembalap_user_id BIGINT,
@@ -36,22 +35,32 @@ BEGIN
     END IF;
 END;
 
+DROP PROCEDURE IF EXISTS `Proc_GetLeaderboard`;
+
 CREATE PROCEDURE `Proc_GetLeaderboard`(
-    IN p_category VARCHAR(100)
+    IN p_category_id INT -- Kita akan filter berdasarkan ID Kategori KIS
 )
 BEGIN
     SELECT 
         u.name AS nama_pembalap,
-        SUM(er.points_earned) AS total_poin
+        c.nama_klub,
+        SUM(er.points_earned) AS total_poin,
+        COUNT(er.id) AS jumlah_balapan,
+        -- Gunakan window function 'RANK()' untuk memberi peringkat
+        RANK() OVER (ORDER BY SUM(er.points_earned) DESC) as `peringkat`
     FROM event_registrations AS er
     JOIN users AS u ON er.pembalap_user_id = u.id
+    JOIN pembalap_profiles AS pp ON u.id = pp.user_id
+    JOIN clubs AS c ON pp.club_id = c.id
+    JOIN kis_applications AS ka ON u.id = ka.pembalap_user_id AND ka.status = 'Approved'
     WHERE 
-        er.category = p_category
+        ka.kis_category_id = p_category_id
+        AND er.points_earned > 0
     GROUP BY 
-        er.pembalap_user_id, u.name
+        er.pembalap_user_id, u.name, c.nama_klub
     ORDER BY 
         total_poin DESC,
-        u.name ASC;
+        jumlah_balapan ASC;
 END;
 
 DROP PROCEDURE IF EXISTS `Proc_RegisterPembalap`;
@@ -115,8 +124,6 @@ BEGIN
         NOW(), 
         NOW()
     );
-    
-    -- 4. Jika semua berhasil, simpan permanen
     COMMIT;
     
 END;

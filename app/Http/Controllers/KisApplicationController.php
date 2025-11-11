@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Club;
 use App\Models\KisApplication;
 use App\Models\KisCategory;
+use App\Models\KisLicense;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,8 +78,6 @@ class KisApplicationController extends Controller
         $path_bukti_bayar = $request->file('file_bukti_bayar')->store('kis_documents/bukti_bayar', 'public');
 
         try {
-            // 4. Panggil Stored Procedure 'Proc_ApplyForKIS'
-            // (Sekarang dengan 11 parameter, sesuai definisi SP)
             DB::statement(
                 'CALL Proc_ApplyForKIS(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
                 [
@@ -90,10 +89,7 @@ class KisApplicationController extends Controller
                     $validatedData['golongan_darah'],
                     $validatedData['phone_number'],
                     $validatedData['address'],
-                    
-                    // --- PARAMETER BARU ---
                     $validatedData['kis_category_id'], 
-                    // --- AKHIR PARAMETER BARU ---
                     
                     $path_surat_sehat,
                     $path_bukti_bayar
@@ -114,4 +110,26 @@ class KisApplicationController extends Controller
             return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan pada server. Gagal menyimpan data.');
         }
     }
+
+    public function approve(KisApplication $application)
+{
+    // ...logika validasi...
+
+    // SAAT MEMBUAT LISENSI
+    KisLicense::updateOrCreate(
+        ['user_id' => $application->user_id], 
+        [
+            'kis_number' => $this->generateKisNumber(), 
+            'expiry_date' => now()->addYear(),
+            'status' => 'active',
+            
+            // !! TAMBAHKAN BARIS INI !!
+            // Ambil category_id dari APLIKASI dan simpan ke LISENSI
+            'kis_category_id' => $application->kis_category_id 
+        ]
+    );
+    
+
+    return redirect()->back()->with('status', 'KIS berhasil disetujui.');
+}
 }

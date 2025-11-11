@@ -37,7 +37,7 @@
                                 <th scope="col" class="px-6 py-3">Nama Ketua</th>
                                 <th scope="col" class="px-6 py-3">No. HP</th>
                                 <th scope="col" class="px-6 py-3">
-                                    Iuran {{ $currentYear }} {{-- Menampilkan tahun saat ini --}}
+                                    Iuran {{ $currentYear }} 
                                 </th>
                                 <th scope="col" class="px-6 py-3">
                                     <span class="sr-only">Aksi</span>
