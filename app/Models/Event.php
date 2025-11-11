@@ -8,52 +8,44 @@ use Illuminate\Database\Eloquent\Model;
 class Event extends Model
 {
     use HasFactory;
+    
     protected $fillable = [
         'event_name',
         'event_date',
+        'registration_deadline',
         'location',
         'description',
         'proposing_club_id',
         'created_by_user_id',
         'is_published',
-    
         'biaya_pendaftaran',
         'kontak_panitia',
         'url_regulasi',
-        'daftar_kelas',
+        'image_banner_url',
     ];
 
-    /**
-     * SATU Event diajukan oleh SATU Klub.
-     * (Relasi ke tabel 'clubs')
-     */
+    protected $casts = [
+        'event_date' => 'datetime',
+        'registration_deadline' => 'datetime',
+        'biaya_pendaftaran' => 'float',
+        'is_published' => 'boolean',
+    ];
+
     public function proposingClub()
     {
         return $this->belongsTo(Club::class, 'proposing_club_id');
     }
 
-    /**
-     * SATU Event dipublikasikan oleh SATU Pengurus.
-     * (Relasi ke tabel 'users')
-     */
-    public function creator() // Menggunakan nama relasi 'creator'
+    public function creator()
     {
         return $this->belongsTo(User::class, 'created_by_user_id');
     }
 
-    /**
-     * SATU Event memiliki BANYAK pendaftaran.
-     * (Relasi ke 'event_registrations')
-     */
     public function registrations()
     {
         return $this->hasMany(EventRegistration::class, 'event_id');
     }
 
-    /**
-     * Relasi MANY-TO-MANY:
-     * Satu Event bisa memiliki BANYAK Kategori KIS (kelas).
-     */
     public function kisCategories()
     {
         return $this->belongsToMany(KisCategory::class, 'event_kis_category');

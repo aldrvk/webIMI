@@ -78,8 +78,6 @@ class KisApplicationController extends Controller
         $path_bukti_bayar = $request->file('file_bukti_bayar')->store('kis_documents/bukti_bayar', 'public');
 
         try {
-            // 4. Panggil Stored Procedure 'Proc_ApplyForKIS'
-            // (Sekarang dengan 11 parameter, sesuai definisi SP)
             DB::statement(
                 'CALL Proc_ApplyForKIS(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
                 [
@@ -91,10 +89,7 @@ class KisApplicationController extends Controller
                     $validatedData['golongan_darah'],
                     $validatedData['phone_number'],
                     $validatedData['address'],
-                    
-                    // --- PARAMETER BARU ---
                     $validatedData['kis_category_id'], 
-                    // --- AKHIR PARAMETER BARU ---
                     
                     $path_surat_sehat,
                     $path_bukti_bayar

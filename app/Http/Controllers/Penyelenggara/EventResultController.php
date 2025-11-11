@@ -22,14 +22,6 @@ class EventResultController extends Controller
             abort(403, 'ANDA TIDAK BERHAK MENGAKSES EVENT INI.');
         }
 
-        // 2. Ambil semua pembalap yang terdaftar di event ini
-        // (Kita asumsikan pembalap sudah mendaftar via 'Daftar Event')
-        // (Untuk PENGUJIAN, kita mungkin perlu Stored Procedure untuk mendaftarkan pembalap)
-        
-        // --- DATA DUMMY (HAPUS NANTI) ---
-        // Karena kita belum punya fitur "Daftar Event" oleh pembalap, 
-        // kita akan buat data dummy pendaftaran agar form-nya tidak kosong.
-        // HAPUS BLOK INI JIKA FITUR DAFTAR SUDAH ADA.
         if (EventRegistration::where('event_id', $event->id)->count() == 0) {
             $pembalapTes = \App\Models\User::where('role', 'pembalap')->first();
             if ($pembalapTes) {
@@ -45,9 +37,9 @@ class EventResultController extends Controller
 
         // 3. Ambil pendaftar (registrants)
         $registrations = EventRegistration::where('event_id', $event->id)
-                                        ->with('pembalap', 'category') // Muat relasi pembalap & kategori KIS
-                                        ->orderBy('id', 'asc')
-                                        ->get();
+        ->with('pembalap', 'kisCategory')
+        ->orderBy('id', 'asc')
+        ->get();
 
         // 4. Kirim data ke view
         return view('penyelenggara.events.results', [

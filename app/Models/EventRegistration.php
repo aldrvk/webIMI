@@ -21,4 +21,10 @@ class EventRegistration extends Model
     {
         return $this->belongsTo(Event::class, 'event_id');
     }
+
+    // Satu pendaftaran merujuk ke SATU Kategori KIS.
+    public function kisCategory()
+    {
+        return $this->belongsTo(KisCategory::class, 'kis_category_id');
+    }
 }

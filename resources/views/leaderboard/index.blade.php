@@ -72,7 +72,7 @@
                                     {{-- Tombol Aksi (Lihat Leaderboard) --}}
                                     <div class="mt-4 md:mt-0 md:flex md:items-center">
                                         {{-- TODO: Kita akan buat rute 'leaderboard.show' ini selanjutnya --}}
-                                        <a href="#" class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 border border-transparent rounded-md">
+                                        <a href="#" class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 border border-transparent rounded-md text-xs uppercase tracking-widest">
                                             Lihat Hasil
                                         </a>
                                     </div>

@@ -124,8 +124,6 @@ BEGIN
         NOW(), 
         NOW()
     );
-    
-    -- 4. Jika semua berhasil, simpan permanen
     COMMIT;
     
 END;

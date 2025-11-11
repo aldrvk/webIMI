@@ -40,7 +40,7 @@ class EventControllerPembalap extends Controller
 
         // 3. Logika Kalender: Dapatkan tanggal pertama di grid (bisa jadi bulan lalu)
         $firstDayOfMonth = $currentDate->copy()->firstOfMonth();
-        $startOfGrid = $firstDayOfMonth->copy()->startOfWeek(Carbon::MONDAY); // Grid dimulai hari Senin
+        $startOfGrid = $firstDayOfMonth->copy()->startOfWeek(Carbon::MONDAY);
         
         // 4. Buat link Navigasi Bulan
         $prevMonthQuery = route('events.index', ['month' => $currentDate->copy()->subMonth()->format('Y-m')]);
@@ -63,12 +63,17 @@ class EventControllerPembalap extends Controller
      */
     public function show(Event $event)
     {
-        // Pastikan event sudah dipublikasi
-        if (!$event->is_published) {
-            abort(404);
-        }
-        
-        // return view('events.show', ['event' => $event]);
-        return redirect()->route('events.index'); // Sementara
+        // 1. Pastikan event sudah di-load dengan relasi 'kisCategories'
+        $event->load('proposingClub', 'kisCategories');
+
+        // 2. Cek apakah event ini sudah lewat
+        $isEventPast = Carbon::parse($event->event_date)->isPast();
+
+        // 3. Tampilkan view baru dan kirim datanya
+        return view('events.show', [
+            'event' => $event,
+            'isEventPast' => $isEventPast
+        ]);
     }
+
 }
