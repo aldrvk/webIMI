@@ -16,7 +16,7 @@
 
     <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 rtl:space-x-reverse">
-            <img src="{{ asset('storage/assets/imi_family.svg') }}" class="h-8" alt="App Logo" />
+            <img src="{{ asset('storage/imi_family.png') }}" class="h-8" alt="App Logo" />
             <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">{{ config('app.name', 'Laravel') }}</span>
         </a>
 
