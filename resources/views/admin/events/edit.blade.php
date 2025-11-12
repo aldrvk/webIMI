@@ -9,7 +9,8 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 
-                <form method="POST" action="{{ route('admin.events.update', $event->id) }}" class="p-6">
+                {{-- PENTING: 'enctype' WAJIB untuk upload file --}}
+                <form method="POST" action="{{ route('admin.events.update', $event->id) }}" class="p-6" enctype="multipart/form-data">
                     @csrf 
                     @method('PATCH') 
                     
@@ -50,11 +51,24 @@
                         <div>
                             <label for="event_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Event</label>
                             <input type="date" id="event_date" name="event_date" 
-                                   value="{{ old('event_date', $event->event_date) }}" required
+                                   {{-- Format 'Y-m-d' diperlukan oleh <input type="date"> --}}
+                                   value="{{ old('event_date', $event->event_date->format('Y-m-d')) }}" required
                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             @error('event_date') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
                         
+    
+                        <div class="md:col-span-2">
+                            <label for="registration_deadline" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Batas Akhir Pendaftaran</label>
+                            <input type="datetime-local" id="registration_deadline" name="registration_deadline" 
+                                   {{-- Format 'Y-m-d\TH:i' diperlukan oleh <input type="datetime-local"> --}}
+                                   value="{{ old('registration_deadline', optional($event->registration_deadline)->format('Y-m-d\TH:i')) }}" required
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Pendaftaran ditutup pada tanggal dan jam ini.</p>
+                            @error('registration_deadline') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
+                        </div>
+             
+
                         <div class="md:col-span-2">
                             <label for="proposing_club_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Klub Penyelenggara</label>
                             <select id="proposing_club_id" name="proposing_club_id" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
@@ -83,6 +97,26 @@
                     </h3>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    
+                        <div class="md:col-span-2">
+                            <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="image_banner_url">Poster Event / Banner</label>
+    
+                            @if($event->image_banner_url)
+                                <div class="mb-2">
+                                    <img src="{{ Storage::url($event->image_banner_url) }}" alt="Poster Saat Ini" class="w-full max-w-sm rounded-lg border dark:border-gray-700">
+                                    <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Poster saat ini. Upload file baru di bawah untuk menggantinya.</p>
+                                </div>
+                            @endif
+
+                            <input class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" 
+                                   id="image_banner_url" name="image_banner_url" type="file"
+                                   accept="image/png, image/jpeg, image/jpg, image/webp">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-300" id="file_input_help">Kosongkan jika tidak ingin mengganti poster. (Maks. 2MB).</p>
+                            @error('image_banner_url') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
+                        </div>
+            
+
 
                         <div>
                             <label for="biaya_pendaftaran" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Biaya Pendaftaran (Opsional)</label>
@@ -117,56 +151,37 @@
 
                     </div>
                     
-                    {{-- =============================================== --}}
-                    {{-- ==     AWAL BLOK CHECKBOX (UI BARU)        == --}}
-                    {{-- =============================================== --}}
-                    
+                    {{-- (BLOK KARTU CHECKBOX) --}}
                     <hr class="my-6 border-gray-200 dark:border-gray-700">
-
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                         Daftar Kelas yang Diperlombakan
                     </h3>
                     <p class="mb-4 text-sm text-gray-600 dark:text-gray-400">Pilih satu atau lebih kelas yang akan dibuka di event ini.</p>
-                    
                     <div class="space-y-6">
-                        {{-- Kelompokkan berdasarkan 'tipe' (Mobil/Motor) dari database Anda --}}
                         @foreach ($categories->groupBy('tipe') as $tipe => $categoryList)
                             <div>
                                 <h4 class="text-md font-semibold text-gray-900 dark:text-gray-100 mb-3 border-b pb-2 dark:border-gray-700">{{ $tipe }}</h4>
-                                
-                                {{-- Grid untuk "Selection Cards" --}}
                                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-                                    
                                     @foreach ($categoryList as $category)
                                         <div>
-                                            {{-- Checkbox Asli (Disembunyikan) --}}
                                             <input type="checkbox" 
                                                    id="category_{{ $category->id }}" 
                                                    name="kis_categories_ids[]" 
                                                    value="{{ $category->id }}" 
-                                                   class="hidden peer" {{-- Trik UI --}}
-                                                   {{-- Logika untuk 'edit': cek 'old()' atau data dari DB --}}
+                                                   class="hidden peer"
                                                    @checked( in_array($category->id, old('kis_categories_ids', $selectedCategories)) )>
-                                            
-                                            {{-- Label yang Dibuat Terlihat Seperti Kartu --}}
                                             <label for="category_{{ $category->id }}" 
                                                    class="inline-flex items-center justify-between w-full p-3 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">
-                                                
                                                 <div class="block">
-                                                    {{-- Tampilkan Kode Kategori (C1, B5) --}}
                                                     <div class="w-full text-sm font-semibold">{{ $category->kode_kategori }}</div>
-                                                    {{-- Tampilkan Nama Kategori (Karting, Rally) --}}
                                                     <div class="w-full text-xs">{{ $category->nama_kategori }}</div>
                                                 </div>
-
-                                                {{-- Ikon Centang (Muncul saat di-check) --}}
                                                 <svg class="w-5 h-5 ms-3 rtl:rotate-180 hidden peer-checked:block text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                                     <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
                                                 </svg>
                                             </label>
                                         </div>
                                     @endforeach
-
                                 </div>
                             </div>
                         @endforeach
@@ -174,15 +189,11 @@
                     @error('kis_categories_ids') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                     @error('kis_categories_ids.*') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                     
-                    {{-- =============================================== --}}
-                    {{-- ==      AKHIR BLOK CHECKBOX (UI BARU)        == --}}
-                    {{-- =============================================== --}}
-
                     <hr class="my-6 border-gray-200 dark:border-gray-700">
                     
                     <div class="flex items-center">
                         <input id="is_published" name="is_published" type="checkbox" value="1" 
-                               @if(old('is_published', $event->is_published)) checked @endif
+                               @checked(old('is_published', $event->is_published))
                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                         <label for="is_published" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Publikasikan Event Ini?</label>
                     </div>

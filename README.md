@@ -1,61 +1,115 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Website Ikatan Motor Indonesia Sumatera Utara
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Deskripsi Aplikasi
+Aplikasi ini adalah sistem manajemen basis data berbasis web yang dirancang untuk mengatasi tantangan administrasi di Ikatan Motor Indonesia (IMI) Sumatera Utara. Fokus utamanya adalah mendigitalisasi proses pendaftaran dan pengelolaan Kartu Izin Start (KIS) serta menyediakan platform terpusat untuk informasi event balap.
 
-## About Laravel
+Sistem ini bertujuan untuk menggantikan pencatatan manual yang rentan terhadap kesalahan, mempermudah pembalap (terutama yang berdomisili jauh dari kantor pusat di Medan) untuk mengurus KIS secara online, dan menyediakan data yang akurat secara real-time bagi pengurus IMI untuk meningkatkan efisiensi operasional dan pengambilan keputusan.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Fitur-Fitur Setiap Peran di Web
+### 1. Pembalap
+- Melakukan registrasi akun baru dan login/logout.
+- Mengelola profil pribadi.
+- Mengajukan KIS baru dengan mengunggah dokumen (seperti bukti pembayaran).
+- Memantau status pengajuan KIS (Pending, Approved, Rejected).
+- Melihat alasan penolakan jika pengajuan ditolak.
+- Melihat dan mengunduh KIS Digital jika disetujui.
+- Melihat kalender event yang akan datang.
+- Mendaftar pada sebuah event.
+- Melihat riwayat partisipasi dan prestasi balap (CV Pembalap).
+- Melihat Papan Peringkat (Leaderboard) provinsi per kategori.
+- Menerima pengumuman dari Pengurus IMI.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 2. Pengurus IMI
+- Login ke dashboard admin.
+- Melihat dan mengelola antrean pengajuan KIS.
+- Menyetujui (approve) pengajuan KIS.
+- Menolak (reject) pengajuan KIS dan wajib memasukkan alasan penolakan.
+- Mengelola (Create, Edit, Nonaktifkan) data event di kalender.
+- Menginput hasil lomba setelah event selesai (otomatis mengisi CV pembalap dan memperbarui leaderboard).
+- Membuat dan mengirimkan pengumuman ke semua pembalap.
+- Melihat daftar semua pembalap yang terdaftar di sistem.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 3. Pimpinan IMI
+- Login ke dashboard eksekutif.
+- Melihat KPI (Key Performance Indicators) utama (total pembalap, KIS pending, jumlah event).
+- Melihat dashboard analitik berupa grafik (pertumbuhan pembalap, sebaran wilayah, kategori terpopuler).
+- Melihat papan peringkat (Leaderboard).
+- Mendownload laporan agregat (rekapitulasi event dalam PDF/Excel).
 
-## Learning Laravel
+### 4. Penyelenggara Event
+- Login ke portal verifikasi.
+- Mengakses fitur verifikasi KIS (via pencarian NIK/nama atau pemindai QR Code).
+- Melihat hasil verifikasi yang jelas (foto, nama, status AKTIF / TIDAK AKTIF).
+- Melihat daftar pembalap yang terdaftar khusus untuk event mereka.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Tech Stack
+Backend :
+- Bahasa Pemrograman: PHP (versi 8.2)
+- Framework: Laravel (versi 12.0)
+- Autentikasi: Laravel Breeze (versi 2.3)
+- Templating Engine: Blade
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Frontend :
+- CSS Framework: Tailwind CSS (versi 3.1.0)
+- JavaScript Framework: Alpine.js (versi 3.4.2)
+- Build Tool: Vite (versi 7.0.7)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Database :
+- Sistem Database: MySQL
+- ORM (Object-Relational Mapper): Laravel Eloquent
+- Manajemen Skema: Laravel Migrations
 
-## Laravel Sponsors
+Tambahan :
+- Manajemen Dependency (PHP): Composer 2.8.8
+- Manajemen Dependency (JS): NPM 10.9.2
+- HTTP Client: Axios (versi 1.11.0)
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Nama Anggota
+- Aldrik Noel Sianipar (241402049)
+- Leondo Admiral Purba (241402053)
+- Rafi Andara Nasution (241402095)
+- Wira Hari Pratama (241402111)
+- Yosial Marcel Korhesy Simanjuntak (241402114)
 
-### Premium Partners
+## Langkah Setup dan Run Projek
+### 1. Clone Repository
+```
+git clone https://github.com/aldrvk/webIMI.git
+cd webIMI
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### 2. Instalasi Dependencies
+```
+composer install
+npm install
+```
 
-## Contributing
+### 3. Konfigurasi Environment (.env)
+```
+copy .env.example .env
+```
+Buka file .env dan atur koneksi database
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=db_imi_sumut  # Ganti dengan nama database yang sesuai
+DB_USERNAME=root          
+DB_PASSWORD=              
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 4. Setup Aplikasi dan Database
+```
+php artisan key:generate
+php artisan migrate
+```
 
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 5. Jalankan Proyek
+```
+php artisan serve
+```
+Di terminal lain, jalankan
+```
+npm run dev
+```
+Setelah itu, aplikasi dapat diakses di http://127.0.0.1:8000.

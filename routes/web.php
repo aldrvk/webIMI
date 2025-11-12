@@ -52,6 +52,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])
         ->middleware('kis.active')
         ->name('leaderboard.index');
+    Route::get('/events/{event}', [EventControllerPembalap::class, 'show'])
+         ->middleware('kis.active')
+         ->name('events.show');
     Route::post('/events/{event}/register', [EventRegistrationController::class, 'store'])
         ->name('events.register')
         ->middleware('kis.active');

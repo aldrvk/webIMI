@@ -11,28 +11,37 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     * (Hanya berisi kolom di tabel 'users')
-     */
     protected $fillable = [
         'name',
         'email',
         'password',
-        'role', // Pastikan 'role' ada di sini
+        'role', 
+        'club_id',
     ];
 
     protected $hidden = [ 'password', 'remember_token' ];
     protected $casts = [ 'email_verified_at' => 'datetime', 'password' => 'hashed' ];
 
-    // === RELASI BARU ===
-    // Satu User (pembalap) memiliki SATU Profil Pembalap
+    /**
+     * Satu User (Penyelenggara) terhubung ke SATU Klub.
+     */
+    public function club()
+    {
+        // Relasi ini menggunakan 'club_id' di tabel 'users'
+        return $this->belongsTo(Club::class);
+    }
+    // ==========================================================
+    // ==                  AKHIR PERBAIKAN                   ==
+    // ==========================================================
+
+
+    // === RELASI ANDA YANG LAIN (Sudah Benar) ===
+    
     public function profile()
     {
         return $this->hasOne(PembalapProfile::class);
     }
 
-    // === RELASI LAMA (MASIH VALID) ===
     public function kisApplications()
     {
         return $this->hasMany(KisApplication::class, 'pembalap_user_id');
@@ -53,7 +62,7 @@ class User extends Authenticatable
         return $this->hasMany(KisApplication::class, 'processed_by_user_id');
     }
 
-    public function createdEvents() // Ganti nama dari approvedEvents
+    public function createdEvents()
     {
         return $this->hasMany(Event::class, 'created_by_user_id');
     }
