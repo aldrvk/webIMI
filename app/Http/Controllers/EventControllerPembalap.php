@@ -2,78 +2,101 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\Event; // Import model Event
+use App\Models\Event;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth; // <-- INI ADALAH PERBAIKANNYA
 
 class EventControllerPembalap extends Controller
 {
     /**
-     * Menampilkan halaman Kalender Event yang interaktif.
-     * Terhubung ke Rute GET /events (events.index)
+     * Menampilkan kalender event
      */
     public function index(Request $request)
     {
-        // 1. Tentukan bulan & tahun yang sedang dilihat
-        //    (Ambil dari URL query ?month=2025-12, atau default ke bulan ini)
-        try {
-            // Karbon akan mem-parse string seperti "2025-11"
-            $currentDate = Carbon::parse($request->query('month', now()->toDateString()));
-        } catch (\Exception $e) {
-            $currentDate = Carbon::now();
-        }
-        
-        $monthName = $currentDate->translatedFormat('F Y'); // Contoh: "November 2025"
-        $year = $currentDate->year;
-        $month = $currentDate->month;
+        $currentMonthQuery = $request->query('month', now()->format('Y-m'));
+        $currentDate = Carbon::createFromFormat('Y-m', $currentMonthQuery)->startOfMonth();
+        $monthName = $currentDate->translatedFormat('F Y');
+        $currentMonth = $currentDate->month;
+        $startOfGrid = $currentDate->copy()->startOfWeek(Carbon::MONDAY);
 
-        // 2. Ambil data event yang sudah dipublikasikan HANYA untuk bulan ini
-        //    Kita 'keyBy' (kelompokkan) berdasarkan hari agar mudah dicari di view
         $events = Event::where('is_published', true)
-                        ->whereYear('event_date', $year)
-                        ->whereMonth('event_date', $month)
-                        ->with('proposingClub')
-                        ->orderBy('event_date', 'asc')
-                        ->get()
-                        // Mengelompokkan event berdasarkan hari. Cth: $eventsByDay->get(3) akan berisi event di tgl 3
-                        ->groupBy(fn($event) => Carbon::parse($event->event_date)->day); 
-
-        // 3. Logika Kalender: Dapatkan tanggal pertama di grid (bisa jadi bulan lalu)
-        $firstDayOfMonth = $currentDate->copy()->firstOfMonth();
-        $startOfGrid = $firstDayOfMonth->copy()->startOfWeek(Carbon::MONDAY);
+            ->whereYear('event_date', $currentDate->year)
+            ->whereMonth('event_date', $currentDate->month)
+            ->orderBy('event_date', 'asc')
+            ->get();
         
-        // 4. Buat link Navigasi Bulan
+        $eventsByDay = $events->groupBy(function($event) {
+            return Carbon::parse($event->event_date)->day;
+        });
+
         $prevMonthQuery = route('events.index', ['month' => $currentDate->copy()->subMonth()->format('Y-m')]);
         $nextMonthQuery = route('events.index', ['month' => $currentDate->copy()->addMonth()->format('Y-m')]);
 
-        // 5. Kirim semua data terstruktur ini ke view
-        return view('events.index', [
-            'monthName' => $monthName,
-            'startOfGrid' => $startOfGrid, // Tanggal (Carbon) untuk sel pertama
-            'currentMonth' => $month, // Nomor bulan (cth: 11)
-            'eventsByDay' => $events, // Data event yang sudah dikelompokkan
-            'prevMonthQuery' => $prevMonthQuery,
-            'nextMonthQuery' => $nextMonthQuery,
+        return view('events.index', compact(
+            'monthName', 
+            'currentMonth', 
+            'startOfGrid', 
+            'eventsByDay', 
+            'prevMonthQuery', 
+            'nextMonthQuery'
+        ));
+    }
+
+    /**
+     * Menampilkan halaman detail untuk satu event.
+     * (Logika "Sadar Status" yang sudah diperbarui)
+     */
+    public function show(Event $event)
+    {
+        // 1. Ambil data event
+        $event->load('proposingClub', 'kisCategories');
+
+        // 2. Cek apakah pendaftaran DITUTUP (event sudah lewat ATAU deadline lewat)
+        $isRegistrationClosed = $event->event_date->isPast() || ($event->registration_deadline && $event->registration_deadline->isPast());
+
+        // 3. Ambil status pendaftaran pembalap SAAT INI (jika ada)
+        //    (Perbaikan: Menggunakan Auth::id() yang sudah di-import)
+        $userRegistration = $event->registrations()
+                                  ->where('pembalap_user_id', Auth::id())
+                                  ->first();
+
+        // 4. Tampilkan view baru dan kirim semua datanya
+        return view('events.show', [
+            'event' => $event,
+            'isRegistrationClosed' => $isRegistrationClosed,
+            'userRegistration' => $userRegistration // (Bisa null jika belum daftar)
         ]);
     }
 
     /**
-     * Menampilkan detail satu event.
-     * (Kita biarkan kosong untuk saat ini)
+     * Menampilkan hasil lomba (Leaderboard per Event).
+     * (Fungsi ini sudah ada)
      */
-    public function show(Event $event)
+    public function results(Event $event)
     {
-        // 1. Pastikan event sudah di-load dengan relasi 'kisCategories'
-        $event->load('proposingClub', 'kisCategories');
+        // 1. Pastikan event sudah lewat
+        if (!$event->event_date->isPast()) {
+            return redirect()->route('events.show', $event->id)
+                             ->with('info', 'Hasil lomba belum tersedia karena event belum selesai.');
+        }
 
-        // 2. Cek apakah event ini sudah lewat
-        $isEventPast = Carbon::parse($event->event_date)->isPast();
+        // 2. Ambil data pendaftaran yang memiliki hasil
+        $registrations = $event->registrations()
+                               ->with(['pembalap', 'kisCategory'])
+                               ->whereNotNull('result_position') 
+                               ->orderBy('kis_category_id')      
+                               ->orderBy('result_position', 'asc') 
+                               ->get();
 
-        // 3. Tampilkan view baru dan kirim datanya
-        return view('events.show', [
+        // 3. Kelompokkan berdasarkan Nama Kategori untuk Tabs
+        $groupedResults = $registrations->groupBy(function ($reg) {
+            return $reg->kisCategory->nama_kategori ?? 'Umum';
+        });
+
+        return view('events.results', [
             'event' => $event,
-            'isEventPast' => $isEventPast
+            'groupedResults' => $groupedResults
         ]);
     }
-
 }

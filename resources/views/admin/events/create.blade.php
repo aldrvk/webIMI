@@ -9,7 +9,6 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 
-                {{-- PENTING: 'enctype' WAJIB untuk upload file --}}
                 <form method="POST" action="{{ route('admin.events.store') }}" class="p-6" enctype="multipart/form-data">
                     @csrf 
                     
@@ -17,7 +16,6 @@
                         Detail Event Utama
                     </h3>
 
-                    {{-- Tampilkan error validasi --}}
                     @if ($errors->any())
                         <div class="mb-4 p-4 bg-red-100 text-red-700 rounded border border-red-400 dark:bg-gray-700 dark:text-red-300 dark:border-red-600">
                             <p class="font-bold">Terjadi kesalahan validasi:</p>
@@ -29,7 +27,6 @@
                         </div>
                     @endif
                     
-                    {{-- Grid untuk Detail Utama --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         
                         <div class="md:col-span-2">
@@ -52,6 +49,7 @@
                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             @error('event_date') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
+
                         <div class="md:col-span-2">
                             <label for="registration_deadline" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Batas Akhir Pendaftaran</label>
                             <input type="datetime-local" id="registration_deadline" name="registration_deadline" 
@@ -60,7 +58,7 @@
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Pendaftaran ditutup pada tanggal dan jam ini.</p>
                             @error('registration_deadline') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
-        
+
                         <div class="md:col-span-2">
                             <label for="proposing_club_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Diajukan oleh Klub</label>
                             <select id="proposing_club_id" name="proposing_club_id" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
@@ -121,6 +119,21 @@
                             @error('kontak_panitia') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
 
+                        {{-- =============================================== --}}
+                        {{-- ==        FITUR BARU: INFO REKENING          == --}}
+                        {{-- =============================================== --}}
+                        <div class="md:col-span-2">
+                            <label for="bank_account_info" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                Info Rekening / Instruksi Pembayaran (Wajib jika berbayar)
+                            </label>
+                            <textarea id="bank_account_info" name="bank_account_info" rows="3"
+                                      class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                      placeholder="Contoh:&#10;Bank BCA&#10;No. Rek: 123-456-7890&#10;a/n IMI Sumut">{{ old('bank_account_info') }}</textarea>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Tuliskan Nama Bank, Nomor Rekening, dan Atas Nama penerima.</p>
+                            @error('bank_account_info') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
+                        </div>
+                        {{-- =============================================== --}}
+
                         <div class="md:col-span-2">
                             <label for="url_regulasi" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Link/URL Regulasi (Opsional)</label>
                             <input type="url" id="url_regulasi" name="url_regulasi" value="{{ old('url_regulasi') }}"
@@ -131,7 +144,6 @@
 
                     </div>
                     
-                    {{-- (BLOK KARTU CHECKBOX) --}}
                     <hr class="my-6 border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                         Daftar Kelas yang Diperlombakan
@@ -169,7 +181,6 @@
                     @error('kis_categories_ids') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                     @error('kis_categories_ids.*') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
 
-                    {{-- Tombol Submit --}}
                     <div class="flex items-center justify-end mt-8 border-t dark:border-gray-700 pt-6">
                         <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                             {{ __('Simpan Pengajuan Event') }}

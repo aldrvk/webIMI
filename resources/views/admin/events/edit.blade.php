@@ -9,7 +9,6 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 
-                {{-- PENTING: 'enctype' WAJIB untuk upload file --}}
                 <form method="POST" action="{{ route('admin.events.update', $event->id) }}" class="p-6" enctype="multipart/form-data">
                     @csrf 
                     @method('PATCH') 
@@ -29,7 +28,6 @@
                         </div>
                     @endif
                     
-                    {{-- Grid untuk Detail Utama --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         
                         <div class="md:col-span-2">
@@ -51,23 +49,19 @@
                         <div>
                             <label for="event_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Event</label>
                             <input type="date" id="event_date" name="event_date" 
-                                   {{-- Format 'Y-m-d' diperlukan oleh <input type="date"> --}}
                                    value="{{ old('event_date', $event->event_date->format('Y-m-d')) }}" required
                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             @error('event_date') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
                         
-    
                         <div class="md:col-span-2">
                             <label for="registration_deadline" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Batas Akhir Pendaftaran</label>
                             <input type="datetime-local" id="registration_deadline" name="registration_deadline" 
-                                   {{-- Format 'Y-m-d\TH:i' diperlukan oleh <input type="datetime-local"> --}}
                                    value="{{ old('registration_deadline', optional($event->registration_deadline)->format('Y-m-d\TH:i')) }}" required
                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Pendaftaran ditutup pada tanggal dan jam ini.</p>
                             @error('registration_deadline') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
-             
 
                         <div class="md:col-span-2">
                             <label for="proposing_club_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Klub Penyelenggara</label>
@@ -98,10 +92,9 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-    
                         <div class="md:col-span-2">
                             <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="image_banner_url">Poster Event / Banner</label>
-    
+                            
                             @if($event->image_banner_url)
                                 <div class="mb-2">
                                     <img src="{{ Storage::url($event->image_banner_url) }}" alt="Poster Saat Ini" class="w-full max-w-sm rounded-lg border dark:border-gray-700">
@@ -115,8 +108,6 @@
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-300" id="file_input_help">Kosongkan jika tidak ingin mengganti poster. (Maks. 2MB).</p>
                             @error('image_banner_url') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
-            
-
 
                         <div>
                             <label for="biaya_pendaftaran" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Biaya Pendaftaran (Opsional)</label>
@@ -140,6 +131,21 @@
                             @error('kontak_panitia') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
 
+                        {{-- =============================================== --}}
+                        {{-- ==        FITUR BARU: INFO REKENING          == --}}
+                        {{-- =============================================== --}}
+                        <div class="md:col-span-2">
+                            <label for="bank_account_info" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                                Info Rekening / Instruksi Pembayaran (Wajib jika berbayar)
+                            </label>
+                            <textarea id="bank_account_info" name="bank_account_info" rows="3"
+                                      class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                      placeholder="Contoh:&#10;Bank BCA&#10;No. Rek: 123-456-7890&#10;a/n IMI Sumut">{{ old('bank_account_info', $event->bank_account_info) }}</textarea>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Tuliskan Nama Bank, Nomor Rekening, dan Atas Nama penerima.</p>
+                            @error('bank_account_info') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
+                        </div>
+                        {{-- =============================================== --}}
+
                         <div class="md:col-span-2">
                             <label for="url_regulasi" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Link/URL Regulasi (Opsional)</label>
                             <input type="url" id="url_regulasi" name="url_regulasi" 
@@ -151,7 +157,6 @@
 
                     </div>
                     
-                    {{-- (BLOK KARTU CHECKBOX) --}}
                     <hr class="my-6 border-gray-200 dark:border-gray-700">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">
                         Daftar Kelas yang Diperlombakan
@@ -198,7 +203,6 @@
                         <label for="is_published" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Publikasikan Event Ini?</label>
                     </div>
 
-                    {{-- Tombol Submit --}}
                     <div class="flex items-center justify-end mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
                         <a href="{{ route('admin.events.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white me-4">
                             Batal

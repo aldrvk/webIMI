@@ -59,6 +59,7 @@ class EventController extends Controller
             'kontak_panitia' => 'nullable|string|max:255',
             'url_regulasi' => 'nullable|url|max:255', 
             'image_banner_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'bank_account_info' => 'nullable|string|max:1000',
             
             // Relasi
             'kis_categories_ids' => 'nullable|array',
@@ -114,18 +115,21 @@ class EventController extends Controller
             'event_date' => 'required|date',
             
             // <-- 2. LOGIKA VALIDASI DEADLINE BARU -->
-            'registration_deadline' => 'required|date|before:event_date', // Deadline harus sebelum tanggal event
+            'registration_deadline' => 'required|date|before:event_date', 
 
             'location' => 'required|string|max:255',
             'description' => 'nullable|string',
             'proposing_club_id' => 'required|exists:clubs,id',
             'is_published' => 'nullable|boolean',
             'biaya_pendaftaran' => 'nullable|numeric|min:0',
+            'bank_account_info' => 'nullable|string|max:1000',
             'kontak_panitia' => 'nullable|string|max:255',
             'url_regulasi' => 'nullable|url|max:255',
             'image_banner_url' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            
             'kis_categories_ids' => 'nullable|array',
             'kis_categories_ids.*' => 'integer|exists:kis_categories,id'
+            
         ]);
 
         // 2. Siapkan data (checkbox publish)
