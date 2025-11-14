@@ -4,7 +4,6 @@
             {{ __('Detail Event') }}
         </h2>
     </x-slot>
-
     <div>
         <div class="max-w-5xl mx-auto sm:px-6 lg:px-8">
             
@@ -28,6 +27,7 @@
 
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 
+                {{-- Poster/Banner --}}
                 <div>
                     @if($event->image_banner_url)
                         <img src="{{ Storage::url($event->image_banner_url) }}" alt="Event Poster" class="w-full h-48 md:h-64 object-cover">
@@ -76,17 +76,17 @@
                                     @endforelse
                                 </div>
                             </div>
+                            
                             @if($event->registration_deadline)
                             <div>
                                 <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">Batas Waktu Pendaftaran</h3>
-                                <div class="p-4 w-80 h-30 bg-gray-50 rounded-lg dark:bg-gray-900 border dark:border-gray-700">
+                                <div class="p-4 bg-gray-50 rounded-lg dark:bg-gray-900 border dark:border-gray-700">
                                 <p class="text-gray-700 dark:text-gray-300 text-xl">
                                     {{ $event->registration_deadline->translatedFormat('l, d F Y') }}
                                     <span class="text-red-500 font-medium"><br> Pukul {{ $event->registration_deadline->format('H:i') }} WIB</span>
                                 </p>
                             </div>
                             </div>
-                            
                             @endif
                         </div>
 
@@ -125,75 +125,113 @@
                         </div>
                     </div>
 
-                    <div class="mt-8 pt-6 border-t dark:border-gray-700" 
-                         x-data="{
-                            eventTime: new Date('{{ $event->event_date->format('c') }}').getTime(),
-                            days: '00',
-                            hours: '00',
-                            minutes: '00',
-                            seconds: '00',
-                            isEventPast: false,
+                    <div class="mt-8 pt-6 border-t dark:border-gray-700">
 
-                            startTimer() {
-                                const updateTimer = () => {
-                                    const now = new Date().getTime();
-                                    const distance = this.eventTime - now;
+                        @if($isRegistrationClosed)
+                            {{-- 1. JIKA PENDAFTARAN SUDAH DITUTUP --}}
+                            <div class="p-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
+                                <span class="font-medium">Pendaftaran Ditutup.</span> 
+                                @if($event->registration_deadline && $event->registration_deadline->isPast())
+                                    Batas akhir pendaftaran sudah lewat.
+                                @else
+                                    Event ini sudah berlalu.
+                                @endif
+                            </div>
 
-                                    if (distance < 0) {
-                                        this.isEventPast = true;
-                                        clearInterval(interval);
-                                        return;
-                                    }
-
-                                    this.days = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
-                                    this.hours = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
-                                    this.minutes = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-                                    this.seconds = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
-                                };
-
-                                updateTimer();
-                                const interval = setInterval(updateTimer, 1000);
-                            }
-                         }" 
-                         x-init="startTimer()">
-                        
-                        {{-- Tampilkan Countdown HANYA jika event belum lewat --}}
-                        <div x-show="!isEventPast">
-                            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Pendaftaran Ditutup Dalam</h3>
+                        @elseif($userRegistration == null)
+                            {{-- 2. JIKA BELUM DAFTAR & MASIH DIBUKA --}}
                             
-                            <div class="flex gap-2 md:gap-4 my-4">
-                                <div class="flex flex-col items-center justify-center p-3 bg-gray-100 dark:bg-gray-700 rounded-lg w-1/4">
-                                    <span class="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white" x-text="days">00</span>
-                                    <span class="text-xs text-gray-500 dark:text-gray-400">Hari</span>
+                            @if($event->registration_deadline)
+                                {{-- PERBAIKAN BUG ALPINE.JS: Logika dipindah ke x-data --}}
+                                <div x-data="{
+                                        eventTime: new Date('{{ $event->registration_deadline->format('c') }}').getTime(),
+                                        days: '00',
+                                        hours: '00',
+                                        minutes: '00',
+                                        seconds: '00',
+                                        isEventPast: false,
+                                        startTimer() {
+                                            const updateTimer = () => {
+                                                const now = new Date().getTime();
+                                                const distance = this.eventTime - now;
+                                                if (distance < 0) {
+                                                    this.isEventPast = true;
+                                                    clearInterval(interval);
+                                                    return;
+                                                }
+                                                this.days = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                                                this.hours = String(Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                                                this.minutes = String(Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                                                this.seconds = String(Math.floor((distance % (1000 * 60)) / 1000)).padStart(2, '0');
+                                            };
+                                            updateTimer();
+                                            const interval = setInterval(updateTimer, 1000);
+                                        }
+                                    }" 
+                                     x-init="startTimer()">
+                                    
+                                    <div x-show="!isEventPast">
+                                        <p class="text-sm font-semibold uppercase text-red-500 tracking-wider">DEADLINE</p>
+                                        <h3 class="text-lg font-medium text-gray-900 dark:text-white mt-1">Pendaftaran Ditutup Dalam</h3>
+                                        <div class="flex gap-2 md:gap-4 my-4"> {{-- (Blok Countdown Timer) --}}
+                                            <div class="flex flex-col items-center justify-center p-3 bg-gray-100 dark:bg-gray-700 rounded-lg w-1/4"><span class="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white" x-text="days">00</span><span class="text-xs text-gray-500 dark:text-gray-400">Hari</span></div>
+                                            <div class="flex flex-col items-center justify-center p-3 bg-gray-100 dark:bg-gray-700 rounded-lg w-1/4"><span class="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white" x-text="hours">00</span><span class="text-xs text-gray-500 dark:text-gray-400">Jam</span></div>
+                                            <div class="flex flex-col items-center justify-center p-3 bg-gray-100 dark:bg-gray-700 rounded-lg w-1/4"><span class="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white" x-text="minutes">00</span><span class="text-xs text-gray-500 dark:text-gray-400">Menit</span></div>
+                                            <div class="flex flex-col items-center justify-center p-3 bg-gray-100 dark:bg-gray-700 rounded-lg w-1/4"><span class="text-2xl md:text-4xl font-bold text-red-600 dark:text-red-500" x-text="seconds">00</span><span class="text-xs text-gray-500 dark:text-gray-400">Detik</span></div>
+                                        </div>
+                                        <form method="POST" action="{{ route('events.register', $event->id) }}" class="mt-4">
+                                            @csrf
+                                            {{-- PERBAIKAN KONSISTENSI TOMBOL (BIRU) --}}
+                                            <button type="submit" class="w-full inline-flex justify-center px-5 py-3 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest bg-blue-700 hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                                Daftar Sekarang
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div x-show="isEventPast" class="p-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
+                                        <span class="font-medium">Pendaftaran Ditutup.</span> Batas akhir pendaftaran sudah lewat.
+                                    </div>
                                 </div>
-                                <div class="flex flex-col items-center justify-center p-3 bg-gray-100 dark:bg-gray-700 rounded-lg w-1/4">
-                                    <span class="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white" x-text="hours">00</span>
-                                    <span class="text-xs text-gray-500 dark:text-gray-400">Jam</span>
+                            @else
+                                {{-- Fallback jika Admin lupa set deadline --}}
+                                <div class="p-4 text-sm text-gray-800 rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-gray-300" role="alert">
+                                    Panitia belum menentukan batas akhir pendaftaran untuk event ini.
                                 </div>
-                                <div class="flex flex-col items-center justify-center p-3 bg-gray-100 dark:bg-gray-700 rounded-lg w-1/4">
-                                    <span class="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white" x-text="minutes">00</span>
-                                    <span class="text-xs text-gray-500 dark:text-gray-400">Menit</span>
-                                </div>
-                                <div class="flex flex-col items-center justify-center p-3 bg-gray-100 dark:bg-gray-700 rounded-lg w-1/4">
-                                    <span class="text-2xl md:text-4xl font-bold text-red-600 dark:text-red-500" x-text="seconds">00</span>
-                                    <span class="text-xs text-gray-500 dark:text-gray-400">Detik</span>
-                                </div>
+                            @endif
+
+                        @elseif($userRegistration->status == 'Pending Payment')
+                            {{-- 3. JIKA SUDAH DAFTAR, TAPI BELUM BAYAR --}}
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-white">Menunggu Pembayaran</h3>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Anda sudah memulai pendaftaran. Silakan selesaikan pembayaran Anda.</p>
+                            {{-- PERBAIKAN KONSISTENSI TOMBOL (KUNING) --}}
+                            <a href="{{ route('events.payment', $userRegistration->id) }}" class="mt-4 w-full inline-flex justify-center px-5 py-3 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest bg-yellow-500 hover:bg-yellow-600 focus:bg-yellow-600 active:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                Lanjutkan Pembayaran
+                            </a>
+
+                        @elseif($userRegistration->status == 'Pending Confirmation')
+                            {{-- 4. JIKA SUDAH UPLOAD BUKTI, TAPI BELUM DICEK ADMIN --}}
+                            <div class="p-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
+                                <span class="font-medium">Menunggu Konfirmasi.</span> Bukti pembayaran Anda telah diupload dan sedang diperiksa oleh panitia.
                             </div>
                             
-                            {{-- Tombol BIRU untuk Aksi Utama --}}
-                            <form method="POST" action="{{ route('events.register', $event->id) }}" class="mt-4">
-                                @csrf
-                                <button type="submit" 
-                                        class="w-full text-xs text-white uppercase tracking-widest bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg px-5 py-3 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                    Daftar Sekarang
-                                </button>
-                            </form>
-                        </div>
-                        
-                        {{-- Tampilkan ini JIKA event sudah lewat --}}
-                        <div x-show="isEventPast" class="p-4 text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300" role="alert">
-                            <span class="font-medium">Pendaftaran Ditutup.</span> Event ini sudah berlalu.
-                        </div>
+                        @elseif($userRegistration->status == 'Rejected')
+                            {{-- 5. JIKA DITOLAK --}}
+                            <div class="p-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-red-300 dark:border-red-600" role="alert">
+                                <h3 class="font-bold text-lg mb-2">Pendaftaran Ditolak!</h3>
+                                <p class="mb-2">Panitia menolak bukti pembayaran Anda dengan alasan:</p>
+                                <p class="italic font-medium">"{{ $userRegistration->admin_note ?? 'Tidak ada alasan spesifik.' }}"</p>
+                            </div>
+                            {{-- PERBAIKAN KONSISTENSI TOMBOL (MERAH) --}}
+                            <a href="{{ route('events.payment', $userRegistration->id) }}" class="mt-4 w-full inline-flex justify-center px-5 py-3 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest bg-red-700 hover:bg-red-600 focus:bg-red-600 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                Upload Ulang Bukti Bayar
+                            </a>
+
+                        @elseif($userRegistration->status == 'Confirmed')
+                            {{-- 6. JIKA SUDAH LUNAS DAN DISETUJUI --}}
+                            <div class="p-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400 border border-green-300 dark:border-green-600" role="alert">
+                                <span class="font-medium">Anda Sudah Terdaftar!</span> Selamat, pendaftaran Anda sudah dikonfirmasi. Sampai jumpa di event!
+                            </div>
+                        @endif
+
                     </div>
 
                 </div>

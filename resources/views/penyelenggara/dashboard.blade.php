@@ -7,20 +7,18 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            
-            {{-- Pesan Sukses (setelah simpan hasil) --}}
+
             @if (session('status'))
                 <div class="flex items-center p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
-                   <span class="font-medium">Sukses! </span> {{ session('status') }}
+                    <span class="font-medium">Sukses! </span> {{ session('status') }}
                 </div>
             @endif
             @if (session('error'))
                 <div class="flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
-                   <span class="font-medium">Error! </span> {{ session('error') }}
+                    <span class="font-medium">Error! </span> {{ session('error') }}
                 </div>
             @endif
 
-            {{-- Kartu Nama Klub --}}
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Selamat Datang, Penyelenggara dari:</h3>
@@ -32,7 +30,6 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <h3 class="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">Event Selesai (Menunggu Input Hasil)</h3>
-                    
                     <div class="space-y-4">
                         @forelse ($pastEvents as $event)
                             <div class="block p-4 bg-gray-50 border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700">
@@ -45,9 +42,11 @@
                                         <p class="font-normal text-gray-700 dark:text-gray-400">{{ $event->location }}</p>
                                     </div>
                                     <div class="mt-4 md:mt-0">
-                                        {{-- Tombol BIRU (Aksi) untuk input hasil --}}
-                                        <a href="{{ route('penyelenggara.events.results.edit', $event->id) }}" 
-                                           class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                                        {{-- =============================================== --}}
+                                        {{-- ==          PERBAIKAN TOMBOL (BIRU)          == --}}
+                                        {{-- =============================================== --}}
+                                        <a href="{{ route('penyelenggara.events.results.edit', $event->id) }}"
+                                            class="inline-flex items-center px-4 py-2 bg-blue-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150 dark:bg-blue-600 dark:hover:bg-blue-700">
                                             Input/Edit Hasil Lomba
                                         </a>
                                     </div>
@@ -57,7 +56,6 @@
                             <p class="text-gray-500 dark:text-gray-400">Tidak ada event selesai yang perlu diisi hasilnya.</p>
                         @endforelse
                     </div>
-
                 </div>
             </div>
 
@@ -65,8 +63,7 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <h3 class="text-lg font-medium mb-4 text-gray-900 dark:text-gray-100">Event Anda yang Akan Datang</h3>
-                    
-                     <div class="space-y-4">
+                    <div class="space-y-4">
                         @forelse ($upcomingEvents as $event)
                             <div class="block p-4 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                                 <div class="flex flex-col md:flex-row md:justify-between md:items-center">
@@ -77,11 +74,18 @@
                                         <h5 class="mt-1 text-xl font-bold tracking-tight text-gray-900 dark:text-white">{{ $event->event_name }}</h5>
                                         <p class="font-normal text-gray-700 dark:text-gray-400">{{ $event->location }}</p>
                                     </div>
-                                    <div class="mt-4 md:mt-0">
-                                        {{-- Tombol ABU-ABU (Disabled) --}}
-                                        <span class="cursor-not-allowed inline-block px-5 py-2.5 text-sm font-medium text-center text-gray-400 bg-gray-200 rounded-lg dark:bg-gray-700 dark:text-gray-500">
+                                    {{-- =============================================== --}}
+                                    {{-- ==    PERBAIKAN TOMBOL (KUNING & ABU-ABU)    == --}}
+                                    {{-- =============================================== --}}
+                                    <div class="mt-4 md:mt-0 flex flex-wrap gap-2">
+                                        <a href="{{ route('penyelenggara.events.payments.index', $event->id) }}"
+                                            class="inline-flex items-center px-4 py-2 bg-yellow-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-yellow-600 focus:bg-yellow-600 active:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                            Validasi Pembayaran
+                                        </a>
+                                        {{-- Tombol Disabled (Abu-abu), kita gunakan styling x-secondary-button --}}
+                                        <button disabled class="inline-flex items-center px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-500 rounded-md font-semibold text-xs text-gray-400 dark:text-gray-600 uppercase tracking-widest opacity-60 cursor-not-allowed">
                                             Input Hasil (Belum Selesai)
-                                        </span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -89,10 +93,8 @@
                             <p class="text-gray-500 dark:text-gray-400">Anda belum memiliki event yang akan datang.</p>
                         @endforelse
                     </div>
-
                 </div>
             </div>
-
         </div>
     </div>
 </x-app-layout>
