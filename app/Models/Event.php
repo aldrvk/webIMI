@@ -22,6 +22,7 @@ class Event extends Model
         'kontak_panitia',
         'url_regulasi',
         'image_banner_url',
+        'bank_account_info',
     ];
 
     protected $casts = [

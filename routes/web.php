@@ -58,6 +58,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/events/{event}/register', [EventRegistrationController::class, 'store'])
         ->name('events.register')
         ->middleware('kis.active');
+    Route::get('/events/{event}/results', [EventControllerPembalap::class, 'results'])
+        ->middleware('kis.active')
+        ->name('events.results');
+    Route::get('/registrations/{registration}/payment', [EventRegistrationController::class, 'showPayment'])
+        ->name('events.payment');
+    Route::patch('/registrations/{registration}/payment', [EventRegistrationController::class, 'storePayment'])
+        ->name('events.payment.store');
 
     // Route Pengurus IMI
     Route::middleware('role:pengurus_imi')->prefix('admin')->name('admin.')->group(function () {
@@ -93,6 +100,12 @@ Route::middleware('auth')->group(function () {
         
         Route::get('/events/{event}/results',   [EventResultController::class, 'edit'])->name('events.results.edit');
         Route::post('/events/{event}/results', [EventResultController::class, 'update'])->name('events.results.update');
+        Route::get('/events/{event}/payments', [\App\Http\Controllers\Penyelenggara\PaymentApprovalController::class, 'index'])
+             ->name('events.payments.index');
+        Route::post('/registrations/{registration}/approve', [\App\Http\Controllers\Penyelenggara\PaymentApprovalController::class, 'approve'])
+             ->name('registrations.approve');
+        Route::post('/registrations/{registration}/reject', [\App\Http\Controllers\Penyelenggara\PaymentApprovalController::class, 'reject'])
+             ->name('registrations.reject');
     });
 
     // Route Super Admin
