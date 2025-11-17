@@ -10,10 +10,9 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100 space-y-6">
 
-                    {{-- Section: Informasi Pembalap (DIPERBARUI) --}}
+                    {{-- Section: Informasi Pembalap --}}
                     <div>
                         <h3 class="text-lg font-medium border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">Informasi Pembalap</h3>
-                        {{-- Cek apakah profil ada --}}
                         @if ($application->pembalap->profile)
                             @php $profile = $application->pembalap->profile; @endphp
                             <dl class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-3 text-sm">
@@ -64,7 +63,7 @@
                          <dl class="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-2 text-sm">
                             <div class="col-span-1">
                                 <dt class="font-medium text-gray-500 dark:text-gray-400">ID Pengajuan:</dt>
-                                <dd class="text-gray-900 dark:text-gray-100">{{ $application->id }}</dd>
+                                <dd class="text-gray-900 dark:text-gray-100">#{{ $application->id }}</dd>
                             </div>
                             <div class="col-span-1">
                                 <dt class="font-medium text-gray-500 dark:text-gray-400">Tanggal Pengajuan:</dt>
@@ -82,35 +81,66 @@
                                     </span>
                                 </dd>
                             </div>
-                        </dl>
+                         </dl>
                     </div>
 
-                    {{-- Section: Dokumen Pendukung --}}
+                    {{-- =============================================== --}}
+                    {{-- ==     AWAL PERUBAHAN: DOKUMEN PENDUKUNG      == --}}
+                    {{-- =============================================== --}}
                     <div>
                          <h3 class="text-lg font-medium border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">Dokumen Pendukung</h3>
-                         <div class="flex flex-wrap gap-4 text-sm">
-                            {{-- Card Surat Sehat --}}
+                         {{-- Menggunakan Grid agar lebih rapi --}}
+                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                            
+                            {{-- Card KTP/SIM --}}
                             <div class="flex-shrink-0">
-                                <span class="font-medium text-gray-500 dark:text-gray-400">Surat Keterangan Sehat:</span>
-                                @if($application->file_surat_sehat_url)
-                                    <a href="{{ asset('storage/' . $application->file_surat_sehat_url) }}" target="_blank" 
+                                <span class="font-medium text-gray-500 dark:text-gray-400">1. KTP / SIM:</span>
+                                @if($application->file_ktp_url)
+                                    <a href="{{ Storage::url($application->file_ktp_url) }}" target="_blank" 
                                        class="ml-2 text-blue-600 dark:text-blue-500 hover:underline font-medium">[Lihat File]</a>
                                 @else
-                                    <span class="ml-2 text-gray-400 dark:text-gray-500">[Tidak Ada File]</span>
+                                    <span class="ml-2 text-red-500 dark:text-red-400">[File Hilang]</span>
                                 @endif
                             </div>
-                             {{-- Card Bukti Bayar --}}
-                             <div class="flex-shrink-0">
-                                <span class="font-medium text-gray-500 dark:text-gray-400">Bukti Pembayaran:</span>
-                                 @if($application->file_bukti_bayar_url)
-                                    <a href="{{ asset('storage/' . $application->file_bukti_bayar_url) }}" target="_blank" 
+
+                            {{-- Card Pas Foto --}}
+                            <div class="flex-shrink-0">
+                                <span class="font-medium text-gray-500 dark:text-gray-400">2. Pas Foto 3x4:</span>
+                                @if($application->file_pas_foto_url)
+                                    <a href="{{ Storage::url($application->file_pas_foto_url) }}" target="_blank" 
                                        class="ml-2 text-blue-600 dark:text-blue-500 hover:underline font-medium">[Lihat File]</a>
                                 @else
-                                     <span class="ml-2 text-gray-400 dark:text-gray-500">[Tidak Ada File]</span>
+                                    <span class="ml-2 text-red-500 dark:text-red-400">[File Hilang]</span>
+                                @endif
+                            </div>
+
+                            {{-- Card Surat Sehat --}}
+                            <div class="flex-shrink-0">
+                                <span class="font-medium text-gray-500 dark:text-gray-400">3. Surat Keterangan Sehat:</span>
+                                @if($application->file_surat_sehat_url)
+                                    <a href="{{ Storage::url($application->file_surat_sehat_url) }}" target="_blank" 
+                                       class="ml-2 text-blue-600 dark:text-blue-500 hover:underline font-medium">[Lihat File]</a>
+                                @else
+                                    <span class="ml-2 text-red-500 dark:text-red-400">[File Hilang]</span>
+                                @endif
+                            </div>
+                             
+                             {{-- Card Bukti Bayar --}}
+                             <div class="flex-shrink-0">
+                                <span class="font-medium text-gray-500 dark:text-gray-400">4. Bukti Pembayaran:</span>
+                                 @if($application->file_bukti_bayar_url)
+                                    <a href="{{ Storage::url($application->file_bukti_bayar_url) }}" target="_blank" 
+                                       class="ml-2 text-blue-600 dark:text-blue-500 hover:underline font-medium">[Lihat File]</a>
+                                @else
+                                     <span class="ml-2 text-red-500 dark:text-red-400">[File Hilang]</span>
                                 @endif
                             </div>
                          </div>
                     </div>
+                    {{-- =============================================== --}}
+                    {{-- ==      AKHIR PERUBAHAN: DOKUMEN PENDUKUNG     == --}}
+                    {{-- =============================================== --}}
+
 
                     {{-- Section: Aksi Persetujuan (Hanya jika status 'Pending') --}}
                     @if($application->status == 'Pending')

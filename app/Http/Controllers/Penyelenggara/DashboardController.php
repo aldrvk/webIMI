@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Event;
 use App\Models\Club;
 
-class DashboardController extends Controller // Pastikan nama class-nya DashboardController
+class DashboardController extends Controller 
 {
     /**
      * Menampilkan dashboard untuk Penyelenggara Event.
@@ -25,7 +25,6 @@ class DashboardController extends Controller // Pastikan nama class-nya Dashboar
 
         // 1. Handle jika akun Penyelenggara tidak ter-link ke klub
         if (!$clubId) {
-            // Kita akan buat view error ini selanjutnya
             return view('penyelenggara.dashboard-error', [
                 'message' => 'Error! Akun Penyelenggara Anda tidak terhubung dengan Klub manapun. Harap hubungi Super Admin.'
             ]);

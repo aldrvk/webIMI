@@ -59,23 +59,21 @@
         <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-user">
             <ul class="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
 
-                @auth
-                    {{-- =================================== --}}
-                    {{-- Navigasi untuk SUPER ADMIN --}}
-                    {{-- =================================== --}}
+            @auth
+
                     @if($user->role === 'super_admin')
-                        <li>
-                            {{-- Link "Dashboard" Super Admin langsung ke halaman Manajemen User --}}
+                    <li>
                             <a href="{{ route('superadmin.users.index') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('superadmin.users.*') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent" aria-current="page">
                                 Manajemen User
                             </a>
                         </li>
-                        {{-- (Nanti Anda bisa tambahkan link lain khusus Super Admin di sini) --}}
+                        <li>
+                            <a href="{{ route('superadmin.logs.index') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('superadmin.logs.*') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent">
+                                Log Aktivitas
+                            </a>
+                        </li>
 
-                    {{-- =================================== --}}
-                    {{-- Navigasi untuk PENGURUS & PIMPINAN --}}
-                    {{-- =================================== --}}
-                    @elseif(in_array($user->role, ['pengurus_imi', 'pimpinan_imi']))
+                    @elseif($user->role === 'pengurus_imi')
                         <li>
                             <a href="{{ route('dashboard') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('dashboard') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent" aria-current="page">Dashboard</a>
                         </li>
@@ -95,21 +93,22 @@
                             <a href="{{ route('admin.iuran.index') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('admin.iuran.*') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent">Persetujuan Iuran</a>
                         </li>
 
-                    {{-- =================================== --}}
-                    {{-- Navigasi untuk PENYELENGGARA        --}}
-                    {{-- =================================== --}}
+                    @elseif($user->role === 'pimpinan_imi')
+                         <li>
+                            <a href="{{ route('dashboard') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('dashboard') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent" aria-current="page">Dashboard Eksekutif</a>
+                        </li>
+                        <li>
+                            <a href="{{ route('leaderboard.index') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('leaderboard.index') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent">Lihat Klasemen</a>
+                        </li>
+                    
                     @elseif($user->role === 'penyelenggara_event')
                         <li>
                             <a href="{{ route('penyelenggara.dashboard') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('penyelenggara.dashboard') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent" aria-current="page">Dashboard Penyelenggara</a>
                         </li>
-                        {{-- (Nanti kita tambahkan link 'Input Hasil Lomba' di sini) --}}
 
-                    {{-- =================================== --}}
-                    {{-- Navigasi untuk PEMBALAP --}}
-                    {{-- =================================== --}}
                     @elseif($user->role === 'pembalap')
                         <li>
-                            <a href="{{ route('dashboard') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('dashboard') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent hover:text-blue-700 dark:hover:text-blue-500" aria-current="page">Dashboard</a>
+                            <a href="{{ route('dashboard') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('dashboard') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent" aria-current="page">Dashboard</a>
                         </li>
                         
                         @if(!$profileExists || ($profileExists && !$hasActiveKis && !$hasPendingKis))
@@ -119,21 +118,14 @@
                         @endif
                         
                         <li>
-                            <a href="{{ route('leaderboard.index') }}" 
-                               class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('leaderboard.index') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent hover:text-blue-700 dark:hover:text-blue-500">
-                                Hasil Event
-                            </a>
+                            <a href="{{ route('leaderboard.index') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('leaderboard.index') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent">Hasil Event</a>
                         </li>
                          <li>
-                            <a href="{{ route('events.index') }}" 
-                               class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('events.index') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent hover:text-blue-700 dark:hover:text-blue-500">
-                                Kalender Event
-                            </a>
+                            <a href="{{ route('events.index') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('events.index') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent">Kalender Event</a>
                         </li>
                     @endif
 
                 @else 
-                    {{-- Navigasi untuk GUEST (Belum Login) --}}
                     <li><a href="{{ route('login') }}" class="block ... text-gray-900 ...">Login</a></li>
                     <li><a href="{{ route('register') }}" class="block ... text-gray-900 ...">Register</a></li>
                 @endauth

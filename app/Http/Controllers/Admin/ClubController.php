@@ -10,12 +10,10 @@ class ClubController extends Controller
 {
     /**
      * Menampilkan daftar semua klub.
-     * (Logika index perlu diubah untuk cek status iuran baru)
      */
     public function index()
     {
         // 1. Ambil data klub, dan cek status iuran untuk TAHUN INI (misal 2025)
-        // Kita gunakan 'withExists' untuk efisiensi
         $currentYear = now()->year;
         $clubs = Club::withExists([
             'duesHistory' => function ($query) use ($currentYear) {
@@ -35,7 +33,6 @@ class ClubController extends Controller
 
     /**
      * Menampilkan formulir untuk membuat klub baru.
-     * (Tidak ada perubahan di sini)
      */
     public function create()
     {
@@ -44,7 +41,6 @@ class ClubController extends Controller
 
     /**
      * Menyimpan klub baru ke database.
-     * (DIPERBARUI: 'status_iuran' dihapus)
      */
     public function store(Request $request)
     {
@@ -67,7 +63,6 @@ class ClubController extends Controller
 
     /**
      * Menampilkan detail satu klub.
-     * (DIPERBARUI: Kita muat riwayat iuran)
      */
     public function show(Club $club)
     {
@@ -83,7 +78,6 @@ class ClubController extends Controller
 
     /**
      * Menampilkan formulir untuk mengedit klub.
-     * (Tidak ada perubahan di sini)
      */
     public function edit(Club $club)
     {
@@ -94,7 +88,6 @@ class ClubController extends Controller
 
     /**
      * Memperbarui klub di database.
-     * (DIPERBARUI: 'status_iuran' dihapus)
      */
     public function update(Request $request, Club $club)
     {
@@ -105,7 +98,6 @@ class ClubController extends Controller
             'nama_ketua' => 'nullable|string|max:255',
             'hp' => 'nullable|string|max:20',
             'email_klub' => 'nullable|email|max:255|unique:clubs,email_klub,' . $club->id,
-            // 'status_iuran' DIHAPUS
         ]);
 
         // 2. Update data klub
@@ -117,7 +109,6 @@ class ClubController extends Controller
 
     /**
      * Menghapus klub dari database.
-     * (Tidak ada perubahan, error handling tetap aman)
      */
     public function destroy(Club $club)
     {

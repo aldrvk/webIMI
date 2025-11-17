@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB; 
 use App\Models\KisApplication;
 use App\Models\ClubDues;
 use App\Models\Club;
 use App\Models\PembalapProfile;
 use App\Models\Event; 
+use App\Models\KisCategory; 
+use App\Models\KisLicense;
 
 class DashboardController extends Controller
 {
@@ -18,91 +21,82 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $data = []; // Data yang akan dikirim ke view
+        $data = []; 
         $data['user'] = $user;
-
-        // --- GUNAKAN 'SWITCH' UNTUK "SORTING HAT" YANG BERSIH ---
 
         switch ($user->role) {
 
-            // ==========================================================
-            // ==       1. ROLE: SUPER ADMIN                           ==
-            // ==========================================================
             case 'super_admin':
                 return redirect()->route('superadmin.users.index');
 
-            // ==========================================================
-            // ==       2. ROLE: PENGURUS IMI & PIMPINAN IMI         ==
-            // ==========================================================
-            // Mereka berbagi 'dashboard-admin'
             case 'pengurus_imi':
-            case 'pimpinan_imi':
                 $data['pendingKisCount'] = KisApplication::where('status', 'Pending')->count();
                 $data['pendingIuranCount'] = ClubDues::where('status', 'Pending')->count();
                 $data['totalKlub'] = Club::count();
                 $data['totalPembalap'] = PembalapProfile::count();
-
-                $data['latestPendingKis'] = KisApplication::where('status', 'Pending')
-                                                ->with('pembalap') 
-                                                ->latest() 
-                                                ->take(5) 
-                                                ->get();
+                $data['latestPendingKis'] = KisApplication::where('status', 'Pending')->with('pembalap')->latest()->take(5)->get();
+                $data['latestPendingIuran'] = ClubDues::where('status', 'Pending')->with('club')->latest()->take(5)->get();
+                $data['upcomingEvents'] = Event::where('is_published', true)->where('event_date', '>=', now()->toDateString())->with('proposingClub')->orderBy('event_date', 'asc')->take(5)->get();
                 
-                $data['latestPendingIuran'] = ClubDues::where('status', 'Pending')
-                                                ->with('club') 
-                                                ->latest()
-                                                ->take(5)
-                                                ->get();
-                
-                $data['upcomingEvents'] = Event::where('is_published', true) 
-                                            ->where('event_date', '>=', now()->toDateString())
-                                            ->with('proposingClub')
-                                            ->orderBy('event_date', 'asc')
-                                            ->take(5)
-                                            ->get();
-                
-                return view('dashboard-admin', $data); // <-- MENGARAHKAN KE VIEW ADMIN
+                return view('dashboard-admin', $data);
             
-            // ==========================================================
-            // ==       3. ROLE: PENYELENGGARA EVENT                 ==
-            // ==========================================================
+            case 'pimpinan_imi':
+                
+                // 1. Ambil KPI (Key Performance Indicators)
+                $kpis = DB::table('View_Dashboard_KPIs')->first();
+                $data['kpi_pembalap_aktif'] = $kpis->total_pembalap_aktif;
+                $data['kpi_klub_total'] = $kpis->total_klub;
+                $data['kpi_event_selesai'] = $kpis->total_event_selesai;
+                $data['kpi_kis_pending'] = $kpis->total_kis_pending;
+                
+                // 2. Data untuk Tabel Pie Chart: Kirim koleksi mentah
+                $data['pieChartData'] = KisLicense::join('kis_categories', 'kis_licenses.kis_category_id', '=', 'kis_categories.id')
+                            ->where('expiry_date', '>=', now()->toDateString()) 
+                            ->select('kis_categories.nama_kategori', DB::raw('count(kis_licenses.id) as total'))
+                            ->groupBy('kis_categories.nama_kategori')
+                            ->get();
+
+                // 3. Data untuk Tabel Line Chart: Kirim koleksi mentah
+                $data['lineChartData'] = KisApplication::where('status', 'Approved')
+                            ->where('approved_at', '>=', now()->subYear())
+                            ->select(DB::raw('DATE_FORMAT(approved_at, "%Y-%m") as bulan'), DB::raw('count(id) as total'))
+                            ->groupBy('bulan')
+                            ->orderBy('bulan', 'asc')
+                            ->get();
+                
+                // 4. Data untuk Tabel Klasemen 
+                $data['overallLeaderboard'] = DB::table('View_Leaderboard')
+                                                ->orderBy('total_poin', 'desc')
+                                                ->take(10)
+                                                ->get();
+                
+                // 5. Ambil data Kategori untuk dropdown
+                $data['categories'] = KisCategory::orderBy('tipe')->orderBy('nama_kategori')->get();
+
+                return view('dashboard-pimpinan', $data);
+            
             case 'penyelenggara_event':
-                // Arahkan ke Rute Dashboard Penyelenggara yang sudah kita buat
                 return redirect()->route('penyelenggara.dashboard');
 
-            // ==========================================================
-            // ==       4. ROLE: PEMBALAP                            ==
-            // ==========================================================
             case 'pembalap':
                 $data['hasProfile'] = $user->profile()->exists();
                 $data['hasActiveKis'] = false;
                 $data['hasPendingKis'] = false;
                 $data['latestRejectedApplication'] = null;
-
                 if ($data['hasProfile']) {
                     $data['hasActiveKis'] = $user->kisLicense()->exists() && $user->kisLicense->expiry_date >= now()->toDateString();
                     $data['hasPendingKis'] = $user->kisApplications()->where('status', 'Pending')->exists();
-                    
                     if (!$data['hasActiveKis'] && !$data['hasPendingKis']) {
-                         $data['latestRejectedApplication'] = $user->kisApplications()
-                                                                    ->where('status', 'Rejected')
-                                                                    ->latest()
-                                                                    ->first();
+                         $data['latestRejectedApplication'] = $user->kisApplications()->where('status', 'Rejected')->latest()->first();
                     }
                 }
-                
                 if($data['hasActiveKis']) {
-                    $data['upcomingEvents'] = Event::where('is_published', true)
-                                            ->where('event_date', '>=', now()->toDateString())
-                                            ->with('proposingClub')
-                                            ->orderBy('event_date', 'asc') 
-                                            ->take(5) // Ambil 5 event terdekat
-                                            ->get();
+                    $data['upcomingEvents'] = Event::where('is_published', true)->where('event_date', '>=', now()->toDateString())->with('proposingClub')->orderBy('event_date', 'asc')->take(5)->get();
                 } else {
                      $data['upcomingEvents'] = collect();
                 }
                 
-                return view('dashboard-pembalap', $data); 
+                return view('dashboard-pembalap', $data);
 
             default:
                 return redirect('/')->with('error', 'Role tidak dikenali.');

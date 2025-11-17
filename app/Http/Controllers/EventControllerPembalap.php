@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use DB;
 use Illuminate\Http\Request;
 use App\Models\Event;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Auth; // <-- INI ADALAH PERBAIKANNYA
+use Illuminate\Support\Facades\Auth; 
 
 class EventControllerPembalap extends Controller
 {
@@ -70,33 +71,30 @@ class EventControllerPembalap extends Controller
     }
 
     /**
-     * Menampilkan hasil lomba (Leaderboard per Event).
-     * (Fungsi ini sudah ada)
-     */
-    public function results(Event $event)
-    {
-        // 1. Pastikan event sudah lewat
-        if (!$event->event_date->isPast()) {
-            return redirect()->route('events.show', $event->id)
-                             ->with('info', 'Hasil lomba belum tersedia karena event belum selesai.');
-        }
+    * Menampilkan hasil lomba (Leaderboard per Event).
+    */
+   public function results(Event $event)
+   {
+       // 1. Validasi 
+       if (!$event->event_date->isPast()) {
+           return redirect()->route('events.show', $event->id)
+                            ->with('info', 'Hasil lomba belum tersedia karena event belum selesai.');
+       }
 
-        // 2. Ambil data pendaftaran yang memiliki hasil
-        $registrations = $event->registrations()
-                               ->with(['pembalap', 'kisCategory'])
-                               ->whereNotNull('result_position') 
-                               ->orderBy('kis_category_id')      
-                               ->orderBy('result_position', 'asc') 
-                               ->get();
+       // 2. Ambil data dari SQL View
+       $results = DB::table('View_Detailed_Event_Results')
+                      ->where('event_id', $event->id)
+                      ->orderBy('category_name', 'asc')
+                      ->orderBy('result_position', 'asc')
+                      ->get();
 
-        // 3. Kelompokkan berdasarkan Nama Kategori untuk Tabs
-        $groupedResults = $registrations->groupBy(function ($reg) {
-            return $reg->kisCategory->nama_kategori ?? 'Umum';
-        });
+       // 3. Kelompokkan berdasarkan Nama Kategori
+       $groupedResults = $results->groupBy('category_name');
 
-        return view('events.results', [
-            'event' => $event,
-            'groupedResults' => $groupedResults
-        ]);
-    }
+       // 4. Kirim ke view 
+       return view('events.results', [
+           'event' => $event,
+           'groupedResults' => $groupedResults
+       ]);
+   }
 }

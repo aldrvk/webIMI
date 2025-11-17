@@ -17,9 +17,7 @@
 
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                    
                     {{-- 1. FITUR TELUSURI (SEARCH) --}}
-                    {{-- Form ini akan GET ke URL-nya sendiri (admin.pembalap.index) --}}
                     <form method="GET" action="{{ route('admin.pembalap.index') }}" class="mb-6">
                         <label for="search" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white sr-only">Telusuri</label>
                         <div class="relative">
@@ -28,7 +26,6 @@
                                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                                 </svg>
                             </div>
-                            {{-- Variabel $search dikirim dari PembalapController@index --}}
                             <input type="search" id="search" name="search"
                                    class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                                    placeholder="Telusuri berdasarkan Nama Pembalap..." value="{{ $search ?? '' }}">
