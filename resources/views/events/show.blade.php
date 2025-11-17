@@ -171,7 +171,6 @@
                                      x-init="startTimer()">
                                     
                                     <div x-show="!isEventPast">
-                                        <p class="text-sm font-semibold uppercase text-red-500 tracking-wider">DEADLINE</p>
                                         <h3 class="text-lg font-medium text-gray-900 dark:text-white mt-1">Pendaftaran Ditutup Dalam</h3>
                                         <div class="flex gap-2 md:gap-4 my-4"> {{-- (Blok Countdown Timer) --}}
                                             <div class="flex flex-col items-center justify-center p-3 bg-gray-100 dark:bg-gray-700 rounded-lg w-1/4"><span class="text-2xl md:text-4xl font-bold text-gray-900 dark:text-white" x-text="days">00</span><span class="text-xs text-gray-500 dark:text-gray-400">Hari</span></div>

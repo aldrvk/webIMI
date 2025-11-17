@@ -12,13 +12,12 @@ class KisApprovalController extends Controller
     public function index()
     {
         $pendingApplications = KisApplication::where('status', 'Pending')
-                                             ->with('pembalap') // Eager load relasi pembalap
-                                             ->orderBy('created_at', 'asc') // Tampilkan yang terlama dulu
-                                             // ->paginate(10); // Gunakan ini jika ingin pagination
+                                             ->with('pembalap')
+                                             ->orderBy('created_at', 'asc') 
                                              ->get(); 
 
         return view('admin.kis.index', [
-            'applications' => $pendingApplications // Kirim data dengan nama variabel 'applications'
+            'applications' => $pendingApplications 
         ]);
     }
     public function show(KisApplication $application)
@@ -33,7 +32,6 @@ class KisApprovalController extends Controller
 
     /**
      * Approve a KIS application.
-     * Handles PATCH /admin/kis-approvals/{application}/approve
      */
     public function approve(KisApplication $application)
     {
@@ -60,7 +58,6 @@ class KisApprovalController extends Controller
 
     /**
      * Reject a KIS application.
-     * Handles PATCH /admin/kis-approvals/{application}/reject
      */
     public function reject(Request $request, KisApplication $application)
     {

@@ -13,6 +13,7 @@ use App\Http\Controllers\KisApplicationController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicIuranController;
+use App\Http\Controllers\SuperAdmin\LogController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Penyelenggara\DashboardController as PenyelenggaraDashboardController;
 use App\Http\Controllers\SuperAdmin\UserController as SuperAdminUserController;
@@ -52,9 +53,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/leaderboard', [LeaderboardController::class, 'index'])
         ->middleware('kis.active')
         ->name('leaderboard.index');
+    Route::get('/leaderboard/{category}', [LeaderboardController::class, 'show'])
+        ->middleware('kis.active')
+        ->name('leaderboard.show');
     Route::get('/events/{event}', [EventControllerPembalap::class, 'show'])
-         ->middleware('kis.active')
-         ->name('events.show');
+        ->middleware('kis.active')
+        ->name('events.show');
     Route::post('/events/{event}/register', [EventRegistrationController::class, 'store'])
         ->name('events.register')
         ->middleware('kis.active');
@@ -74,7 +78,11 @@ Route::middleware('auth')->group(function () {
         Route::patch('/kis-approvals/{application}/reject', [KisApprovalController::class, 'reject'])->name('kis.reject');
 
         Route::resource('events', EventController::class)->only([
-            'index', 'create', 'store', 'edit', 'update' 
+            'index',
+            'create',
+            'store',
+            'edit',
+            'update'
         ]);
         Route::resource('clubs', ClubController::class);
 
@@ -94,25 +102,25 @@ Route::middleware('auth')->group(function () {
 
     // Route Penyelenggara Event
     Route::middleware('role:penyelenggara_event')->prefix('penyelenggara')->name('penyelenggara.')->group(function () {
-        
+
         // Gunakan alias 'PenyelenggaraDashboardController' yang sudah kita buat
         Route::get('/dashboard', [PenyelenggaraDashboardController::class, 'index'])->name('dashboard');
-        
-        Route::get('/events/{event}/results',   [EventResultController::class, 'edit'])->name('events.results.edit');
+
+        Route::get('/events/{event}/results', [EventResultController::class, 'edit'])->name('events.results.edit');
         Route::post('/events/{event}/results', [EventResultController::class, 'update'])->name('events.results.update');
         Route::get('/events/{event}/payments', [\App\Http\Controllers\Penyelenggara\PaymentApprovalController::class, 'index'])
-             ->name('events.payments.index');
+            ->name('events.payments.index');
         Route::post('/registrations/{registration}/approve', [\App\Http\Controllers\Penyelenggara\PaymentApprovalController::class, 'approve'])
-             ->name('registrations.approve');
+            ->name('registrations.approve');
         Route::post('/registrations/{registration}/reject', [\App\Http\Controllers\Penyelenggara\PaymentApprovalController::class, 'reject'])
-             ->name('registrations.reject');
+            ->name('registrations.reject');
     });
 
     // Route Super Admin
     Route::middleware('role:super_admin')->prefix('superadmin')->name('superadmin.')->group(function () {
-        // Rute CRUD untuk Manajemen User
         Route::resource('users', SuperAdminUserController::class);
-        
+        Route::get('logs', [LogController::class, 'index'])->name('logs.index');
+
     });
 
 });

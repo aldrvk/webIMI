@@ -1,32 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Papan Peringkat') }}
+            {{ __('Hasil Event') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
 
-            {{-- Bagian Alert --}}
-            @if (session('error'))
-                <div class="flex items-center p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 border border-red-300 dark:border-red-800"
-                    role="alert">
-                    <span class="font-medium">Error!</span> {{ session('error') }}
-                </div>
-            @endif
-
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="pt-6 px-6">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                        Papan Peringkat Pembalap
-                    </h3>
-                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                        Peringkat keseluruhan pembalap berdasarkan poin yang dikumpulkan dari semua event.
-                    </p>
-                </div>
-
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+                <div class="p-6 text-gray-100">
 
                     {{-- 1. HEADER & FILTER --}}
                     <form method="GET" action="{{ route('leaderboard.index') }}" class="mb-6">
@@ -40,29 +23,36 @@
                                     placeholder="Cari nama pembalap..." value="{{ $search ?? '' }}">
                             </div>
 
-                            {{-- Filter Kategori --}}
-                            <div>
-                                <label for="kategori" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Kategori</label>
-                                <select id="kategori" name="kategori" class="mt-1 block w-full p-2.5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                                    <option value="">Semua Kategori</option>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id }}" @selected($selectedKategori == $category->id)>
-                                            {{ $category->nama_kategori }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
+                    {{-- 2. DAFTAR EVENT (YANG SUDAH SELESAI) --}}
+                    <div class="space-y-6">
+                        @forelse($events as $event)
+                            <div
+                                class="block p-6 bg-gray-50 border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700">
+                                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                                    {{-- Info Event --}}
+                                    <div>
+                                        <span class="text-sm font-medium text-red-600 dark:text-red-400">
+                                            {{ $event->event_date ? $event->event_date->translatedFormat('l, d F Y') : 'TBD' }}
+                                            (Selesai)
+                                        </span>
+                                        <h5
+                                            class="mt-2 mb-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                                            {{ $event->event_name }}
+                                        </h5>
+                                        <p class="font-normal text-gray-700 dark:text-gray-400">{{ $event->location }}</p>
+                                        <p class="text-sm font-normal text-gray-500 dark:text-gray-500">Penyelenggara:
+                                            {{ $event->proposing_club_name ?? 'N/A' }}
+                                        </p>
+                                    </div>
 
-                            {{-- Tombol --}}
-                            <div class="flex items-end space-x-2">
-                                <button type="submit"
-                                    class="text-white w-full md:w-auto justify-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                                    Filter
-                                </button>
-                                <a href="{{ route('leaderboard.index') }}"
-                                    class="text-gray-900 w-full md:w-auto justify-center bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-gray-700 dark:text-white dark:border-gray-600 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
-                                    Reset
-                                </a>
+                                    <div class="mt-4 md:mt-0 md:flex md:items-center">
+                                        <a href="{{ route('events.results', ['event' => $event->id, 'source' => 'leaderboard']) }}"
+                                            class="inline-flex items-center px-4 py-2 bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-600 focus:bg-green-600 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                            Lihat Hasil
+                                        </a>
+                                    </div>
+
+                                </div>
                             </div>
                         </div>
                     </form>

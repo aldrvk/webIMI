@@ -12,7 +12,6 @@ use Illuminate\Support\Facades\Storage;
 
 class EventController extends Controller
 {
-    // ... (fungsi index() tetap sama) ...
     public function index()
     {
         $events = Event::with('proposingClub')
@@ -25,7 +24,6 @@ class EventController extends Controller
         ]);
     }
 
-    // ... (fungsi create() tetap sama) ...
     public function create()
     {
         $clubs = Club::orderBy('nama_klub', 'asc')->get();
@@ -88,8 +86,6 @@ class EventController extends Controller
 
         return redirect()->route('admin.events.index')->with('status', 'Event baru berhasil dipublikasikan.');
     }
-
-    // ... (fungsi edit() tetap sama) ...
     public function edit(Event $event)
     {
         $clubs = Club::orderBy('nama_klub')->get();

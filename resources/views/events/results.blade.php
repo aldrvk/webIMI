@@ -13,7 +13,8 @@
                 <h1 class="text-3xl font-bold text-gray-900 dark:text-white">{{ $event->event_name }}</h1>
                 <p class="text-gray-600 dark:text-gray-400 mt-2">
                     {{ \Carbon\Carbon::parse($event->event_date)->translatedFormat('l, d F Y') }} —
-                    {{ $event->location }}</p>
+                    {{ $event->location }}
+                </p>
             </div>
 
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
@@ -77,7 +78,7 @@
                                                         @endif
                                                     </th>
                                                     <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
-                                                        {{ $result->pembalap->name }}
+                                                        {{ $result->pembalap_name }}
                                                     </td>
                                                     <td class="px-6 py-4 text-center text-blue-600 font-bold">
                                                         {{ $result->points_earned }}
@@ -98,10 +99,10 @@
                     @if(request('source') === 'leaderboard')
                         {{-- Jika datang dari Leaderboard --}}
                         <a href="{{ route('leaderboard.index') }}" class="text-blue-600 hover:underline dark:text-blue-400">
-                            &larr; Kembali ke Kalender Event
+                            &larr; Kembali ke Hasil Event
                         </a>
                     @else
-                        {{-- Jika datang dari Kalender --}}
+                        {{-- Default (jika datang dari Kalender atau link langsung) --}}
                         <a href="{{ route('events.index') }}" class="text-blue-600 hover:underline dark:text-blue-400">
                             &larr; Kembali ke Kalender Event
                         </a>

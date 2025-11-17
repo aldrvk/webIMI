@@ -2,27 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Event;
-use App\Models\KisCategory; 
+use App\Models\KisCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB; 
 
 class LeaderboardController extends Controller
 {
     /**
-     * Menampilkan halaman Papan Peringkat (dari View_Leaderboard).
-     * Terhubung ke Rute GET /leaderboard
+     * Menampilkan halaman "Hasil Event"
      */
     public function index(Request $request)
     {
-        // 1. Ambil daftar Kategori untuk dropdown filter
-        $categories = KisCategory::orderBy('nama_kategori', 'asc')->get();
+        // 1. Mulai query ke SQL View Anda
+        $query = DB::table('View_Finished_Events');
 
-        // 2. Mulai query ke SQL VIEW Anda
-        $query = DB::table('View_Leaderboard');
-
-        // 3. Logika Filter Search (berdasarkan Nama Pembalap)
+        // 2. Logika Search
         if ($request->has('search') && $request->search != '') {
             $searchTerm = $request->search;
             $query->where('nama_pembalap', 'like', '%' . $searchTerm . '%');
@@ -38,12 +32,33 @@ class LeaderboardController extends Controller
                              ->paginate(20) // Tampilkan 20 per halaman
                              ->withQueryString(); // Agar filter tetap ada saat pindah halaman
 
-        // 6. Kirim data ke view
+            // Ubah 'event_date' (string) menjadi objek Carbon (Tanggal) secara manual
+            $events->getCollection()->transform(function ($event) {
+                $event->event_date = \Carbon\Carbon::parse($event->event_date);
+                return $event;
+            });
+            
+        // 4. Kirim data ke view 
         return view('leaderboard.index', [
             'leaderboard' => $leaderboard,
             'categories' => $categories,
             'search' => $request->search ?? '',
             'selectedKategori' => $request->kategori ?? ''
+        ]);
+    }
+
+    /**
+     * Menampilkan Papan Peringkat FINAL untuk satu Kategori.
+     */
+    public function show(KisCategory $category)
+    {
+        // 1. Panggil Stored Procedure 'Proc_GetLeaderboard'
+        $results = DB::select('CALL Proc_GetLeaderboard(?)', [$category->id]);
+
+        // 2. Kirim data hasil dan data kategori ke view
+        return view('leaderboard.show', [
+            'category' => $category,
+            'results' => $results
         ]);
     }
 }
