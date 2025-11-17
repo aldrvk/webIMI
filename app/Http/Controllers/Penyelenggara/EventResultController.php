@@ -13,7 +13,6 @@ class EventResultController extends Controller
 {
     /**
      * Menampilkan form untuk menginput hasil lomba.
-     * Terhubung ke Rute GET /penyelenggara/events/{event}/results
      */
     public function edit(Event $event)
     {
@@ -32,8 +31,6 @@ class EventResultController extends Controller
                 ]);
             }
         }
-        // --- AKHIR DATA DUMMY ---
-
 
         // 3. Ambil pendaftar (registrants)
         $registrations = EventRegistration::where('event_id', $event->id)
@@ -67,7 +64,7 @@ class EventResultController extends Controller
             'results.*.points' => 'nullable|integer|min:0',
         ]);
 
-        // 3. Gunakan Transaksi Database (Krusial untuk MSBD)
+        // 3. Gunakan Transaksi Database
         DB::beginTransaction();
         try {
             

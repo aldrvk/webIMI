@@ -11,7 +11,6 @@ class PublicIuranController extends Controller
 {
     /**
      * Menampilkan formulir publik untuk submit iuran.
-     * Terhubung ke Rute GET /iuran/submit (iuran.create)
      */
     public function create()
     {
@@ -19,7 +18,6 @@ class PublicIuranController extends Controller
         $clubs = Club::orderBy('nama_klub', 'asc')->get();
 
         // 2. Tampilkan view form publik
-        //    (Kita akan gunakan layout 'guest' agar tidak perlu login)
         return view('iuran.create', [
             'clubs' => $clubs
         ]);
@@ -27,7 +25,6 @@ class PublicIuranController extends Controller
 
     /**
      * Menyimpan pengajuan iuran baru ke database (status 'Pending').
-     * (DIPERBARUI: Menambahkan validasi 'persetujuan')
      */
     public function store(Request $request)
     {
@@ -38,10 +35,7 @@ class PublicIuranController extends Controller
             'payment_date' => 'required|date',
             'amount_paid' => 'required|numeric|min:0',
             'payment_proof_url' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048', // "Nota"
-            
-            // --- VALIDASI PERSETUJUAN BARU ---
-            'persetujuan' => 'required|accepted', // 'accepted' = harus 'on', '1', atau 'true'
-            // --- AKHIR VALIDASI BARU ---
+            'persetujuan' => 'required|accepted', 
         ]);
 
         // 2. Upload File "Nota"

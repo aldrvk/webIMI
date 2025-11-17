@@ -13,7 +13,6 @@ class ClubDuesController extends Controller
 {
     /**
      * Menampilkan formulir untuk mencatat pembayaran iuran baru.
-     * Terhubung ke Rute GET /admin/clubs/{club}/dues/create
      */
     public function create(Club $club)
     {
@@ -25,7 +24,6 @@ class ClubDuesController extends Controller
 
    /**
      * Menyimpan catatan iuran baru ke database (via Stored Procedure).
-     * (DIPERBARUI: Penanganan Error Profesional)
      */
     public function store(Request $request, Club $club)
     {

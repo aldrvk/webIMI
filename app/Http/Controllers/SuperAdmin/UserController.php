@@ -14,23 +14,31 @@ use Illuminate\Support\Facades\Hash;
 class UserController extends Controller
 {
     /**
-     * Menampilkan daftar semua user di sistem.
-     * (Fungsi ini sudah ada)
-     */
-    public function index()
+     * Menampilkan daftar semua user dan search di sistem.
+     */ 
+    public function index(Request $request) 
     {
+        $search = $request->input('search'); 
+
         $users = User::with('club')
-                     ->orderBy('name')
-                     ->paginate(15); 
+
+                    ->when($search, function ($query, $term) {
+                        $query->where('name', 'like', '%' . $term . '%')
+                              ->orWhere('email', 'like', '%' . $term . '%');
+                    })
+                    ->orderBy('name')
+                    ->paginate(15)
+                    ->withQueryString(); 
 
         return view('superadmin.users.index', [
-            'users' => $users
+            'users' => $users,
+            'search' => $search
         ]);
     }
 
+
     /**
      * Menampilkan formulir untuk membuat user baru.
-     * (Fungsi ini sudah ada)
      */
     public function create()
     {
@@ -51,7 +59,6 @@ class UserController extends Controller
 
     /**
      * Menyimpan user baru ke database.
-     * (Fungsi ini sudah ada)
      */
     public function store(Request $request)
     {
@@ -81,7 +88,6 @@ class UserController extends Controller
 
     /**
      * * Menampilkan formulir untuk mengedit user.
-     * Terhubung ke Rute GET /superadmin/users/{user}/edit
      */
     public function edit(User $user) 
     {
@@ -104,7 +110,6 @@ class UserController extends Controller
 
     /**
      * * Menyimpan perubahan user ke database.
-     * Terhubung ke Rute PATCH /superadmin/users/{user}
      */
     public function update(Request $request, User $user)
     {

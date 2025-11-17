@@ -11,7 +11,6 @@ class IuranApprovalController extends Controller
 {
     /**
      * Menampilkan daftar pengajuan iuran yang statusnya 'Pending'.
-     * Terhubung ke Rute GET /admin/iuran-approvals (admin.iuran.index)
      */
     public function index()
     {
@@ -29,7 +28,6 @@ class IuranApprovalController extends Controller
 
     /**
      * Menampilkan detail satu pengajuan iuran (untuk melihat 'nota').
-     * Terhubung ke Rute GET /admin/iuran-approvals/{clubDues} (admin.iuran.show)
      */
     public function show(ClubDues $clubDues) // Menggunakan Route Model Binding
     {
@@ -44,7 +42,6 @@ class IuranApprovalController extends Controller
 
     /**
      * Menyetujui (Approve) pengajuan iuran.
-     * Terhubung ke Rute PATCH /admin/iuran-approvals/{clubDues}/approve (admin.iuran.approve)
      */
     public function approve(ClubDues $clubDues)
     {
@@ -66,7 +63,6 @@ class IuranApprovalController extends Controller
 
     /**
      * Menolak (Reject) pengajuan iuran.
-     * Terhubung ke Rute PATCH /admin/iuran-approvals/{clubDues}/reject (admin.iuran.reject)
      */
     public function reject(Request $request, ClubDues $clubDues)
     {

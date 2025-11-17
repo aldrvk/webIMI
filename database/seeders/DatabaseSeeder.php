@@ -15,31 +15,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        
-        User::factory()->create([
-            'name' => 'Admin IMI',
-            'email' => 'admin@imi.com',
-            'role' => 'pengurus_imi' 
-        ]);
-
-        User::factory()->create([
-            'name' => 'Super Admin',
-            'email' => 'superadmin@imi.com',
-            'role' => 'super_admin' 
-        ]);
-        
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'role' => 'pembalap' 
-        ]);
-        
-        // Urutan ini sudah benar
+        // Panggil seeder fondasi (WAJIB PALING ATAS)
         $this->call([
             ClubSeeder::class,
             KisCategorySeeder::class,
-            EventSeeder::class,
-            RaceResultTestSeeder::class,
+        ]);
+        
+        // Panggil seeder skenario lengkap kita
+        // Seeder ini akan membuat semua User (Admin+Pembalap) dan Event
+        $this->call([
+            FullStorySeeder::class,
         ]);
     }
 }

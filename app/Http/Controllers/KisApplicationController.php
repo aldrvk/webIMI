@@ -5,23 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\Club;
 use App\Models\KisApplication;
 use App\Models\KisCategory;
-use App\Models\KisLicense;
-use DB;
+use Illuminate\Support\Facades\DB; 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
-use Storage;
+use Illuminate\Support\Facades\Storage;
 
 class KisApplicationController extends Controller
 {
    /**
-     * Menampilkan formulir pengajuan KIS (yang sekarang juga formulir profil).
+     * Menampilkan formulir pengajuan KIS.
      */
     public function create()
     {
         $user = Auth::user();
 
-        // Cek pengajuan yang aktif/pending
         $hasPendingOrActive = $user->kisApplications()
                                   ->whereIn('status', ['Pending', 'Approved'])
                                   ->exists();
@@ -30,13 +28,9 @@ class KisApplicationController extends Controller
             return redirect()->route('dashboard')->with('info', 'Anda sudah memiliki pengajuan KIS yang sedang diproses atau sudah disetujui.');
         }
 
-        // 1. Ambil daftar klub untuk dropdown
         $clubs = Club::orderBy('nama_klub', 'asc')->get();
-        
-        // 2. AMBIL DAFTAR KATEGORI KIS (BARU)
         $categories = KisCategory::orderBy('tipe', 'asc')->orderBy('kode_kategori', 'asc')->get();
 
-        // 3. Tampilkan view dan kirim KEDUA data
         return view('kis.apply', [
             'clubs' => $clubs,
             'categories' => $categories
@@ -45,41 +39,48 @@ class KisApplicationController extends Controller
 
     /**
      * Menyimpan pengajuan KIS baru DAN membuat profil pembalap.
-
-     */
-    /**
-     * Menyimpan pengajuan KIS baru DAN membuat profil pembalap.
-     * (DIPERBARUI: Menambahkan 'kis_category_id')
      */
     public function store(Request $request)
     {
-        // 1. Validasi Input (LENGKAP)
+        // 1. Validasi Input (DIPERBARUI)
         $validatedData = $request->validate([
-            // Validasi Data Profil
+            // Data Profil
             'club_id' => ['required', 'integer', 'exists:clubs,id'],
             'tempat_lahir' => ['required', 'string', 'max:255'],
             'tanggal_lahir' => ['required', 'date'],
-            'no_ktp_sim' => ['required', 'string', 'max:30'],
+            'no_ktp_sim' => ['required', 'string', 'max:30', 'unique:pembalap_profiles,no_ktp_sim'],
             'golongan_darah' => ['required', Rule::in(['A', 'B', 'AB', 'O', '-'])],
             'phone_number' => ['required', 'string', 'max:20'],
             'address' => ['required', 'string', 'max:1000'],
             
-            // --- VALIDASI BARU ---
+            // Data KIS
             'kis_category_id' => ['required', 'integer', 'exists:kis_categories,id'],
-            // --- AKHIR VALIDASI BARU ---
             
-            // Validasi File KIS
+            // Validasi File 
             'file_surat_sehat' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'file_bukti_bayar' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'file_ktp' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048', // <-- BARU
+            'file_pas_foto' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048', // <-- BARU
+            
+            // Validasi Checkbox
+            'persetujuan' => ['required', 'accepted'], // <-- BARU (PENTING!)
         ]);
 
         $userId = Auth::id();
+
+        // 2. Upload 4 File
         $path_surat_sehat = $request->file('file_surat_sehat')->store('kis_documents/surat_sehat', 'public');
         $path_bukti_bayar = $request->file('file_bukti_bayar')->store('kis_documents/bukti_bayar', 'public');
+        $path_ktp = $request->file('file_ktp')->store('kis_documents/ktp', 'public'); 
+        $path_pas_foto = $request->file('file_pas_foto')->store('kis_documents/pas_foto', 'public'); 
+
+        // Kumpulkan path untuk rollback jika gagal
+        $all_paths = [$path_surat_sehat, $path_bukti_bayar, $path_ktp, $path_pas_foto];
 
         try {
+            // 3. Panggil Stored Procedure
             DB::statement(
-                'CALL Proc_ApplyForKIS(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
+                'CALL Proc_ApplyForKIS(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
                 [
                     $userId,
                     $validatedData['club_id'],
@@ -92,17 +93,21 @@ class KisApplicationController extends Controller
                     $validatedData['kis_category_id'], 
                     
                     $path_surat_sehat,
-                    $path_bukti_bayar
+                    $path_bukti_bayar,
+                    
+                    $path_ktp, 
+                    $path_pas_foto
                 ]
             );
 
             return redirect()->route('dashboard')->with('status', 'Profil berhasil dilengkapi dan pengajuan KIS telah dikirim!');
 
         } catch (\Exception $e) {
-            Storage::disk('public')->delete([$path_surat_sehat, $path_bukti_bayar]);
+            // 4. Hapus 4 file jika Stored Procedure gagal
+            Storage::disk('public')->delete($all_paths);
+            
             \Log::error('Gagal mengajukan KIS (Proc_ApplyForKIS): ' . $e->getMessage());
             
-            // Cek error spesifik
             if (str_contains($e->getMessage(), 'Duplicate entry') && str_contains($e->getMessage(), 'no_ktp_sim')) {
                  return redirect()->back()->withInput()->with('error', 'No. KTP/SIM yang Anda masukkan sudah terdaftar di sistem.');
             }
@@ -110,26 +115,4 @@ class KisApplicationController extends Controller
             return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan pada server. Gagal menyimpan data.');
         }
     }
-
-    public function approve(KisApplication $application)
-{
-    // ...logika validasi...
-
-    // SAAT MEMBUAT LISENSI
-    KisLicense::updateOrCreate(
-        ['user_id' => $application->user_id], 
-        [
-            'kis_number' => $this->generateKisNumber(), 
-            'expiry_date' => now()->addYear(),
-            'status' => 'active',
-            
-            // !! TAMBAHKAN BARIS INI !!
-            // Ambil category_id dari APLIKASI dan simpan ke LISENSI
-            'kis_category_id' => $application->kis_category_id 
-        ]
-    );
-    
-
-    return redirect()->back()->with('status', 'KIS berhasil disetujui.');
-}
 }
