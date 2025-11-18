@@ -13,19 +13,10 @@ return new class extends Migration
         // 1. Baca isi file SQL
         $sql = file_get_contents(database_path('sql/functions_views.sql'));
 
-        // 2. Pecah berdasarkan delimiter '$$' (sama seperti procedure)
+        // 2. Pecah berdasarkan delimiter '$$'
         $statements = array_filter(array_map('trim', explode('$$', $sql)));
 
         // 3. Jalankan setiap statement
-        foreach ($statements as $statement) {
-            if (!empty($statement)) {
-                // JANGAN tambahkan ';'
-                DB::unprepared($statement);
-            }
-        }
-
-        $sql = file_get_contents(database_path('sql/functions_views.sql'));
-        $statements = array_filter(array_map('trim', explode('$$', $sql)));
         foreach ($statements as $statement) {
             if (!empty($statement)) {
                 DB::unprepared($statement);
