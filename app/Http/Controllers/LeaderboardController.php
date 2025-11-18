@@ -19,11 +19,18 @@ class LeaderboardController extends Controller
         // 2. Logika Search
         if ($request->has('search') && $request->search != '') {
             $searchTerm = $request->search;
-            $query->where('event_name', 'like', '%' . $searchTerm . '%');
+            $query->where('nama_pembalap', 'like', '%' . $searchTerm . '%');
         }
 
-        // 3. Ambil hasil 
-        $events = $query->orderBy('event_date', 'desc')->paginate(10)->withQueryString();
+        // 4. Logika Filter Kategori
+        if ($request->has('kategori') && $request->kategori != '') {
+            $query->where('kategori_id', $request->kategori);
+        }
+
+        // 5. Ambil hasil, urutkan berdasarkan poin, dan paginasi
+        $leaderboard = $query->orderBy('total_points', 'desc')
+                             ->paginate(20) // Tampilkan 20 per halaman
+                             ->withQueryString(); // Agar filter tetap ada saat pindah halaman
 
             // Ubah 'event_date' (string) menjadi objek Carbon (Tanggal) secara manual
             $events->getCollection()->transform(function ($event) {
@@ -33,8 +40,10 @@ class LeaderboardController extends Controller
             
         // 4. Kirim data ke view 
         return view('leaderboard.index', [
-            'events' => $events,
-            'search' => $request->search ?? ''
+            'leaderboard' => $leaderboard,
+            'categories' => $categories,
+            'search' => $request->search ?? '',
+            'selectedKategori' => $request->kategori ?? ''
         ]);
     }
 
