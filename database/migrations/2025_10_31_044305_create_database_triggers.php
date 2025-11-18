@@ -1,13 +1,34 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
-return new class extends Migration {
-    public function up(): void {
-        $path = database_path('sql/triggers.sql');
-        DB::unprepared(file_get_contents($path));
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        // 1. Baca isi file SQL
+        $sql = file_get_contents(database_path('sql/triggers.sql'));
+
+        // 2. Pecah berdasarkan delimiter '$$'
+        $statements = array_filter(array_map('trim', explode('$$', $sql)));
+
+        // 3. Jalankan setiap statement
+        foreach ($statements as $statement) {
+            if (!empty($statement)) {
+                DB::unprepared($statement);
+            }
+        }
     }
-    public function down(): void {
-        // Drop triggers (opsional tapi baik)
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
         DB::unprepared('DROP TRIGGER IF EXISTS `auto_create_kis_license_on_approval`');
         DB::unprepared('DROP TRIGGER IF EXISTS `log_kis_application_insert`');
         DB::unprepared('DROP TRIGGER IF EXISTS `log_kis_application_update`');
