@@ -11,16 +11,16 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-100">
 
-                    {{-- 1. HEADER & SEARCH --}}
+                    {{-- 1. HEADER & FILTER --}}
                     <form method="GET" action="{{ route('leaderboard.index') }}" class="mb-6">
-                        <label for="search" class="sr-only">Cari Event</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                                </svg>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            
+                            {{-- Filter Nama Pembalap --}}
+                            <div>
+                                <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Pembalap</label>
+                                <input type="search" id="search" name="search"
+                                    class="mt-1 block w-full p-2.5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                    placeholder="Cari nama pembalap..." value="{{ $search ?? '' }}">
                             </div>
                             <input type="search" id="search" name="search"
                                 class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
@@ -63,16 +63,63 @@
 
                                 </div>
                             </div>
-                        @empty
-                            <p class="text-center text-gray-500 dark:text-gray-400">Tidak ada event selesai yang ditemukan.
-                            </p>
-                        @endforelse
+                        </div>
+                    </form>
+
+                    {{-- 2. TABEL PAPAN PERINGKAT (DARI VIEW) --}}
+                    <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
+                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" class="py-3 px-6">Peringkat</th>
+                                    <th scope="col" class="py-3 px-6">Nama Pembalap</th>
+                                    <th scope="col" class="py-3 px-6">Kategori</th>
+                                    <th scope="col" class="py-3 px-6">Total Poin</th>
+                                    <th scope="col" class="py-3 px-6">Jumlah Balapan</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{-- Data $leaderboard ini diambil dari View_Leaderboard --}}
+                                @forelse($leaderboard as $index => $entry)
+                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                                        <th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            {{-- Rumus untuk peringkat yang benar di tiap halaman paginasi --}}
+                                            {{ ($leaderboard->currentPage() - 1) * $leaderboard->perPage() + $index + 1 }}
+                                        </th>
+                                        <td class="py-4 px-6 font-medium text-gray-900 dark:text-white">
+                                            {{ $entry->nama_pembalap ?? 'N/A' }}
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            {{ $entry->kategori ?? 'N/A' }}
+                                        </td>
+                                        <td class="py-4 px-6 font-bold">
+                                            {{ $entry->total_points ?? '0' }}
+                                        </td>
+                                        <td class="py-4 px-6">
+                                            {{ $entry->jumlah_balapan ?? '0' }}
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                        <td colspan="5" class="py-4 px-6 text-center">
+                                            Tidak ada data pembalap yang ditemukan
+                                            @if($search || $selectedKategori)
+                                                dengan filter ini.
+                                            @else
+                                                .
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
 
                     {{-- Pagination --}}
                     <div class="mt-6">
-                        {{ $events->links() }}
+                        {{ $leaderboard->links() }}
                     </div>
+
                 </div>
             </div>
         </div>
