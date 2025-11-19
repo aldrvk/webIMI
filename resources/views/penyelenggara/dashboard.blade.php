@@ -22,7 +22,7 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Selamat Datang, Penyelenggara dari:</h3>
-                    <p class="text-2xl font-semibold text-blue-600 dark:text-blue-400">{{ $club->nama_klub }}</p>
+                    <p class="text-2xl font-semibold text-primary-600 dark:text-primary-400">{{ $club->nama_klub }}</p>
                 </div>
             </div>
 
@@ -46,7 +46,7 @@
                                         {{-- ==          PERBAIKAN TOMBOL (BIRU)          == --}}
                                         {{-- =============================================== --}}
                                         <a href="{{ route('penyelenggara.events.results.edit', $event->id) }}"
-                                            class="inline-flex items-center px-4 py-2 bg-blue-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150 dark:bg-blue-600 dark:hover:bg-blue-700">
+                                            class="inline-flex items-center px-4 py-2 bg-primary-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-600 focus:bg-primary-600 active:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition ease-in-out duration-150 dark:bg-primary-600 dark:hover:bg-primary-700">
                                             Input/Edit Hasil Lomba
                                         </a>
                                     </div>

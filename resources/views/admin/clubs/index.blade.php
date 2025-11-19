@@ -22,7 +22,7 @@
 
             {{-- Tombol Tambah Klub Baru --}}
              <div class="mb-4 flex justify-end">
-                <a href="{{ route('admin.clubs.create') }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                <a href="{{ route('admin.clubs.create') }}" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
                     + Tambah Klub Baru
                 </a>
             </div>
@@ -75,7 +75,7 @@
                                         <a href="{{ route('admin.clubs.show', $club->id) }}" class="font-medium text-green-600 dark:text-green-500 hover:underline">Detail</a>
 
                                         {{-- Link Edit --}}
-                                        <a href="{{ route('admin.clubs.edit', $club->id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                                        <a href="{{ route('admin.clubs.edit', $club->id) }}" class="font-medium text-primary-600 dark:text-primary-500 hover:underline">Edit</a>
                                         
                                         {{-- Form Delete --}}
                                         <form action="{{ route('admin.clubs.destroy', $club->id) }}" method="POST" onsubmit="return confirm('Anda yakin ingin menghapus klub ini? Aksi ini tidak dapat dibatalkan.');">

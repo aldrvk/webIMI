@@ -54,7 +54,7 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         @if($reg->payment_proof_url)
-                                            <a href="{{ Storage::url($reg->payment_proof_url) }}" target="_blank" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Lihat Foto</a>
+                                            <a href="{{ Storage::url($reg->payment_proof_url) }}" target="_blank" class="font-medium text-primary-600 dark:text-primary-500 hover:underline">Lihat Foto</a>
                                         @else
                                             <span class="text-gray-400">-</span>
                                         @endif
@@ -91,7 +91,7 @@
                                                 <label for="admin_note_{{ $reg->id }}" class="sr-only">Alasan Penolakan</label>
                                                 <textarea id="admin_note_{{ $reg->id }}" name="admin_note" rows="2" 
                                                        placeholder="Alasan penolakan..." 
-                                                       class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>{{ $reg->admin_note }}</textarea>
+                                                       class="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" required>{{ $reg->admin_note }}</textarea>
                                                 <button type="submit" class="mt-2 text-xs font-medium text-red-600 dark:text-red-400 hover:underline">
                                                     Kirim Penolakan
                                                 </button>

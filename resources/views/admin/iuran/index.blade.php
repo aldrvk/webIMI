@@ -62,7 +62,7 @@
                                         <td class="px-6 py-4 text-right">
                                             {{-- Link ke halaman detail (show) --}}
                                             <a href="{{ route('admin.iuran.show', $payment->id) }}"
-                                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                                                class="font-medium text-primary-600 dark:text-primary-500 hover:underline">
                                                 Lihat Detail (Nota)
                                             </a>
                                         </td>

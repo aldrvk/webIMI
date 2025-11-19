@@ -43,7 +43,7 @@
                     <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
                         @foreach($groupedRegistrations as $categoryName => $regs)
                         <li class="me-2" role="presentation">
-                            <button class="inline-block p-4 border-b-2 rounded-t-lg {{ $loop->first ? 'border-blue-600' : '' }}" 
+                            <button class="inline-block p-4 border-b-2 rounded-t-lg {{ $loop->first ? 'border-primary-600' : '' }}" 
                                     id="tab-{{ $loop->iteration }}" 
                                     data-tabs-target="#content-{{ $loop->iteration }}" 
                                     type="button" role="tab" aria-controls="content-{{ $loop->iteration }}" 
@@ -79,7 +79,7 @@
                                             <select name="results[{{ $reg->id }}][position]" 
                                                     {{-- Panggil Alpine.js 'updatePoints' saat diubah --}}
                                                     x-on:change="updatePoints('{{ $reg->id }}', $event.target.value)"
-                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                                 <option value="0" {{ $reg->result_position == null ? 'selected' : '' }}>-- Hasil --</option>
                                                 @for ($i = 1; $i <= 15; $i++)
                                                     <option value="{{ $i }}" {{ $reg->result_position == $i ? 'selected' : '' }}>Juara {{ $i }}</option>
@@ -93,7 +93,7 @@
                                                    id="points_{{ $reg->id }}"
                                                    name="results[{{ $reg->id }}][points]" 
                                                    value="{{ $reg->points_earned ?? 0 }}" 
-                                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                                                    placeholder="0">
                                         </td>
                                     </tr>
@@ -114,7 +114,7 @@
                     <a href="{{ route('penyelenggara.dashboard') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white me-4">
                         Batal
                     </a>
-                    <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    <button type="submit" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                         Simpan Hasil Lomba
                     </button>
                 </div>

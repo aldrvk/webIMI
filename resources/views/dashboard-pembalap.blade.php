@@ -14,7 +14,7 @@
                 </div>
             @endif
             @if (session('info'))
-                <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-white dark:bg-gray-800 dark:text-blue-400" role="alert">
+                <div class="p-4 mb-4 text-sm text-primary-800 rounded-lg bg-white dark:bg-gray-800 dark:text-primary-400" role="alert">
                     <span class="font-medium">Info: </span> {{ session('info') }}
                 </div>
             @endif
@@ -34,7 +34,7 @@
                             @if (!$hasProfile)
                                 <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100">Selamat Datang, {{ $user->name }}! 👋</h3>
                                 <p class="mt-2 mb-4 text-gray-700 dark:text-gray-300">Akun Anda sudah aktif. Langkah terakhir adalah melengkapi profil Anda dan mengajukan Kartu Izin Start (KIS) untuk membuka semua fitur.</p>
-                                <a href="{{ route('kis.apply') }}" class="inline-flex items-center px-4 py-2 bg-blue-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                <a href="{{ route('kis.apply') }}" class="inline-flex items-center px-4 py-2 bg-primary-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-600 focus:bg-primary-600 active:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                     Lengkapi Profil & Ajukan KIS
                                 </a>
                             
@@ -53,7 +53,7 @@
                                 </div>
                             @else 
                                 <p class="mb-4 text-gray-700 dark:text-gray-300">Profil Anda sudah lengkap. Segera ajukan KIS Anda untuk bisa mengikuti event!</p>
-                                <a href="{{ route('kis.apply') }}" class="inline-flex items-center px-4 py-2 bg-blue-700 ...">
+                                <a href="{{ route('kis.apply') }}" class="inline-flex items-center px-4 py-2 bg-primary-700 ...">
                                     Ajukan KIS Sekarang
                                 </a>
                             @endif
@@ -106,9 +106,9 @@
                                 {{-- Kolom Kiri: Kartu KIS Digital --}}
                                 <div class="md:col-span-1">
                                     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Lisensi KIS Anda</h3>
-                                    <div class="bg-gradient-to-br from-blue-100 to-white dark:from-gray-700 dark:to-gray-800 p-5 rounded-lg shadow border dark:border-gray-700 space-y-3">
+                                    <div class="bg-gradient-to-br from-primary-100 to-white dark:from-gray-700 dark:to-gray-800 p-5 rounded-lg shadow border dark:border-gray-700 space-y-3">
                                         <div class="flex justify-between items-center">
-                                            <span class="text-sm font-semibold text-blue-800 dark:text-blue-300">Kartu Izin Start (KIS)</span>
+                                            <span class="text-sm font-semibold text-primary-800 dark:text-primary-300">Kartu Izin Start (KIS)</span>
                                             <span class="px-2 py-0.5 text-xs font-bold rounded-full bg-green-200 text-green-800 dark:bg-green-900 dark:text-green-300">Aktif</span>
                                         </div>
                                         <h4 class="text-xl font-bold text-gray-900 dark:text-white">{{ $user->name }}</h4>
@@ -135,7 +135,7 @@
                                             <div class="block p-6 bg-gray-50 border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700">
                                                 <div class="flex flex-col md:flex-row md:justify-between">
                                                     <div>
-                                                        <span class="text-sm font-medium bg-blue-100 text-blue-800 rounded px-2.5 py-0.5 dark:bg-gray-700 dark:text-blue-400">
+                                                        <span class="text-sm font-medium bg-primary-100 text-primary-800 rounded px-2.5 py-0.5 dark:bg-gray-700 dark:text-primary-400">
                                                             {{ $event->event_date ? \Carbon\Carbon::parse($event->event_date)->translatedFormat('l, d F Y') : 'TBD' }}
                                                         </span>
                                                         <h5 class="mt-2 mb-1 text-xl font-bold tracking-tight text-gray-900 dark:text-white">{{ $event->event_name }}</h5>
@@ -144,7 +144,7 @@
                                                     </div>
                                                     {{-- Tombol Aksi (Daftar) --}}
                                             <div class="mt-4 md:mt-0 md:flex md:items-center">
-                                            <a href="{{ route('events.show', $event->id) }}" class="inline-flex items-center px-4 py-2 bg-blue-700 border border-transparent rounded-md font-semibold  text-white text-xs uppercase tracking-widest hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                            <a href="{{ route('events.show', $event->id) }}" class="inline-flex items-center px-4 py-2 bg-primary-700 border border-transparent rounded-md font-semibold  text-white text-xs uppercase tracking-widest hover:bg-primary-600 focus:bg-primary-600 active:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                                 Lihat Detail Event
                                             </a>
                                             </div>

@@ -43,7 +43,7 @@
                     {{-- Tombol Aksi Edit --}}
                     <div class="flex items-center justify-end mt-6 pt-4 border-t dark:border-gray-700">
                         <a href="{{ route('admin.clubs.edit', $club->id) }}"
-                            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                            class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800">
                             Edit Informasi Klub
                         </a>
                     </div>
@@ -103,7 +103,7 @@
                                         <td class="px-6 py-4">
                                             @if($payment->payment_proof_url)
                                                 <a href="{{ asset('storage/' . $payment->payment_proof_url) }}" target="_blank"
-                                                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline">[Lihat
+                                                    class="font-medium text-primary-600 dark:text-primary-500 hover:underline">[Lihat
                                                     Nota]</a>
                                             @else
                                                 -

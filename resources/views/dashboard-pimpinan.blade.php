@@ -110,7 +110,7 @@
                         <div class="mb-4">
                             <label for="category_filter" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Filter Peringkat per Kategori:</label>
                             <select id="category_filter" onchange="if(this.value) window.location.href='/leaderboard/' + this.value"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="">Pilih Kategori...</option>
                                 @foreach ($categories as $category)
                                     <option value="{{ $category->id }}">{{ $category->nama_kategori }} ({{ $category->kode_kategori }})</option>
@@ -139,7 +139,7 @@
                                                     {{ $result->kategori }}
                                                 </p>
                                             </div>
-                                            <div class="inline-flex items-center text-base font-semibold text-blue-600 dark:text-blue-400">
+                                            <div class="inline-flex items-center text-base font-semibold text-primary-600 dark:text-primary-400">
                                                 {{ $result->total_poin }}
                                             </div>
                                         </div>

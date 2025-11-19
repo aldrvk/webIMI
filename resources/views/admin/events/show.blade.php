@@ -15,7 +15,7 @@
                 </div>
             @endif
             @if (session('info'))
-                <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
+                <div class="p-4 mb-4 text-sm text-primary-800 rounded-lg bg-primary-50 dark:bg-gray-800 dark:text-primary-400" role="alert">
                     <span class="font-medium">Info: </span> {{ session('info') }}
                 </div>
             @endif
@@ -30,7 +30,7 @@
 
                     {{-- 1. JUDUL DAN INFO UTAMA --}}
                     <div class="border-b dark:border-gray-700 pb-6 mb-6">
-                        <span class="block text-sm font-medium text-blue-600 dark:text-blue-400">
+                        <span class="block text-sm font-medium text-primary-600 dark:text-primary-400">
                             {{ \Carbon\Carbon::parse($event->event_date)->translatedFormat('l, d F Y') }}
                         </span>
                         <h1 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{{ $event->event_name }}</h1>
@@ -92,7 +92,7 @@
                             @if($event->url_regulasi)
                                 <div>
                                     <a href="{{ $event->url_regulasi }}" target="_blank" rel="noopener noreferrer" 
-                                       class="inline-flex w-full items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                       class="inline-flex w-full items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500">
                                         Download Regulasi (.pdf)
                                         <svg class="w-4 h-4 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                           <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />

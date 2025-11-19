@@ -27,7 +27,7 @@
             <label for="club_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pilih Klub Anda
                 (Wajib)</label>
             <select id="club_id" name="club_id" required
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                 <option value="" disabled selected>-- Pilih Klub --</option>
                 {{-- Variabel $clubs ini dikirim dari PublicIuranController@create --}}
                 @foreach ($clubs as $club)
@@ -45,7 +45,7 @@
                     Tahun</label>
                 <input type="number" id="payment_year" name="payment_year"
                     value="{{ old('payment_year', now()->year) }}" required
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                     placeholder="Contoh: 2025">
                 @error('payment_year') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                 @enderror
@@ -55,7 +55,7 @@
                 <label for="payment_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal
                     Pembayaran</label>
                 <input type="date" id="payment_date" name="payment_date" value="{{ old('payment_date') }}" required
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                 @error('payment_date') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                 @enderror
             </div>
@@ -66,7 +66,7 @@
                 (Rp)</label>
             <input type="number" id="amount_paid" name="amount_paid" value="{{ old('amount_paid') }}" required
                 step="1000"
-                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                 placeholder="Contoh: 200000">
             @error('amount_paid') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
         </div>
@@ -87,7 +87,7 @@
             <div class="flex items-center h-5">
                 <input id="persetujuan" name="persetujuan" type="checkbox" value="true" required
                     {{-- 'name="persetujuan"' & 'required' --}}
-                    class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800">
+                    class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800">
             </div>
             <label for="persetujuan" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                 Saya menyatakan bahwa data yang saya kirim (termasuk bukti pembayaran) adalah benar dan sah.
@@ -98,7 +98,7 @@
 
         <div class="flex items-center justify-end mt-6">
             <button type="submit"
-                class="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                class="w-full text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                 {{ __('Kirim Bukti Pembayaran') }}
             </button>
         </div>

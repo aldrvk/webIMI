@@ -63,7 +63,7 @@
                                         </td>
                                         <td class="px-6 py-4 text-center">
                                             <a href="{{ route('admin.kis.show', $application->id) }}"
-                                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                                                class="font-medium text-primary-600 dark:text-primary-500 hover:underline">
                                                 Detail
                                             </a>
                                         </td>

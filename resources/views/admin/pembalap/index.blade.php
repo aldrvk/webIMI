@@ -27,9 +27,9 @@
                                 </svg>
                             </div>
                             <input type="search" id="search" name="search"
-                                   class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                                   class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
                                    placeholder="Telusuri berdasarkan Nama Pembalap..." value="{{ $search ?? '' }}">
-                            <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                            <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                                 Telusuri
                             </button>
                         </div>
@@ -90,7 +90,7 @@
                                                         </span>
                                         </td>
                                         <td class="px-6 py-4 text-right">
-                                            <a href="{{ route('admin.pembalap.show', $profile->id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Detail</a>
+                                            <a href="{{ route('admin.pembalap.show', $profile->id) }}" class="font-medium text-primary-600 dark:text-primary-500 hover:underline">Detail</a>
                                         </td>
                                     </tr>
                                 @empty

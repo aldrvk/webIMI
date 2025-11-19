@@ -71,13 +71,13 @@
                                     {{-- Nomor Tanggal --}}
                                     <time datetime="{{ $currentDay->format('Y-m-d') }}"
                                           class="text-sm font-medium 
-                                          @if($isToday) text-white bg-blue-700 rounded-full h-6 w-6 flex items-center justify-center @elseif(!$isCurrentMonth) text-gray-400 dark:text-gray-500 @else text-gray-900 dark:text-gray-100 @endif">
+                                          @if($isToday) text-white bg-primary-700 rounded-full h-6 w-6 flex items-center justify-center @elseif(!$isCurrentMonth) text-gray-400 dark:text-gray-500 @else text-gray-900 dark:text-gray-100 @endif">
                                         {{ $currentDay->day }}
                                     </time>
                                     
                                     {{-- TANDA EVENT (Background Bulat) --}}
                                     @if($isCurrentMonth && $eventsOnThisDay)
-                                        <span class="w-2 h-2 bg-blue-500 rounded-full" title="{{ $eventsOnThisDay->count() }} event"></span>
+                                        <span class="w-2g-primary-500 rounded-full" title="{{ $eventsOnThisDay->count() }} event"></span>
                                     @endif
                                 </div>
                                 
@@ -86,7 +86,7 @@
                                     <div class="mt-1 space-y-1 overflow-y-auto max-h-20">
                                         @foreach($eventsOnThisDay as $event)
                                         {{-- TODO: Ganti '#' dengan route('events.show', $event->id) --}}
-                                        <a href="#" class="block text-xs p-1 truncate bg-blue-100 text-blue-800 rounded hover:bg-blue-200 dark:bg-gray-700 dark:text-blue-400 dark:hover:bg-gray-600" title="{{ $event->event_name }}">
+                                        <a href="#" class="block text-xs p-1 trung-primary-100 text-primary-800 rounded hg-primary-200 dark:bg-gray-700 dark:text-blue-400 dark:hover:bg-gray-600" title="{{ $event->event_name }}">
                                             {{ $event->event_name }}
                                         </a>
                                         @endforeach
@@ -111,7 +111,7 @@
                                 <div class="flex flex-col md:flex-row md:justify-between">
                                     {{-- Info Event --}}
                                         <div>
-                                            <span class="text-sm font-medium bg-blue-100 text-blue-800 rounded px-2.5 py-0.5 dark:bg-gray-700 dark:text-blue-400">
+                                            <span class="text-sm font-meg-primary-100 text-blue-800 rounded px-2.5 py-0.5 dark:bg-gray-700 dark:text-blue-400">
                                                 {{ $event->event_date ? \Carbon\Carbon::parse($event->event_date)->translatedFormat('l, d F Y') : 'TBD' }}
                                             </span>
                                             <h5 class="mt-2 mb-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">{{ $event->event_name }}</h5>
@@ -131,7 +131,7 @@
                                             </a>
                                         @else
                                 
-                                            <a href="{{ route('events.show', $event->id) }}" class="inline-flex items-center px-4 py-2 bg-blue-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                            <a href="{{ route('events.show', $event->id) }}" class="inline-flex items-center px-4 g-primary-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hg-primary-600 fg-primary-600 acg-primary-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                                 Lihat Detail Event
                                             </a>
                                         @endif

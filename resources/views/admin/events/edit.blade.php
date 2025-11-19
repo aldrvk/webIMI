@@ -34,7 +34,7 @@
                             <label for="event_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Event</label>
                             <input type="text" id="event_name" name="event_name" 
                                    value="{{ old('event_name', $event->event_name) }}" required 
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             @error('event_name') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
 
@@ -42,7 +42,7 @@
                             <label for="location" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Lokasi</label>
                             <input type="text" id="location" name="location" 
                                    value="{{ old('location', $event->location) }}" required
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             @error('location') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
 
@@ -50,7 +50,7 @@
                             <label for="event_date" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Event</label>
                             <input type="date" id="event_date" name="event_date" 
                                    value="{{ old('event_date', $event->event_date->format('Y-m-d')) }}" required
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             @error('event_date') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
                         
@@ -58,14 +58,14 @@
                             <label for="registration_deadline" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Batas Akhir Pendaftaran</label>
                             <input type="datetime-local" id="registration_deadline" name="registration_deadline" 
                                    value="{{ old('registration_deadline', optional($event->registration_deadline)->format('Y-m-d\TH:i')) }}" required
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Pendaftaran ditutup pada tanggal dan jam ini.</p>
                             @error('registration_deadline') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
 
                         <div class="md:col-span-2">
                             <label for="proposing_club_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Klub Penyelenggara</label>
-                            <select id="proposing_club_id" name="proposing_club_id" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                            <select id="proposing_club_id" name="proposing_club_id" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="" disabled>-- Pilih Klub --</option>
                                 @foreach($clubs as $club)
                                     <option value="{{ $club->id }}" {{ old('proposing_club_id', $event->proposing_club_id) == $club->id ? 'selected' : '' }}>
@@ -79,7 +79,7 @@
                         <div class="md:col-span-2">
                             <label for="description" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Deskripsi (Opsional)</label>
                             <textarea id="description" name="description" rows="3"
-                                      class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">{{ old('description', $event->description) }}</textarea>
+                                      class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">{{ old('description', $event->description) }}</textarea>
                             @error('description') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
                     </div> 
@@ -117,7 +117,7 @@
                                 </span>
                                 <input type="number" id="biaya_pendaftaran" name="biaya_pendaftaran" min="0" step="1000"
                                        value="{{ old('biaya_pendaftaran', $event->biaya_pendaftaran) }}"
-                                       class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                       class="rounded-none rounded-e-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-primary-500 focus:border-primary-500 block flex-1 min-w-0 w-full text-sm p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             </div>
                             @error('biaya_pendaftaran') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -126,7 +126,7 @@
                             <label for="kontak_panitia" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Kontak Panitia (Opsional)</label>
                             <input type="text" id="kontak_panitia" name="kontak_panitia" 
                                    value="{{ old('kontak_panitia', $event->kontak_panitia) }}"
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
                                    placeholder="0812-3456-7890 (Budi)">
                             @error('kontak_panitia') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -139,7 +139,7 @@
                                 Info Rekening / Instruksi Pembayaran (Wajib jika berbayar)
                             </label>
                             <textarea id="bank_account_info" name="bank_account_info" rows="3"
-                                      class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                      class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                       placeholder="Contoh:&#10;Bank BCA&#10;No. Rek: 123-456-7890&#10;a/n IMI Sumut">{{ old('bank_account_info', $event->bank_account_info) }}</textarea>
                             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Tuliskan Nama Bank, Nomor Rekening, dan Atas Nama penerima.</p>
                             @error('bank_account_info') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
@@ -150,7 +150,7 @@
                             <label for="url_regulasi" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Link/URL Regulasi (Opsional)</label>
                             <input type="url" id="url_regulasi" name="url_regulasi" 
                                    value="{{ old('url_regulasi', $event->url_regulasi) }}"
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
                                    placeholder="https://... (Contoh: link Google Drive)">
                             @error('url_regulasi') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -176,12 +176,12 @@
                                                    class="hidden peer"
                                                    @checked( in_array($category->id, old('kis_categories_ids', $selectedCategories)) )>
                                             <label for="category_{{ $category->id }}" 
-                                                   class="inline-flex items-center justify-between w-full p-3 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-blue-500 peer-checked:border-blue-600 peer-checked:text-blue-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">
+                                                   class="inline-flex items-center justify-between w-full p-3 text-gray-500 bg-white border border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 dark:peer-checked:text-primary-500 peer-checked:border-primary-600 peer-checked:text-primary-600 hover:text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">
                                                 <div class="block">
                                                     <div class="w-full text-sm font-semibold">{{ $category->kode_kategori }}</div>
                                                     <div class="w-full text-xs">{{ $category->nama_kategori }}</div>
                                                 </div>
-                                                <svg class="w-5 h-5 ms-3 rtl:rotate-180 hidden peer-checked:block text-blue-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                                                <svg class="w-5 h-5 ms-3 rtl:rotate-180 hidden peer-checked:block text-primary-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                                                     <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
                                                 </svg>
                                             </label>
@@ -199,7 +199,7 @@
                     <div class="flex items-center">
                         <input id="is_published" name="is_published" type="checkbox" value="1" 
                                @checked(old('is_published', $event->is_published))
-                               class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                               class="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500 dark:focus:ring-primary-600 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                         <label for="is_published" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Publikasikan Event Ini?</label>
                     </div>
 
@@ -207,7 +207,7 @@
                         <a href="{{ route('admin.events.index') }}" class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white me-4">
                             Batal
                         </a>
-                        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        <button type="submit" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                             {{ __('Simpan Perubahan') }}
                         </button>
                     </div>
