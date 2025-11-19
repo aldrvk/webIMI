@@ -14,7 +14,7 @@
                 </div>
             @endif
             @if (session('info'))
-                <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
+                <div class="p-4 mb-4 text-sm text-primary-800 rounded-lg bg-primary-50 dark:bg-gray-800 dark:text-primary-400" role="alert">
                    <span class="font-medium">Info: </span> {{ session('info') }}
                 </div>
             @endif
@@ -36,10 +36,10 @@
                             <a href="{{ route('admin.kis.index') }}" class="relative p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-50 dark:bg-gray-900 dark:border-gray-700 dark:hover:bg-gray-700 transition duration-150 ease-in-out overflow-hidden">
                                 <div class="relative z-10">
                                     <p class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">KIS Pending</p>
-                                    <span class="text-4xl font-extrabold text-blue-600 dark:text-blue-500">{{ $pendingKisCount }}</span>
+                                    <span class="text-4xl font-extrabold text-primary-600 dark:text-primary-500">{{ $pendingKisCount }}</span>
                                     <p class="text-xs text-gray-500 dark:text-gray-400 mt-2">Pengajuan KIS menunggu persetujuan Anda.</p>
                                 </div>
-                                <svg class="w-24 h-24 absolute -right-6 -bottom-6 text-blue-50 dark:text-gray-700 opacity-60" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-24 h-24 absolute -right-6 -bottom-6 text-primary-50 dark:text-gray-700 opacity-60" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
                                   <path fill-rule="evenodd" d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z" clip-rule="evenodd"/>
                                 </svg>
                             </a>
@@ -122,7 +122,7 @@
                                                         {{ $kis->created_at->diffForHumans() }}
                                                     </td>
                                                     <td class="px-6 py-4 text-right">
-                                                        <a href="{{ route('admin.kis.show', $kis->id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Lihat</a>
+                                                        <a href="{{ route('admin.kis.show', $kis->id) }}" class="font-medium text-primary-600 dark:text-primary-500 hover:underline">Lihat</a>
                                                     </td>
                                                 </tr>
                                             @empty
@@ -136,7 +136,7 @@
                                     </table>
                                 </div>
                                 <div class="p-4 border-t border-gray-200 dark:border-gray-700">
-                                    <a href="{{ route('admin.kis.index') }}" class="text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">Lihat Semua Antrean KIS &rarr;</a>
+                                    <a href="{{ route('admin.kis.index') }}" class="text-sm font-medium text-primary-600 dark:text-primary-500 hover:underline">Lihat Semua Antrean KIS &rarr;</a>
                                 </div>
                             </div>
 
@@ -170,7 +170,7 @@
                                                         {{ $iuran->created_at->diffForHumans() }}
                                                     </td>
                                                     <td class="px-6 py-4 text-right">
-                                                        <a href="{{ route('admin.iuran.show', $iuran->id) }}" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Lihat</a>
+                                                        <a href="{{ route('admin.iuran.show', $iuran->id) }}" class="font-medium text-primary-600 dark:text-primary-500 hover:underline">Lihat</a>
                                                     </td>
                                                 </tr>
                                             @empty
@@ -184,7 +184,7 @@
                                     </table>
                                 </div>
                                 <div class="p-4 border-t border-gray-200 dark:border-gray-700">
-                                    <a href="{{ route('admin.iuran.index') }}" class="text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">Lihat Semua Antrean Iuran &rarr;</a>
+                                    <a href="{{ route('admin.iuran.index') }}" class="text-sm font-medium text-primary-600 dark:text-primary-500 hover:underline">Lihat Semua Antrean Iuran &rarr;</a>
                                 </div>
                             </div>
                         </div>

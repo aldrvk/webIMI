@@ -98,7 +98,7 @@
                             <a href="{{ route('dashboard') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('dashboard') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent" aria-current="page">Dashboard Eksekutif</a>
                         </li>
                         <li>
-                            <a href="{{ route('leaderboard.index') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('leaderboard.index') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent">Lihat Klasemen</a>
+                            <a href="{{ route('leaderboard.index') }}" class="block py-2 px-3 rounded md:p-0 {{ request()->routeIs('leaderboard.index') ? 'text-blue-700 dark:text-blue-500' : 'text-gray-900 dark:text-white' }} md:bg-transparent">Hasil Event</a>
                         </li>
                     
                     @elseif($user->role === 'penyelenggara_event')

@@ -14,7 +14,7 @@
                     </div>
                 @endif
                 @if (session('info'))
-                    <div class="p-4 mb-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
+                    <div class="p-4 mb-4 text-sm text-primary-800 rounded-lg bg-primary-50 dark:bg-gray-800 dark:text-primary-400" role="alert">
                         <span class="font-medium">Info: </span> {{ session('info') }}
                     </div>
                 @endif
@@ -43,7 +43,7 @@
 
                     {{-- 1. JUDUL DAN INFO UTAMA --}}
                     <div class="border-b dark:border-gray-700 pb-6 mb-6">
-                        <span class="block text-sm font-medium text-blue-600 dark:text-blue-400">
+                        <span class="block text-sm font-medium text-primary-600 dark:text-primary-400">
                             {{ $event->event_date->translatedFormat('l, d F Y') }}
                         </span>
                         <h1 class="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{{ $event->event_name }}</h1>
@@ -181,7 +181,7 @@
                                         <form method="POST" action="{{ route('events.register', $event->id) }}" class="mt-4">
                                             @csrf
                                             {{-- PERBAIKAN KONSISTENSI TOMBOL (BIRU) --}}
-                                            <button type="submit" class="w-full inline-flex justify-center px-5 py-3 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest bg-blue-700 hover:bg-blue-600 focus:bg-blue-600 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                            <button type="submit" class="w-full inline-flex justify-center px-5 py-3 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest bg-primary-700 hover:bg-primary-600 focus:bg-primary-600 active:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 transition ease-in-out duration-150">
                                                 Daftar Sekarang
                                             </button>
                                         </form>
@@ -208,7 +208,7 @@
 
                         @elseif($userRegistration->status == 'Pending Confirmation')
                             {{-- 4. JIKA SUDAH UPLOAD BUKTI, TAPI BELUM DICEK ADMIN --}}
-                            <div class="p-4 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert">
+                            <div class="p-4 text-sm text-primary-800 rounded-lg bg-primary-50 dark:bg-gray-800 dark:text-primary-400" role="alert">
                                 <span class="font-medium">Menunggu Konfirmasi.</span> Bukti pembayaran Anda telah diupload dan sedang diperiksa oleh panitia.
                             </div>
                             

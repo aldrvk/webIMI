@@ -36,7 +36,7 @@
                                             @if($log->action_type == 'INSERT')
                                                 <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-green-900 dark:text-green-300">DIBUAT</span>
                                             @elseif($log->action_type == 'UPDATE')
-                                                <span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">DIUBAH</span>
+                                                <span class="bg-primary-100 text-primary-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-primary-900 dark:text-primary-300">DIUBAH</span>
                                             @else
                                                 <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300">{{ $log->action_type }}</span>
                                             @endif

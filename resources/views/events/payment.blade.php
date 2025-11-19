@@ -13,7 +13,7 @@
                 <div class="text-center border-b border-gray-200 dark:border-gray-700 pb-6 mb-6">
                     <h3 class="text-lg text-gray-600 dark:text-gray-400">Tagihan Pendaftaran Event</h3>
                     <h1 class="text-2xl font-bold text-gray-900 dark:text-white mt-2">{{ $event->event_name }}</h1>
-                    <p class="text-3xl font-bold text-blue-600 mt-4">Rp {{ number_format($event->biaya_pendaftaran, 0, ',', '.') }}</p>
+                    <p class="text-3xl font-bold text-primary-600 mt-4">Rp {{ number_format($event->biaya_pendaftaran, 0, ',', '.') }}</p>
                 </div>
 
                 @if($registration->status == 'Rejected' && $registration->admin_note)
@@ -66,7 +66,7 @@
 
                             <div class="flex items-center mt-4">
                                 <input id="confirmation_check" type="checkbox" x-model="isConfirmed" 
-                                       class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                       class="w-4 h-4 text-primary-600 bg-gray-100 border-gray-300 rounded focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                                 <label for="confirmation_check" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                                     Saya pastikan dokumen yang diupload sudah benar.
                                 </label>
@@ -74,7 +74,7 @@
 
                             <button type="submit" 
                                     x-bind:disabled="!isConfirmed" 
-                                    class="mt-6 w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 
+                                    class="mt-6 w-full text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800 
                                            disabled:bg-gray-400 disabled:cursor-not-allowed dark:disabled:bg-gray-600">
                                 Kirim Bukti Pembayaran
                             </button>

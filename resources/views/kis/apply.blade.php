@@ -44,7 +44,7 @@
                         <div>
                             <label for="tempat_lahir" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tempat Lahir (Wajib)</label>
                             <input type="text" id="tempat_lahir" name="tempat_lahir" value="{{ old('tempat_lahir') }}" required
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white" 
                                    placeholder="Contoh: Medan">
                             @error('tempat_lahir') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -52,21 +52,21 @@
                         <div>
                             <label for="tanggal_lahir" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Lahir (Wajib)</label>
                             <input type="date" id="tanggal_lahir" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}" required
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             @error('tanggal_lahir') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
                             <label for="no_ktp_sim" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">No. KTP / SIM (Wajib)</label>
                             <input type="text" id="no_ktp_sim" name="no_ktp_sim" value="{{ old('no_ktp_sim') }}" required
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                    placeholder="16 digit NIK atau nomor SIM">
                             @error('no_ktp_sim') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
                             <label for="golongan_darah" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Golongan Darah (Wajib)</label>
-                            <select id="golongan_darah" name="golongan_darah" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                            <select id="golongan_darah" name="golongan_darah" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="" disabled selected>-- Pilih Gol. Darah --</option>
                                 <option value="A" {{ old('golongan_darah') == 'A' ? 'selected' : '' }}>A</option>
                                 <option value="B" {{ old('golongan_darah') == 'B' ? 'selected' : '' }}>B</option>
@@ -79,7 +79,7 @@
                         
                         <div class="md:col-span-2">
                             <label for="club_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pilih Klub Afiliasi (Wajib)</label>
-                            <select id="club_id" name="club_id" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                            <select id="club_id" name="club_id" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="" disabled selected>-- Pilih Klub Anda --</option>
                                 @foreach ($clubs as $club)
                                     <option value="{{ $club->id }}" {{ old('club_id') == $club->id ? 'selected' : '' }}>
@@ -93,7 +93,7 @@
                         <div class="md:col-span-2">
                             <label for="phone_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nomor Telepon (WhatsApp) (Wajib)</label>
                             <input type="tel" id="phone_number" name="phone_number" value="{{ old('phone_number') }}" required
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                    placeholder="0812...">
                             @error('phone_number') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -101,7 +101,7 @@
                         <div class="md:col-span-2">
                             <label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alamat Lengkap (Sesuai KTP) (Wajib)</label>
                             <textarea id="address" name="address" rows="3" required
-                                      class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
+                                      class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                                       placeholder="Jalan ... No. ...">{{ old('address') }}</textarea>
                             @error('address') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
@@ -115,7 +115,7 @@
                         
                         <div class="md:col-span-2">
                             <label for="kis_category_id" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Pilih Kategori KIS (Wajib)</label>
-                            <select id="kis_category_id" name="kis_category_id" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                            <select id="kis_category_id" name="kis_category_id" required class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                                 <option value="" disabled selected>-- Pilih Kategori (Contoh: C2, B1) --</option>
                                 <optgroup label="Motor">
                                     @foreach ($categories->where('tipe', 'Motor') as $category)
@@ -179,7 +179,7 @@
                     <div class="flex items-start mt-6">
                         <div class="flex items-center h-5">
                             <input id="persetujuan" name="persetujuan" type="checkbox" value="true" required
-                                   class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800">
+                                   class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800">
                         </div>
                         <label for="persetujuan" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                             Saya menyatakan bahwa data yang saya isi adalah benar dan sah.
@@ -189,7 +189,7 @@
                     
                     {{-- Tombol Submit --}}
                     <div class="flex items-center justify-end mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
-                        <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        <button type="submit" class="text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                             {{ __('Ajukan KIS Sekarang') }}
                         </button>
                     </div>

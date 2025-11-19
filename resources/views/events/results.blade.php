@@ -38,7 +38,7 @@
                             @foreach($groupedResults as $categoryName => $results)
                                 <li class="me-2" role="presentation">
                                     <button
-                                        class="inline-block p-4 border-b-2 rounded-t-lg {{ $loop->first ? 'border-blue-600' : '' }}"
+                                        class="inline-block p-4 border-b-2 rounded-t-lg {{ $loop->first ? 'border-primary-600' : '' }}"
                                         id="tab-{{ $loop->iteration }}" data-tabs-target="#content-{{ $loop->iteration }}"
                                         type="button" role="tab" aria-controls="content-{{ $loop->iteration }}"
                                         aria-selected="{{ $loop->first ? 'true' : 'false' }}">
@@ -80,7 +80,7 @@
                                                     <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
                                                         {{ $result->pembalap_name }}
                                                     </td>
-                                                    <td class="px-6 py-4 text-center text-blue-600 font-bold">
+                                                    <td class="px-6 py-4 text-center text-primary-600 font-bold">
                                                         {{ $result->points_earned }}
                                                     </td>
                                                 </tr>
@@ -98,12 +98,12 @@
                 <div class="mt-6 text-center">
                     @if(request('source') === 'leaderboard')
                         {{-- Jika datang dari Leaderboard --}}
-                        <a href="{{ route('leaderboard.index') }}" class="text-blue-600 hover:underline dark:text-blue-400">
+                        <a href="{{ route('leaderboard.index') }}" class="text-primary-600 hover:underline dark:text-primary-400">
                             &larr; Kembali ke Hasil Event
                         </a>
                     @else
                         {{-- Default (jika datang dari Kalender atau link langsung) --}}
-                        <a href="{{ route('events.index') }}" class="text-blue-600 hover:underline dark:text-blue-400">
+                        <a href="{{ route('events.index') }}" class="text-primary-600 hover:underline dark:text-primary-400">
                             &larr; Kembali ke Kalender Event
                         </a>
                     @endif

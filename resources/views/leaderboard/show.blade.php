@@ -14,13 +14,13 @@
                 {{-- Tombol "Kembali" ini sekarang memeriksa role user --}}
                 @if(Auth::user()->role == 'pimpinan_imi')
                     {{-- Jika Pimpinan, kembali ke Dashboard Eksekutif --}}
-                    <a href="{{ route('dashboard') }}" class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                    <a href="{{ route('dashboard') }}" class="text-sm text-primary-600 dark:text-primary-400 hover:underline">
                         &larr; Kembali ke Dashboard Eksekutif
                     </a>
                 @else
                     {{-- Jika Pembalap atau role lain, kembali ke halaman "Hasil Event" --}}
                     <a href="{{ route('leaderboard.index') }}"
-                        class="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                        class="text-sm text-primary-600 dark:text-primary-400 hover:underline">
                         &larr; Kembali ke Semua Kategori
                     </a>
                 @endif
@@ -62,7 +62,7 @@
                                             {{ $result->nama_pembalap }}
                                         </th>
                                         <td class="px-6 py-4">{{ $result->nama_klub }}</td>
-                                        <td class="px-6 py-4 text-center font-bold text-blue-600 dark:text-blue-400">
+                                        <td class="px-6 py-4 text-center font-bold text-primary-600 dark:text-primary-400">
                                             {{ $result->total_poin }}
                                         </td>
                                         <td class="px-6 py-4 text-center">{{ $result->jumlah_balapan }}</td>

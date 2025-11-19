@@ -31,14 +31,14 @@
                             </svg>
                         </div>
                         <input type="search" id="search" name="search"
-                               class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                               class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" 
                                placeholder="Telusuri berdasarkan Nama atau Email..." value="{{ $search ?? '' }}">
-                        <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        <button type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                             Telusuri
                         </button>
                     </div>
                 </form>
-                <a href="{{ route('superadmin.users.create') }}" class="w-full md:w-auto text-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 flex-shrink-0">
+                <a href="{{ route('superadmin.users.create') }}" class="w-full md:w-auto text-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 flex-shrink-0">
                     + Buat User Admin Baru
                 </a>
             </div>
@@ -72,7 +72,7 @@
                                         <td class="px-6 py-4">
                                             <span class="px-2 py-0.5 inline-flex text-xs leading-5 font-semibold rounded-full
                                                     @if($user->role == 'super_admin') bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300
-                                                    @elseif($user->role == 'pengurus_imi') bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300
+                                                    @elseif($user->role == 'pengurus_imi') bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300
                                                     @elseif($user->role == 'penyelenggara_event') bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300
                                                     @elseif($user->role == 'pimpinan_imi') bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300
                                                     @else bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300
@@ -86,7 +86,7 @@
                                         </td>
                                         <td class="px-6 py-4 text-right flex items-center justify-end space-x-4">
                                             <a href="{{ route('superadmin.users.edit', $user->id) }}"
-                                                class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                                                class="font-medium text-primary-600 dark:text-primary-500 hover:underline">Edit</a>
                                             <form method="POST" action="{{ route('superadmin.users.destroy', $user->id) }}"
                                                 onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini: {{ $user->name }}?');">
                                                 @csrf

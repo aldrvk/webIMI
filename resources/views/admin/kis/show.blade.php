@@ -97,7 +97,7 @@
                                 <span class="font-medium text-gray-500 dark:text-gray-400">1. KTP / SIM:</span>
                                 @if($application->file_ktp_url)
                                     <a href="{{ Storage::url($application->file_ktp_url) }}" target="_blank" 
-                                       class="ml-2 text-blue-600 dark:text-blue-500 hover:underline font-medium">[Lihat File]</a>
+                                       class="ml-2 text-primary-600 dark:text-primary-500 hover:underline font-medium">[Lihat File]</a>
                                 @else
                                     <span class="ml-2 text-red-500 dark:text-red-400">[File Hilang]</span>
                                 @endif
@@ -108,7 +108,7 @@
                                 <span class="font-medium text-gray-500 dark:text-gray-400">2. Pas Foto 3x4:</span>
                                 @if($application->file_pas_foto_url)
                                     <a href="{{ Storage::url($application->file_pas_foto_url) }}" target="_blank" 
-                                       class="ml-2 text-blue-600 dark:text-blue-500 hover:underline font-medium">[Lihat File]</a>
+                                       class="ml-2 text-primary-600 dark:text-primary-500 hover:underline font-medium">[Lihat File]</a>
                                 @else
                                     <span class="ml-2 text-red-500 dark:text-red-400">[File Hilang]</span>
                                 @endif
@@ -119,7 +119,7 @@
                                 <span class="font-medium text-gray-500 dark:text-gray-400">3. Surat Keterangan Sehat:</span>
                                 @if($application->file_surat_sehat_url)
                                     <a href="{{ Storage::url($application->file_surat_sehat_url) }}" target="_blank" 
-                                       class="ml-2 text-blue-600 dark:text-blue-500 hover:underline font-medium">[Lihat File]</a>
+                                       class="ml-2 text-primary-600 dark:text-primary-500 hover:underline font-medium">[Lihat File]</a>
                                 @else
                                     <span class="ml-2 text-red-500 dark:text-red-400">[File Hilang]</span>
                                 @endif
@@ -130,7 +130,7 @@
                                 <span class="font-medium text-gray-500 dark:text-gray-400">4. Bukti Pembayaran:</span>
                                  @if($application->file_bukti_bayar_url)
                                     <a href="{{ Storage::url($application->file_bukti_bayar_url) }}" target="_blank" 
-                                       class="ml-2 text-blue-600 dark:text-blue-500 hover:underline font-medium">[Lihat File]</a>
+                                       class="ml-2 text-primary-600 dark:text-primary-500 hover:underline font-medium">[Lihat File]</a>
                                 @else
                                      <span class="ml-2 text-red-500 dark:text-red-400">[File Hilang]</span>
                                 @endif
@@ -183,7 +183,7 @@
                                         @method('PATCH')
                                         <div class="mb-4">
                                             <label for="rejection_reason" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan Alasan Penolakan (Wajib)</label>
-                                            <textarea id="rejection_reason" name="rejection_reason" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Contoh: Bukti pembayaran tidak valid." required></textarea>
+                                            <textarea id="rejection_reason" name="rejection_reason" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Contoh: Bukti pembayaran tidak valid." required></textarea>
                                              @error('rejection_reason')
                                                 <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                                              @enderror
@@ -191,7 +191,7 @@
                                         <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
                                             Kirim Penolakan
                                         </button>
-                                         <button data-modal-hide="reject-modal" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                                         <button data-modal-hide="reject-modal" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                                             Batal
                                         </button>
                                     </form>
@@ -202,7 +202,7 @@
 
                      {{-- Back Button --}}
                     <div class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
-                        <a href="{{ route('admin.kis.index') }}" class="text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">&larr; Kembali ke Daftar Pengajuan</a>
+                        <a href="{{ route('admin.kis.index') }}" class="text-sm font-medium text-primary-600 dark:text-primary-500 hover:underline">&larr; Kembali ke Daftar Pengajuan</a>
                     </div>
 
                 </div>

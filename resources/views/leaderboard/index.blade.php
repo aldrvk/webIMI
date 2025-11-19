@@ -22,6 +22,15 @@
                                     class="mt-1 block w-full p-2.5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     placeholder="Cari nama pembalap..." value="{{ $search ?? '' }}">
                             </div>
+                            <input type="search" id="search" name="search"
+                                class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                placeholder="Telusuri berdasarkan Nama Event..." value="{{ $search ?? '' }}">
+                            <button type="submit"
+                                class="text-white absolute end-2.5 bottom-2.5 bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
+                                Telusuri
+                            </button>
+                        </div>
+                    </form>
 
                     {{-- 2. DAFTAR EVENT (YANG SUDAH SELESAI) --}}
                     <div class="space-y-6">
