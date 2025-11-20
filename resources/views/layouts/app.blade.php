@@ -12,25 +12,35 @@
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased bg-gray-100 dark:bg-gray-900">
-        <div class="min-h-screen">
-            {{-- Include your Flowbite Navbar component here --}}
-            @include('layouts.navigation') {{-- We'll create this file next --}}
+    <body class="font-sans antialiased bg-gray-100 dark:bg-gray-900 w-full">
+        @include('layouts.navigation')
+        <div class="min-h-screen -20">
 
+
+
+            {{-- 1. INCLUDE SIDEBAR (POSITION: FIXED) --}}
+            @auth
+                @include('layouts.sidebar') 
+            @endauth
+
+            <!-- {{-- 2. INCLUDE NAVBAR ATAS (NAVIGASI DENGAN MARGIN KIRI) --}}
+            @include('layouts.navigation') -->
+
+            {{-- 3. HEADER - Diberi margin-left di Desktop (md:ml-64) --}}
             @if (isset($header))
-                <header class="bg-white dark:bg-gray-800 shadow">
+                <header class="bg-white dark:bg-gray-800 shadow {{ Auth::check() ? 'md:ml-64' : '' }}">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
                 </header>
             @endif
 
-            <main>
-                {{ $slot }} {{-- This is where page-specific content will be injected --}}
+            {{-- 4. KONTEN UTAMA (MAIN) - Diberi margin-left di Desktop (md:ml-64) --}}
+            <main class="{{ Auth::check() ? 'md:ml-64' : '' }}">
+                {{ $slot }}
             </main>
-
-            {{-- Optional: Add a footer here --}}
+            
         </div>
-        {{-- Flowbite JS might need initialization depending on components used --}}
+        {{-- Pastikan Flowbite/Bootstrap JS dimuat di sini jika diperlukan --}}
     </body>
 </html>

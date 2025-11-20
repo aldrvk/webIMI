@@ -14,14 +14,14 @@
     class="font-sans antialiased bg-gray-100 dark:bg-gradient-to-b dark:from-primary-950 dark:to-gray-900 text-gray-900 dark:text-gray-200">
 
 
-    <nav class="bg-white dark:bg-primary-950 shadow-lg sticky top-0 z-50">
+    <nav class="bg-primary-950 dark:bg-primary-950 shadow-lg sticky top-0 z-50">
         <div class="container mx-auto flex flex-wrap items-center justify-between p-4">
 
             <a href="/" class="flex items-center">
-                <img src="{{ asset('storage/assets/imi_family.svg') }}" class="h-12 mr-3" alt="IMI Sumut Logo" />
-                <div class="text-gray-900 dark:text-white font-bold text-lg leading-tight">
+                <img src="{{ asset('storage/imi_family.png') }}" class="h-12 mr-3" alt="IMI Sumut Logo" />
+                <div class="text-gray-100 dark:text-white font-bold text-lg leading-tight">
                     IKATAN MOTOR INDONESIA <br>
-                    <span class="text-sm font-normal text-gray-500 dark:text-gray-300">PENGURUS PROVINSI SUMATERA
+                    <span class="text-sm font-normal text-gray-200 dark:text-gray-300">PENGURUS PROVINSI SUMATERA
                         UTARA</span>
                 </div>
             </a>
@@ -45,7 +45,7 @@
                     class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:hidden dark:bg-gray-800 dark:border-gray-700">
                     <li class="border-t border-gray-200 dark:border-gray-700 mt-2 pt-2">
                         <a href="{{ route('register') }}"
-                            class="block py-2 px-3 text-gray-900 dark:text-gray-200 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
+                            class="block py-2 px-3 text-gray-100 dark:text-gray-200 rounded hover:bg-gray-100 dark:hover:bg-gray-700">
                             <i class="fas fa-user-plus w-4 mr-2"></i>Daftar
                         </a>
                     </li>
@@ -60,7 +60,7 @@
                 {{-- Menu Desktop --}}
                 <div class="hidden md:flex items-center space-x-5 ml-6">
                     <a href="{{ route('register') }}"
-                        class="flex items-center text-sm text-gray-700 dark:text-gray-200 hover:text-primary-600 dark:hover:text-white transition-colors duration-200">
+                        class="flex items-center text-sm text-gray-100 dark:text-gray-200 hover:text-primary-600 dark:hover:text-white transition-colors duration-200">
                         <i class="fas fa-user-plus mr-2"></i>
                         Daftar
                     </a>
@@ -199,7 +199,7 @@
             <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
 
                 <div class="col-span-1 md:col-span-2 flex flex-col items-center mb-8 md:mb-0">
-                    <img src="{{ asset('storage/assets/imi_family.svg') }}" alt="IMI Sumut Logo Footer"
+                    <img src="{{ asset('storage/imi_family.png') }}" alt="IMI Sumut Logo Footer"
                         class="h-16 mb-4">
                     <div class="text-center text-white font-bold text-xl">
                         IKATAN MOTOR INDONESIA <br>
