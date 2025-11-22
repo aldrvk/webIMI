@@ -10,11 +10,19 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100 space-y-6">
 
+                    {{-- Hitung Umur untuk Logika Tampilan --}}
+                    @php
+                        $profile = $application->pembalap->profile;
+                        $isUnder17 = false;
+                        if ($profile && $profile->tanggal_lahir) {
+                            $isUnder17 = \Carbon\Carbon::parse($profile->tanggal_lahir)->age < 17;
+                        }
+                    @endphp
+
                     {{-- Section: Informasi Pembalap --}}
                     <div>
                         <h3 class="text-lg font-medium border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">Informasi Pembalap</h3>
-                        @if ($application->pembalap->profile)
-                            @php $profile = $application->pembalap->profile; @endphp
+                        @if ($profile)
                             <dl class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4 gap-y-3 text-sm">
                                 <div class="col-span-1">
                                     <dt class="font-medium text-gray-500 dark:text-gray-400">Nama Lengkap:</dt>
@@ -33,7 +41,14 @@
                                     <dd class="text-gray-900 dark:text-gray-100">{{ $profile->club->nama_klub ?? 'N/A' }}</dd>
                                 </div>
                                 <div class="col-span-1">
-                                    <dt class="font-medium text-gray-500 dark:text-gray-400">No. KTP/SIM:</dt>
+                                    {{-- LOGIKA LABEL IDENTITAS (KTP atau NIK) --}}
+                                    <dt class="font-medium text-gray-500 dark:text-gray-400">
+                                        @if($isUnder17)
+                                            NIK (Sesuai KK):
+                                        @else
+                                            No. KTP/SIM:
+                                        @endif
+                                    </dt>
                                     <dd class="text-gray-900 dark:text-gray-100">{{ $profile->no_ktp_sim ?? '-' }}</dd>
                                 </div>
                                 <div class="col-span-1">
@@ -41,6 +56,9 @@
                                     <dd class="text-gray-900 dark:text-gray-100">
                                         {{ $profile->tempat_lahir ?? '-' }}, 
                                         {{ $profile->tanggal_lahir ? \Carbon\Carbon::parse($profile->tanggal_lahir)->translatedFormat('d F Y') : '-' }}
+                                        @if($isUnder17)
+                                            <span class="ml-1 text-xs text-red-500 font-bold">(Di Bawah Umur)</span>
+                                        @endif
                                     </dd>
                                 </div>
                                  <div class="col-span-1">
@@ -81,66 +99,114 @@
                                     </span>
                                 </dd>
                             </div>
+                            <div class="col-span-1 mt-2">
+                                <dt class="font-medium text-gray-500 dark:text-gray-400">Kategori KIS:</dt>
+                                <dd class="text-gray-900 dark:text-gray-100 font-bold">
+                                    {{-- Menggunakan relasi 'kisCategory' yang sudah kita buat di Model --}}
+                                    {{ $application->kisCategory->kode_kategori ?? '?' }} - {{ $application->kisCategory->nama_kategori ?? '?' }}
+                                </dd>
+                            </div>
+                            
                          </dl>
                     </div>
 
-                    {{-- =============================================== --}}
-                    {{-- ==     AWAL PERUBAHAN: DOKUMEN PENDUKUNG      == --}}
-                    {{-- =============================================== --}}
+                    {{-- Section: Dokumen Pendukung --}}
                     <div>
                          <h3 class="text-lg font-medium border-b border-gray-200 dark:border-gray-700 pb-2 mb-4">Dokumen Pendukung</h3>
-                         {{-- Menggunakan Grid agar lebih rapi --}}
                          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                             
-                            {{-- Card KTP/SIM --}}
-                            <div class="flex-shrink-0">
-                                <span class="font-medium text-gray-500 dark:text-gray-400">1. KTP / SIM:</span>
-                                @if($application->file_ktp_url)
-                                    <a href="{{ Storage::url($application->file_ktp_url) }}" target="_blank" 
-                                       class="ml-2 text-primary-600 dark:text-primary-500 hover:underline font-medium">[Lihat File]</a>
+                            {{-- Card 1: Identitas Utama --}}
+                            <div class="flex-shrink-0 p-3 border rounded-lg dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                                <span class="font-medium text-gray-500 dark:text-gray-400 block mb-1">
+                                    @if($isUnder17) 
+                                        1. Scan Kartu Keluarga (KK):
+                                    @else 
+                                        1. Scan KTP / SIM: 
+                                    @endif
+                                </span>
+                                {{-- Kita menggunakan kolom 'file_ktp_url' untuk menyimpan KK jika anak-anak (seperti diskusi sebelumnya) --}}
+                                {{-- ATAU jika Anda sudah pakai kolom 'file_kk_url', gunakan logika if/else di sini --}}
+                                @php
+                                    // Prioritaskan kolom KK jika ada isinya, jika tidak ambil dari kolom KTP (polimorfik)
+                                    $fileIdentitas = $application->file_kk_url ?? $application->file_ktp_url;
+                                @endphp
+
+                                @if($fileIdentitas)
+                                    <a href="{{ Storage::url($fileIdentitas) }}" target="_blank" 
+                                       class="inline-flex items-center text-blue-600 dark:text-blue-500 hover:underline font-medium">
+                                       <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                       Lihat File
+                                    </a>
                                 @else
-                                    <span class="ml-2 text-red-500 dark:text-red-400">[File Hilang]</span>
+                                    <span class="text-red-500 dark:text-red-400 italic">[File Tidak Ditemukan]</span>
                                 @endif
                             </div>
 
-                            {{-- Card Pas Foto --}}
-                            <div class="flex-shrink-0">
-                                <span class="font-medium text-gray-500 dark:text-gray-400">2. Pas Foto 3x4:</span>
+                            {{-- Card 2: Surat Izin Ortu (Hanya jika < 17) --}}
+                            @if($isUnder17)
+                            <div class="flex-shrink-0 p-3 border rounded-lg dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                                <span class="font-medium text-gray-500 dark:text-gray-400 block mb-1">2. Surat Izin Orang Tua:</span>
+                                @if($application->file_surat_izin_url)
+                                    <a href="{{ Storage::url($application->file_surat_izin_url) }}" target="_blank" 
+                                       class="inline-flex items-center text-blue-600 dark:text-blue-500 hover:underline font-medium">
+                                       <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                       Lihat File
+                                    </a>
+                                @else
+                                    <span class="text-red-500 dark:text-red-400 italic">[File Tidak Ditemukan]</span>
+                                @endif
+                            </div>
+                            @endif
+
+                            {{-- Card 3: Pas Foto --}}
+                            <div class="flex-shrink-0 p-3 border rounded-lg dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                                <span class="font-medium text-gray-500 dark:text-gray-400 block mb-1">
+                                    @if($isUnder17) 3. @else 2. @endif Pas Foto 3x4:
+                                </span>
                                 @if($application->file_pas_foto_url)
                                     <a href="{{ Storage::url($application->file_pas_foto_url) }}" target="_blank" 
-                                       class="ml-2 text-primary-600 dark:text-primary-500 hover:underline font-medium">[Lihat File]</a>
+                                       class="inline-flex items-center text-blue-600 dark:text-blue-500 hover:underline font-medium">
+                                       <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                       Lihat File
+                                    </a>
                                 @else
-                                    <span class="ml-2 text-red-500 dark:text-red-400">[File Hilang]</span>
+                                    <span class="text-red-500 dark:text-red-400 italic">[File Tidak Ditemukan]</span>
                                 @endif
                             </div>
 
-                            {{-- Card Surat Sehat --}}
-                            <div class="flex-shrink-0">
-                                <span class="font-medium text-gray-500 dark:text-gray-400">3. Surat Keterangan Sehat:</span>
+                            {{-- Card 4: Surat Sehat --}}
+                            <div class="flex-shrink-0 p-3 border rounded-lg dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                                <span class="font-medium text-gray-500 dark:text-gray-400 block mb-1">
+                                    @if($isUnder17) 4. @else 3. @endif Surat Ket. Sehat:
+                                </span>
                                 @if($application->file_surat_sehat_url)
                                     <a href="{{ Storage::url($application->file_surat_sehat_url) }}" target="_blank" 
-                                       class="ml-2 text-primary-600 dark:text-primary-500 hover:underline font-medium">[Lihat File]</a>
+                                       class="inline-flex items-center text-blue-600 dark:text-blue-500 hover:underline font-medium">
+                                       <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                       Lihat File
+                                    </a>
                                 @else
-                                    <span class="ml-2 text-red-500 dark:text-red-400">[File Hilang]</span>
+                                    <span class="text-red-500 dark:text-red-400 italic">[File Tidak Ditemukan]</span>
                                 @endif
                             </div>
                              
-                             {{-- Card Bukti Bayar --}}
-                             <div class="flex-shrink-0">
-                                <span class="font-medium text-gray-500 dark:text-gray-400">4. Bukti Pembayaran:</span>
+                             {{-- Card 5: Bukti Bayar --}}
+                             <div class="flex-shrink-0 p-3 border rounded-lg dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+                                <span class="font-medium text-gray-500 dark:text-gray-400 block mb-1">
+                                    @if($isUnder17) 5. @else 4. @endif Bukti Pembayaran:
+                                </span>
                                  @if($application->file_bukti_bayar_url)
                                     <a href="{{ Storage::url($application->file_bukti_bayar_url) }}" target="_blank" 
-                                       class="ml-2 text-primary-600 dark:text-primary-500 hover:underline font-medium">[Lihat File]</a>
+                                       class="inline-flex items-center text-blue-600 dark:text-blue-500 hover:underline font-medium">
+                                       <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                       Lihat File
+                                    </a>
                                 @else
-                                     <span class="ml-2 text-red-500 dark:text-red-400">[File Hilang]</span>
+                                     <span class="text-red-500 dark:text-red-400 italic">[File Tidak Ditemukan]</span>
                                 @endif
                             </div>
                          </div>
                     </div>
-                    {{-- =============================================== --}}
-                    {{-- ==      AKHIR PERUBAHAN: DOKUMEN PENDUKUNG     == --}}
-                    {{-- =============================================== --}}
-
 
                     {{-- Section: Aksi Persetujuan (Hanya jika status 'Pending') --}}
                     @if($application->status == 'Pending')
@@ -183,7 +249,7 @@
                                         @method('PATCH')
                                         <div class="mb-4">
                                             <label for="rejection_reason" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Masukkan Alasan Penolakan (Wajib)</label>
-                                            <textarea id="rejection_reason" name="rejection_reason" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Contoh: Bukti pembayaran tidak valid." required></textarea>
+                                            <textarea id="rejection_reason" name="rejection_reason" rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Contoh: Bukti pembayaran tidak valid." required></textarea>
                                              @error('rejection_reason')
                                                 <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p>
                                              @enderror
@@ -191,7 +257,7 @@
                                         <button type="submit" class="text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800">
                                             Kirim Penolakan
                                         </button>
-                                         <button data-modal-hide="reject-modal" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                                         <button data-modal-hide="reject-modal" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                                             Batal
                                         </button>
                                     </form>
@@ -202,7 +268,7 @@
 
                      {{-- Back Button --}}
                     <div class="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
-                        <a href="{{ route('admin.kis.index') }}" class="text-sm font-medium text-primary-600 dark:text-primary-500 hover:underline">&larr; Kembali ke Daftar Pengajuan</a>
+                        <a href="{{ route('admin.kis.index') }}" class="text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">&larr; Kembali ke Daftar Pengajuan</a>
                     </div>
 
                 </div>

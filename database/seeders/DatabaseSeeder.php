@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
         // Seeder ini akan membuat semua User (Admin+Pembalap) dan Event
         $this->call([
             FullStorySeeder::class,
+            SettingSeeder::class,
         ]);
     }
 }

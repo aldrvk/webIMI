@@ -98,6 +98,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/pembalap/{profile}', [PembalapController::class, 'show'])->name('pembalap.show');
         Route::patch('/pembalap/{user}/deactivate', [PembalapController::class, 'deactivate'])->name('pembalap.deactivate');
         Route::patch('/pembalap/{user}/activate', [PembalapController::class, 'activate'])->name('pembalap.activate');
+
+        Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
+        Route::patch('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
     });
 
     // Route Penyelenggara Event
