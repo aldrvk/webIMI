@@ -59,7 +59,7 @@
                                             {{ $application->pembalap->name ?? 'N/A' }}
                                         </td>
                                         <td class="px-6 py-4 text-center">
-                                            {{ $application->created_at->translatedFormat('d F Y H:i') }}
+                                            {{ $application->created_at?->timezone('Asia/Jakarta')->translatedFormat('d F Y H:i') }}
                                         </td>
                                         <td class="px-6 py-4 text-center">
                                             <a href="{{ route('admin.kis.show', $application->id) }}"

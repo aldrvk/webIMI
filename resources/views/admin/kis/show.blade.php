@@ -85,7 +85,7 @@
                             </div>
                             <div class="col-span-1">
                                 <dt class="font-medium text-gray-500 dark:text-gray-400">Tanggal Pengajuan:</dt>
-                                <dd class="text-gray-900 dark:text-gray-100">{{ $application->created_at->translatedFormat('d F Y H:i') }}</dd>
+                                <dd class="text-gray-900 dark:text-gray-100">{{ $application->created_at?->timezone('Asia/Jakarta')->translatedFormat('d F Y H:i') }}</dd>
                             </div>
                             <div class="col-span-1">
                                 <dt class="font-medium text-gray-500 dark:text-gray-400">Status Saat Ini:</dt>
@@ -103,7 +103,7 @@
                                 <dt class="font-medium text-gray-500 dark:text-gray-400">Kategori KIS:</dt>
                                 <dd class="text-gray-900 dark:text-gray-100 font-bold">
                                     {{-- Menggunakan relasi 'kisCategory' yang sudah kita buat di Model --}}
-                                    {{ $application->kisCategory->kode_kategori ?? '?' }} - {{ $application->kisCategory->nama_kategori ?? '?' }}
+                                    {{ $application->Category->kode_kategori ?? '?' }} - {{ $application->Category->nama_kategori ?? '?' }}
                                 </dd>
                             </div>
                             
