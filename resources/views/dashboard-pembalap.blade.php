@@ -125,6 +125,74 @@
                                             <dd class="text-sm font-bold text-red-600 dark:text-red-400">{{ \Carbon\Carbon::parse($user->kisLicense->expiry_date)->translatedFormat('d F Y') }}</dd>
                                         </div>
                                     </div>
+
+                                    {{-- History Pembalap (Di bawah Lisensi KIS) --}}
+                                    <div class="mt-6">
+                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Statistik & Riwayat Anda</h3>
+                                        
+                                        {{-- Mini Statistics --}}
+                                        <div class="bg-gradient-to-br from-gray-50 to-white dark:from-gray-700 dark:to-gray-800 p-4 rounded-lg shadow border dark:border-gray-700 space-y-3 mb-4">
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <div class="text-center p-2 bg-white dark:bg-gray-600 rounded">
+                                                    <div class="text-2xl font-bold text-gray-900 dark:text-white">{{ $totalRaces }}</div>
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase">Balapan</div>
+                                                </div>
+                                                <div class="text-center p-2 bg-white dark:bg-gray-600 rounded">
+                                                    <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ $totalWins }}</div>
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase">Juara</div>
+                                                </div>
+                                            </div>
+                                            <div class="grid grid-cols-2 gap-3">
+                                                <div class="text-center p-2 bg-white dark:bg-gray-600 rounded">
+                                                    <div class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $totalPodiums }}</div>
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase">Podium</div>
+                                                </div>
+                                                <div class="text-center p-2 bg-white dark:bg-gray-600 rounded">
+                                                    <div class="text-2xl font-bold text-primary-600 dark:text-primary-400">{{ number_format($totalPoints) }}</div>
+                                                    <div class="text-xs text-gray-500 dark:text-gray-400 uppercase">Total Poin</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {{-- Recent Races --}}
+                                        @if($recentRaces->count() > 0)
+                                        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow border dark:border-gray-600">
+                                            <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-3">5 Balapan Terakhir</h4>
+                                            <div class="space-y-2">
+                                                @foreach($recentRaces as $race)
+                                                <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-600 rounded">
+                                                    <div class="flex items-center space-x-2">
+                                                        @if($race->result_position == 1)
+                                                            <div class="w-6 h-6 rounded-full bg-yellow-400 flex items-center justify-center text-xs font-bold text-yellow-900">1</div>
+                                                        @elseif($race->result_position == 2)
+                                                            <div class="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center text-xs font-bold text-gray-800">2</div>
+                                                        @elseif($race->result_position == 3)
+                                                            <div class="w-6 h-6 rounded-full bg-amber-600 flex items-center justify-center text-xs font-bold text-white">3</div>
+                                                        @else
+                                                            <div class="w-6 h-6 rounded-full bg-gray-400 flex items-center justify-center text-xs font-bold text-white">{{ $race->result_position }}</div>
+                                                        @endif
+                                                        <div>
+                                                            <p class="text-xs font-medium text-gray-900 dark:text-white truncate" style="max-width: 150px;">{{ $race->event->event_name ?? 'N/A' }}</p>
+                                                            <p class="text-xs text-gray-500 dark:text-gray-400">{{ $race->event ? \Carbon\Carbon::parse($race->event->event_date)->format('d M Y') : 'N/A' }}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-right">
+                                                        <p class="text-sm font-bold text-green-600 dark:text-green-400">{{ $race->points_earned }}</p>
+                                                        <p class="text-xs text-gray-500 dark:text-gray-400">poin</p>
+                                                    </div>
+                                                </div>
+                                                @endforeach
+                                            </div>
+                                            <a href="{{ route('racers.history.show', Auth::id()) }}" class="block mt-3 text-center text-sm font-semibold text-primary-600 dark:text-primary-400 hover:underline">
+                                                Lihat Riwayat Lengkap →
+                                            </a>
+                                        </div>
+                                        @else
+                                        <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow border dark:border-gray-600 text-center">
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">Belum ada riwayat balapan</p>
+                                        </div>
+                                        @endif
+                                    </div>
                                 </div>
 
                                 {{-- Kolom Kanan: Event Mendatang --}}

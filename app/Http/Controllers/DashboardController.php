@@ -92,8 +92,27 @@ class DashboardController extends Controller
                 }
                 if($data['hasActiveKis']) {
                     $data['upcomingEvents'] = Event::where('is_published', true)->where('event_date', '>=', now()->toDateString())->with('proposingClub')->orderBy('event_date', 'asc')->take(5)->get();
+                    
+                    // Ambil riwayat balapan terakhir untuk ditampilkan di dashboard
+                    $data['recentRaces'] = $user->eventRegistrations()
+                        ->whereNotNull('result_position')
+                        ->with('event')
+                        ->orderBy('created_at', 'desc')
+                        ->limit(5)
+                        ->get();
+                    
+                    // Statistik pembalap
+                    $data['totalRaces'] = $user->eventRegistrations()->whereNotNull('result_position')->count();
+                    $data['totalWins'] = $user->eventRegistrations()->where('result_position', 1)->count();
+                    $data['totalPodiums'] = $user->eventRegistrations()->whereIn('result_position', [1, 2, 3])->count();
+                    $data['totalPoints'] = $user->eventRegistrations()->sum('points_earned');
                 } else {
                      $data['upcomingEvents'] = collect();
+                     $data['recentRaces'] = collect();
+                     $data['totalRaces'] = 0;
+                     $data['totalWins'] = 0;
+                     $data['totalPodiums'] = 0;
+                     $data['totalPoints'] = 0;
                 }
                 
                 return view('dashboard-pembalap', $data);

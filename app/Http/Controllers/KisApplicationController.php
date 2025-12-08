@@ -62,7 +62,17 @@ class KisApplicationController extends Controller
             'club_id' => ['required', 'integer', 'exists:clubs,id'],
             'tempat_lahir' => ['required', 'string', 'max:255'],
             'tanggal_lahir' => ['required', 'date'],
-            'no_ktp_sim' => ['required', 'string', 'max:30'], // NIK (KTP atau KK)
+            'no_ktp_sim' => [
+                'required',
+                'string',
+                'max:30', // NIK (KTP atau KK) - validasi tambahan di closure
+                function ($attribute, $value, $fail) {
+                    // Jika pengguna memasukkan hanya digit, anggap itu NIK dan wajib 16 digit
+                    if (preg_match('/^\d+$/', $value) && strlen($value) !== 16) {
+                        $fail('Jika memasukkan NIK (angka saja), maka harus berjumlah 16 digit.');
+                    }
+                }
+            ], // NIK (KTP atau KK)
             'golongan_darah' => ['required', Rule::in(['A', 'B', 'AB', 'O', '-'])],
             'phone_number' => ['required', 'string', 'max:20'],
             'address' => ['required', 'string', 'max:1000'],

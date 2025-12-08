@@ -13,6 +13,7 @@ use App\Http\Controllers\KisApplicationController;
 use App\Http\Controllers\LeaderboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PublicIuranController;
+use App\Http\Controllers\RacerHistoryController;
 use App\Http\Controllers\SuperAdmin\LogController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Penyelenggara\DashboardController as PenyelenggaraDashboardController;
@@ -69,6 +70,12 @@ Route::middleware('auth')->group(function () {
         ->name('events.payment');
     Route::patch('/registrations/{registration}/payment', [EventRegistrationController::class, 'storePayment'])
         ->name('events.payment.store');
+
+    // Route History Pembalap (accessible by all authenticated users)
+    Route::get('/racers/history', [RacerHistoryController::class, 'index'])
+        ->name('racers.history.index');
+    Route::get('/racers/{user}/history', [RacerHistoryController::class, 'show'])
+        ->name('racers.history.show');
 
     // Route Pengurus IMI
     Route::middleware('role:pengurus_imi')->prefix('admin')->name('admin.')->group(function () {

@@ -191,6 +191,14 @@
                         </svg>
                         Kalender Event
                     </a>
+                    <a href="{{ route('racers.history.index') }}"
+                        class="flex items-center px-4 py-2.5 text-base font-medium text-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-300 {{ request()->routeIs('racers.history.*') ? 'bg-gray-100 dark:bg-gray-700' : '' }}">
+                        <svg class="w-5 h-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        History Pembalap
+                    </a>
                 @endif
 
                 <div class="h-px bg-gray-200 dark:bg-gray-700 my-2"></div>

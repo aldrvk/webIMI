@@ -99,9 +99,10 @@
 
                         <div>
                             <label for="no_ktp_sim" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">No. Identitas (KTP/SIM/KIA/NIK) (Wajib)</label>
-                            <input type="text" id="no_ktp_sim" name="no_ktp_sim" value="{{ old('no_ktp_sim') }}" required
+                            <input type="text" id="no_ktp_sim" name="no_ktp_sim" value="{{ old('no_ktp_sim') }}" required maxlength="30" inputmode="numeric"
                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                                   placeholder="16 digit NIK atau nomor SIM">
+                                   placeholder="Masukkan 16 digit NIK atau nomor SIM/KIA">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Jika memasukkan NIK (angka saja), masukkan tepat 16 digit.</p>
                             @error('no_ktp_sim') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
 
