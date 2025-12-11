@@ -85,6 +85,8 @@
                         <div>
                             <label for="tempat_lahir" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tempat Lahir (Wajib)</label>
                             <input type="text" id="tempat_lahir" name="tempat_lahir" value="{{ old('tempat_lahir') }}" required
+                                   pattern="[a-zA-Z\s]+"
+                                   title="Hanya huruf dan spasi yang diperbolehkan"
                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                                    placeholder="Contoh: Medan">
                             @error('tempat_lahir') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
@@ -93,16 +95,20 @@
                         <div>
                             <label for="tanggal_lahir" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Lahir (Wajib)</label>
                             <input type="date" id="tanggal_lahir" name="tanggal_lahir" x-model="tanggalLahir" @change="calculateAge()" required
+                                   max="{{ date('Y-m-d') }}"
+                                   min="1900-01-01"
                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
                             @error('tanggal_lahir') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
 
                         <div>
                             <label for="no_ktp_sim" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">No. Identitas (KTP/SIM/KIA/NIK) (Wajib)</label>
-                            <input type="text" id="no_ktp_sim" name="no_ktp_sim" value="{{ old('no_ktp_sim') }}" required maxlength="30" inputmode="numeric"
-                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                                   placeholder="Masukkan 16 digit NIK atau nomor SIM/KIA">
-                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Jika memasukkan NIK (angka saja), masukkan tepat 16 digit.</p>
+                            <input type="text" id="no_ktp_sim" name="no_ktp_sim" value="{{ old('no_ktp_sim') }}" required maxlength="30"
+                                   pattern="(\d{16}|[A-Z0-9]{6,20})"
+                                   title="NIK: 16 digit angka, atau SIM/KIA: 6-20 karakter alfanumerik (huruf kapital)"
+                                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white uppercase"
+                                   placeholder="Contoh: 1234567890123456">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">NIK: tepat 16 digit angka. SIM/KIA: 6-20 karakter huruf kapital & angka.</p>
                             @error('no_ktp_sim') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
 
@@ -135,16 +141,22 @@
                         <div class="md:col-span-2">
                             <label for="phone_number" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nomor Telepon (WhatsApp) (Wajib)</label>
                             <input type="tel" id="phone_number" name="phone_number" value="{{ old('phone_number') }}" required
+                                   pattern="(\+62|62|0)[0-9]{9,12}"
+                                   title="Format: 08XX, +628XX, atau 628XX (10-13 digit total)"
                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                                   placeholder="0812...">
+                                   placeholder="08123456789">
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Format: 08XX atau +628XX atau 628XX (10-13 digit)</p>
                             @error('phone_number') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
                         
                         <div class="md:col-span-2">
                             <label for="address" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alamat Lengkap (Sesuai KTP/Domisili) (Wajib)</label>
                             <textarea id="address" name="address" rows="3" required
+                                      minlength="10"
+                                      maxlength="500"
                                       class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-                                      placeholder="Jalan ... No. ...">{{ old('address') }}</textarea>
+                                      placeholder="Jalan ... No. ... (minimal 10 karakter)">{{ old('address') }}</textarea>
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Minimal 10 karakter, maksimal 500 karakter</p>
                             @error('address') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
                     </div> 

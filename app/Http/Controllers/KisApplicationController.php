@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 use Carbon\Carbon; 
+use App\Http\Requests\StoreKisApplicationRequest;
 
 class KisApplicationController extends Controller
 {
@@ -46,63 +47,24 @@ class KisApplicationController extends Controller
     /**
      * Menyimpan pengajuan KIS baru.
      */
-    public function store(Request $request)
+    public function store(StoreKisApplicationRequest $request)
     {
-        // 1. Hitung Umur di Server (Logika Pusat)
-        $tanggalLahir = $request->input('tanggal_lahir');
-        $isUnder17 = false;
-        
-        if ($tanggalLahir) {
-            $age = Carbon::parse($tanggalLahir)->age;
-            $isUnder17 = $age < 17;
-        }
-
-        // 2. Validasi Input
-        $validatedData = $request->validate([
-            'club_id' => ['required', 'integer', 'exists:clubs,id'],
-            'tempat_lahir' => ['required', 'string', 'max:255'],
-            'tanggal_lahir' => ['required', 'date'],
-            'no_ktp_sim' => [
-                'required',
-                'string',
-                'max:30', // NIK (KTP atau KK) - validasi tambahan di closure
-                function ($attribute, $value, $fail) {
-                    // Jika pengguna memasukkan hanya digit, anggap itu NIK dan wajib 16 digit
-                    if (preg_match('/^\d+$/', $value) && strlen($value) !== 16) {
-                        $fail('Jika memasukkan NIK (angka saja), maka harus berjumlah 16 digit.');
-                    }
-                }
-            ], // NIK (KTP atau KK)
-            'golongan_darah' => ['required', Rule::in(['A', 'B', 'AB', 'O', '-'])],
-            'phone_number' => ['required', 'string', 'max:20'],
-            'address' => ['required', 'string', 'max:1000'],
-            'kis_category_id' => ['required', 'integer', 'exists:kis_categories,id'],
-            
-            'file_surat_sehat' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_bukti_bayar' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            'file_pas_foto' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
-            
-            // Validasi Kondisional
-            'file_ktp' => [
-                $isUnder17 ? 'nullable' : 'required', 
-                'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'
-            ],
-            'file_surat_izin_ortu' => [
-                $isUnder17 ? 'required' : 'nullable', 
-                'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'
-            ],
-            'file_kk' => [
-                $isUnder17 ? 'required' : 'nullable', 
-                'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'
-            ],
-            
-            'persetujuan' => ['required', 'accepted'],
-        ]);
-
-        $userId = Auth::id();
-        $all_paths = [];
-
         try {
+            // Data sudah tervalidasi dari StoreKisApplicationRequest
+            $validated = $request->validated();
+
+            // 1. Hitung Umur di Server (Logika Pusat)
+            $tanggalLahir = $validated['tanggal_lahir'];
+            $isUnder17 = false;
+            
+            if ($tanggalLahir) {
+                $age = Carbon::parse($tanggalLahir)->age;
+                $isUnder17 = $age < 17;
+            }
+
+            $userId = Auth::id();
+            $all_paths = [];
+
             // Upload File Umum
             $path_surat_sehat = $request->file('file_surat_sehat')->store('kis_documents/surat_sehat', 'public');
             $all_paths[] = $path_surat_sehat;
@@ -137,15 +99,15 @@ class KisApplicationController extends Controller
                 'CALL Proc_ApplyForKIS(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', 
                 [
                     $userId, 
-                    $validatedData['club_id'], 
-                    $validatedData['tempat_lahir'], 
-                    $validatedData['tanggal_lahir'],
-                    $validatedData['no_ktp_sim'], 
-                    $validatedData['golongan_darah'], 
-                    $validatedData['phone_number'], 
-                    $validatedData['address'], 
+                    $validated['club_id'], 
+                    $validated['tempat_lahir'], 
+                    $validated['tanggal_lahir'],
+                    $validated['no_ktp_sim'], 
+                    $validated['golongan_darah'], 
+                    $validated['phone_number'], 
+                    $validated['address'], 
                     
-                    $validatedData['kis_category_id'], 
+                    $validated['kis_category_id'], 
                     $path_surat_sehat, 
                     $path_bukti_bayar, 
                     $path_pas_foto, 
