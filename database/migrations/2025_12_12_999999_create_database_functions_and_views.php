@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-// TAMBAHKAN NAMA CLASS INI (sesuai dengan nama file)
-class CreateDatabaseFunctionsAndViews extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -51,12 +50,5 @@ class CreateDatabaseFunctionsAndViews extends Migration
         DB::unprepared('DROP VIEW IF EXISTS `View_Finished_Events`');
         DB::unprepared('DROP VIEW IF EXISTS `View_Detailed_Event_Results`');
         DB::unprepared('DROP VIEW IF EXISTS `View_Dashboard_KPIs`');
-        
-        // DROP NEW VIEWS
-        DB::unprepared('DROP VIEW IF EXISTS View_Revenue_Breakdown_YTD');
-        DB::unprepared('DROP VIEW IF EXISTS View_Operational_Alerts');
-        DB::unprepared('DROP VIEW IF EXISTS View_Top_Clubs_Performance');
-        DB::unprepared('DROP VIEW IF EXISTS View_Event_Revenue_Ranking');
-        DB::unprepared('DROP FUNCTION IF EXISTS Func_Get_Event_Status');
     }
-}
+};

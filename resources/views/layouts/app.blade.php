@@ -23,12 +23,9 @@
                 @include('layouts.sidebar') 
             @endauth
 
-            <!-- {{-- 2. INCLUDE NAVBAR ATAS (NAVIGASI DENGAN MARGIN KIRI) --}}
-            @include('layouts.navigation') -->
-
             {{-- 3. HEADER - Diberi margin-left di Desktop (md:ml-64) --}}
             @if (isset($header))
-                <header class="bg-white dark:bg-gray-800 shadow {{ Auth::check() ? 'md:ml-64' : '' }}">
+                <header class="bg-white dark:bg-gray-800 shadow {{ Auth::check() ? 'md:ml-64 mt-16' : '' }}">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>

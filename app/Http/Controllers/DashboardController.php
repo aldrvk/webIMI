@@ -21,8 +21,7 @@ class DashboardController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $data = []; 
-        $data['user'] = $user;
+        $data = ['user' => $user];
 
         switch ($user->role) {
 
@@ -49,14 +48,33 @@ class DashboardController extends Controller
                 $data['kpi_event_selesai'] = $kpis->total_event_selesai;
                 $data['kpi_kis_pending'] = $kpis->total_kis_pending;
                 
-                // 2. Data untuk Tabel Pie Chart: Kirim koleksi mentah
+                // 2. NEW: Revenue Breakdown YTD
+                $revenue = DB::table('View_Revenue_Breakdown_YTD')->first();
+                $data['revenue_iuran'] = $revenue->revenue_iuran;
+                $data['revenue_kis'] = $revenue->revenue_kis;
+                $data['revenue_event'] = $revenue->revenue_event;
+                $data['total_revenue_ytd'] = $revenue->total_revenue_ytd;
+                
+                // 3. NEW: Operational Alerts
+                $alerts = DB::table('View_Operational_Alerts')->first();
+                $data['kis_belum_diperbaharui'] = $alerts->kis_belum_diperbaharui;
+                $data['klub_belum_bayar_iuran'] = $alerts->klub_belum_bayar_iuran;
+                $data['event_low_registration'] = $alerts->event_low_registration;
+                
+                // 4. NEW: Top 3 Clubs Performance
+                $data['top_clubs'] = DB::table('View_Top_Clubs_Performance')->get();
+                
+                // 5. NEW: Event Revenue Ranking (Top 5)
+                $data['top_events_revenue'] = DB::table('View_Event_Revenue_Ranking')->limit(5)->get();
+                
+                // 6. Data untuk Tabel Pie Chart: Kirim koleksi mentah
                 $data['pieChartData'] = KisLicense::join('kis_categories', 'kis_licenses.kis_category_id', '=', 'kis_categories.id')
                             ->where('expiry_date', '>=', now()->toDateString()) 
                             ->select('kis_categories.nama_kategori', DB::raw('count(kis_licenses.id) as total'))
                             ->groupBy('kis_categories.nama_kategori')
                             ->get();
 
-                // 3. Data untuk Tabel Line Chart: Kirim koleksi mentah
+                // 7. Data untuk Tabel Line Chart: Kirim koleksi mentah
                 $data['lineChartData'] = KisApplication::where('status', 'Approved')
                             ->where('approved_at', '>=', now()->subYear())
                             ->select(DB::raw('DATE_FORMAT(approved_at, "%Y-%m") as bulan'), DB::raw('count(id) as total'))
@@ -64,13 +82,13 @@ class DashboardController extends Controller
                             ->orderBy('bulan', 'asc')
                             ->get();
                 
-                // 4. Data untuk Tabel Klasemen 
+                // 8. Data untuk Tabel Klasemen 
                 $data['overallLeaderboard'] = DB::table('View_Leaderboard')
                                                 ->orderBy('total_poin', 'desc')
                                                 ->take(10)
                                                 ->get();
                 
-                // 5. Ambil data Kategori untuk dropdown
+                // 9. Ambil data Kategori untuk dropdown
                 $data['categories'] = KisCategory::orderBy('tipe')->orderBy('nama_kategori')->get();
 
                 return view('dashboard-pimpinan', $data);

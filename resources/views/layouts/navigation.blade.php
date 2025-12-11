@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="sticky z-50 bg-primary-950 border-gray-200 dark:bg-gray-900 shadow-sm w-full top-0 left-0">
+<nav x-data="{ open: false }" class="fixed top-0 z-50 bg-primary-950 border-gray-200 dark:bg-gray-900 shadow-sm w-full left-0">
     {{-- Blok PHP untuk Cek Status KIS (Hanya untuk Pembalap) --}}
     @php
         $user = Auth::user(); 

@@ -1,156 +1,424 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard Eksekutif') }}
-        </h2>
+        <div class="flex justify-between items-center">
+            <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
+                {{ __('Dashboard Eksekutif IMI Sumut') }}
+            </h2>
+        </div>
     </x-slot>
 
     <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
             
-            {{-- 1. KARTU STATISTIK (KPI) --}}
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-                <div class="p-6 bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
-                    <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">Pembalap Aktif</h4>
-                    <p class="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">{{ $kpi_pembalap_aktif }}</p>
-                </div>
-                <div class="p-6 bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
-                    <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">Total Klub</h4>
-                    <p class="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">{{ $kpi_klub_total }}</p>
-                </div>
-                <div class="p-6 bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg">
-                    <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">Event Selesai (Tahun Ini)</h4>
-                    <p class="mt-1 text-3xl font-semibold text-gray-900 dark:text-white">{{ $kpi_event_selesai }}</p>
-                </div>
-                <div class="p-6 bg-yellow-50 dark:bg-gray-800 shadow-sm sm:rounded-lg border border-yellow-300 dark:border-yellow-600">
-                    <h4 class="text-sm font-medium text-yellow-600 dark:text-yellow-400 uppercase">Pengajuan KIS Pending</h4>
-                    <p class="mt-1 text-3xl font-semibold text-yellow-800 dark:text-yellow-200">{{ $kpi_kis_pending }}</p>
+            {{-- ========================================
+                 SECTION 1: EXECUTIVE SUMMARY CARD
+                 ======================================== --}}
+            <div class="bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-800 dark:to-blue-950 overflow-hidden shadow-lg sm:rounded-lg">
+                <div class="p-6 text-white">
+                    <div class="flex items-start">
+                        <svg class="w-8 h-8 mr-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <div class="flex-1">
+                            <h3 class="text-lg font-bold mb-2">Ringkasan Eksekutif</h3>
+                            <p class="text-sm leading-relaxed">
+                                Per <strong>{{ now()->translatedFormat('d F Y') }}</strong>, IMI Sumut memiliki 
+                                <strong>{{ $kpi_pembalap_aktif }} pembalap aktif</strong> dari 
+                                <strong>{{ $kpi_klub_total }} klub</strong>. 
+                                Total revenue YTD: <strong>Rp {{ number_format($total_revenue_ytd, 0, ',', '.') }}</strong>.
+                                Terdapat <strong class="text-yellow-300">{{ $kpi_kis_pending }} pengajuan KIS pending</strong> yang perlu diproses.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {{-- 2. GRID UNTUK TABEL DATA --}}
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-                {{-- KOLOM KIRI: LAPORAN (Lebar 2/3) --}}
-                <div class="lg:col-span-2 space-y-6">
-                    
-                    {{-- =============================================== --}}
-                    {{-- ==     AWAL PENGGANTI "LINE CHART" (TABEL)     == --}}
-                    {{-- =============================================== --}}
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Pendaftaran KIS Baru (12 Bulan Terakhir)</h3>
-                            <div class="relative overflow-x-auto shadow-md sm:rounded-lg max-h-96">
-                                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
-                                        <tr>
-                                            <th scope="col" class="px-6 py-3">Bulan</th>
-                                            <th scope="col" class="px-6 py-3 text-right">Total Pendaftar</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse ($lineChartData as $row)
-                                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                    {{ \Carbon\Carbon::parse($row->bulan . '-01')->translatedFormat('F Y') }}
-                                                </th>
-                                                <td class="px-6 py-4 text-right font-bold">{{ $row->total }}</td>
-                                            </tr>
-                                        @empty
-                                            <tr class="bg-white border-b dark:bg-gray-800">
-                                                <td colspan="2" class="px-6 py-4 text-center">Data tidak ditemukan.</td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
+            {{-- ========================================
+                 SECTION 2: KPI CARDS (5 Cards)
+                 ======================================== --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                {{-- KPI 1: Pembalap Aktif --}}
+                <div class="p-6 bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-l-4 border-blue-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">Pembalap Aktif</h4>
+                            <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ $kpi_pembalap_aktif }}</p>
                         </div>
+                        <svg class="w-12 h-12 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
                     </div>
-
-                    {{-- =============================================== --}}
-                    {{-- ==      AWAL PENGGANTI "PIE CHART" (TABEL)     == --}}
-                    {{-- =============================================== --}}
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6">
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Distribusi Pembalap per Kategori</h3>
-                             <div class="relative overflow-x-auto shadow-md sm:rounded-lg max-h-96">
-                                <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
-                                        <tr>
-                                            <th scope="col" class="px-6 py-3">Kategori</th>
-                                            <th scope="col" class="px-6 py-3 text-right">Total Pembalap Aktif</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @forelse ($pieChartData as $row)
-                                            <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                                    {{ $row->nama_kategori }}
-                                                </th>
-                                                <td class="px-6 py-4 text-right font-bold">{{ $row->total }}</td>
-                                            </tr>
-                                        @empty
-                                             <tr class="bg-white border-b dark:bg-gray-800">
-                                                <td colspan="2" class="px-6 py-4 text-center">Data tidak ditemukan.</td>
-                                            </tr>
-                                        @endforelse
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
 
-                {{-- KOLOM KANAN: KLASMEN (Lebar 1/3) --}}
-                <div class="lg:col-span-1">
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
-                        <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Klasemen Poin Tertinggi</h3>
-                        
-                        <div class="mb-4">
-                            <label for="category_filter" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Filter Peringkat per Kategori:</label>
-                            <select id="category_filter" onchange="if(this.value) window.location.href='/leaderboard/' + this.value"
-                                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                                <option value="">Pilih Kategori...</option>
-                                @foreach ($categories as $category)
-                                    <option value="{{ $category->id }}">{{ $category->nama_kategori }} ({{ $category->kode_kategori }})</option>
-                                @endforeach
-                            </select>
+                {{-- KPI 2: Total Klub --}}
+                <div class="p-6 bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-l-4 border-green-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">Total Klub</h4>
+                            <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ $kpi_klub_total }}</p>
                         </div>
-                        
-                        <h4 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">Klasemen Umum (10 Besar)</h4>
-                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-4">Diambil dari `View_Leaderboard`.</p>
+                        <svg class="w-12 h-12 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                        </svg>
+                    </div>
+                </div>
 
-                        <div class="flow-root">
-                            <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
-                                @forelse ($overallLeaderboard as $result)
-                                    <li class="py-3 sm:py-4">
-                                        <div class="flex items-center space-x-4">
-                                            <div class="flex-shrink-0">
-                                                <span class="flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-bold text-xs">
-                                                    {{ $loop->iteration }}
-                                                </span>
-                                            </div>
-                                            <div class="flex-1 min-w-0">
-                                                <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                                                    {{ $result->nama_pembalap }}
-                                                </p>
-                                                <p class="text-sm text-gray-500 truncate dark:text-gray-400">
-                                                    {{ $result->kategori }}
-                                                </p>
-                                            </div>
-                                            <div class="inline-flex items-center text-base font-semibold text-primary-600 dark:text-primary-400">
-                                                {{ $result->total_poin }}
-                                            </div>
-                                        </div>
-                                    </li>
-                                @empty
-                                    <li class="py-3 sm:py-4">
-                                        <p class="text-center text-sm text-gray-500 dark:text-gray-400">Belum ada poin tercatat.</p>
-                                    </li>
-                                @endforelse
-                            </ul>
+                {{-- KPI 3: Event Selesai --}}
+                <div class="p-6 bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-l-4 border-purple-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">Event Selesai (2025)</h4>
+                            <p class="mt-2 text-3xl font-bold text-gray-900 dark:text-white">{{ $kpi_event_selesai }}</p>
                         </div>
+                        <svg class="w-12 h-12 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+                        </svg>
+                    </div>
+                </div>
+
+                {{-- KPI 4: Revenue YTD --}}
+                <div class="p-6 bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-l-4 border-yellow-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">Revenue YTD</h4>
+                            <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">Rp {{ number_format($total_revenue_ytd / 1000000, 1) }}jt</p>
+                        </div>
+                        <svg class="w-12 h-12 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                </div>
+
+                {{-- KPI 5: KIS Pending --}}
+                <div class="p-6 bg-yellow-50 dark:bg-gray-800 shadow-sm sm:rounded-lg border-l-4 border-red-500">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-sm font-medium text-red-600 dark:text-red-400 uppercase">KIS Pending</h4>
+                            <p class="mt-2 text-3xl font-bold text-red-800 dark:text-red-200">{{ $kpi_kis_pending }}</p>
+                        </div>
+                        <svg class="w-12 h-12 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            {{-- ========================================
+                 SECTION 3: ALERTS & FINANCIAL
+                 ======================================== --}}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                {{-- OPERATIONAL ALERTS --}}
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <svg class="w-6 h-6 mr-2 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Perhatian Operasional</h3>
+                        </div>
+                        <ul class="space-y-3">
+                            <li class="flex items-start p-3 bg-red-50 dark:bg-gray-700 rounded-lg">
+                                <svg class="w-5 h-5 mr-2 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                        <strong>{{ $kis_belum_diperbaharui }}</strong> KIS belum diperbaharui sejak tahun lalu
+                                    </p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Pembalap dengan KIS expired & belum daftar ulang tahun ini</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start p-3 bg-orange-50 dark:bg-gray-700 rounded-lg">
+                                <svg class="w-5 h-5 mr-2 text-orange-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                        <strong>{{ $klub_belum_bayar_iuran }}</strong> Klub belum bayar iuran tahun ini
+                                    </p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Tenggat: 31 Desember {{ now()->year }}</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start p-3 bg-yellow-50 dark:bg-gray-700 rounded-lg">
+                                <svg class="w-5 h-5 mr-2 text-yellow-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                                </svg>
+                                <div>
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                        <strong>{{ $event_low_registration }}</strong> Event dengan peserta < 10 orang
+                                    </p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Event yang akan datang dengan registrasi rendah</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                {{-- FINANCIAL OVERVIEW --}}
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <svg class="w-6 h-6 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Ringkasan Keuangan YTD</h3>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center p-3 bg-blue-50 dark:bg-gray-700 rounded-lg">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Iuran Klub</span>
+                                <span class="text-lg font-bold text-blue-700 dark:text-blue-300">Rp {{ number_format($revenue_iuran, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-green-50 dark:bg-gray-700 rounded-lg">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Pendaftaran KIS</span>
+                                <span class="text-lg font-bold text-green-700 dark:text-green-300">Rp {{ number_format($revenue_kis, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between items-center p-3 bg-purple-50 dark:bg-gray-700 rounded-lg">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Biaya Event</span>
+                                <span class="text-lg font-bold text-purple-700 dark:text-purple-300">Rp {{ number_format($revenue_event, 0, ',', '.') }}</span>
+                            </div>
+                            <div class="flex justify-between items-center p-4 bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-gray-700 dark:to-gray-600 rounded-lg border-2 border-yellow-400 dark:border-yellow-600">
+                                <span class="text-base font-bold text-gray-900 dark:text-white">TOTAL REVENUE</span>
+                                <span class="text-2xl font-extrabold text-yellow-800 dark:text-yellow-200">Rp {{ number_format($total_revenue_ytd, 0, ',', '.') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- ========================================
+                 SECTION 4: TOP CLUBS & EVENT REVENUE
+                 ======================================== --}}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                {{-- TOP 3 CLUBS --}}
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <svg class="w-6 h-6 mr-2 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Top 3 Klub Terbaik</h3>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Berdasarkan: Anggota Aktif × 10 + Event × 50 + Iuran Lunas × 100</p>
+                        <div class="space-y-3">
+                            @forelse ($top_clubs as $index => $club)
+                                <div class="flex items-center p-4 rounded-lg {{ $index === 0 ? 'bg-yellow-50 dark:bg-gray-700 border-2 border-yellow-400' : 'bg-gray-50 dark:bg-gray-700' }}">
+                                    <div class="flex-shrink-0">
+                                        <span class="flex items-center justify-center h-10 w-10 rounded-full {{ $index === 0 ? 'bg-yellow-400 text-yellow-900' : ($index === 1 ? 'bg-gray-300 text-gray-700' : 'bg-orange-300 text-orange-900') }} font-bold">
+                                            {{ $index + 1 }}
+                                        </span>
+                                    </div>
+                                    <div class="ml-4 flex-1">
+                                        <p class="text-sm font-bold text-gray-900 dark:text-white">{{ $club->nama_klub }}</p>
+                                        <div class="flex items-center mt-1 space-x-4 text-xs text-gray-500 dark:text-gray-400">
+                                            <span>{{ $club->total_anggota_aktif }} anggota</span>
+                                            <span>{{ $club->total_event_tahun_ini }} event</span>
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium {{ $club->status_iuran === 'Lunas' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' }}">
+                                                {{ $club->status_iuran }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="text-lg font-bold text-gray-900 dark:text-white">{{ $club->score_klub }}</p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">poin</p>
+                                    </div>
+                                </div>
+                            @empty
+                                <p class="text-center text-sm text-gray-500 dark:text-gray-400">Data klub tidak tersedia.</p>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+
+                {{-- TOP EVENT BY REVENUE --}}
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <div class="flex items-center mb-4">
+                            <svg class="w-6 h-6 mr-2 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Top 5 Event by Revenue</h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                    <tr>
+                                        <th scope="col" class="px-4 py-3">Event</th>
+                                        <th scope="col" class="px-4 py-3 text-center">Status</th>
+                                        <th scope="col" class="px-4 py-3 text-center">Peserta</th>
+                                        <th scope="col" class="px-4 py-3 text-right">Revenue</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($top_events_revenue as $event)
+                                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                            <td class="px-4 py-3 font-medium text-gray-900 dark:text-white">
+                                                {{ $event->event_name }}
+                                                <br>
+                                                <span class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($event->event_date)->translatedFormat('d M Y') }}</span>
+                                            </td>
+                                            <td class="px-4 py-3 text-center">
+                                                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium 
+                                                    {{ $event->status_event === 'Selesai' ? 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300' : 
+                                                       ($event->status_event === 'Sedang Berjalan' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 
+                                                       'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200') }}">
+                                                    {{ $event->status_event }}
+                                                </span>
+                                            </td>
+                                            <td class="px-4 py-3 text-center font-bold">{{ $event->total_registrants }}</td>
+                                            <td class="px-4 py-3 text-right font-bold text-green-600 dark:text-green-400">
+                                                Rp {{ number_format($event->total_revenue, 0, ',', '.') }}
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr class="bg-white dark:bg-gray-800">
+                                            <td colspan="4" class="px-4 py-3 text-center">Belum ada event tahun ini.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- ========================================
+                 SECTION 5: DATA TABEL (LINE & PIE)
+                 ======================================== --}}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                {{-- LINE CHART TABLE --}}
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Pendaftaran KIS Baru (12 Bulan Terakhir)</h3>
+                        <div class="relative overflow-x-auto shadow-md sm:rounded-lg max-h-96">
+                            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3">Bulan</th>
+                                        <th scope="col" class="px-6 py-3 text-right">Total Pendaftar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($lineChartData as $row)
+                                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                {{ \Carbon\Carbon::parse($row->bulan . '-01')->translatedFormat('F Y') }}
+                                            </th>
+                                            <td class="px-6 py-4 text-right font-bold">{{ $row->total }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr class="bg-white border-b dark:bg-gray-800">
+                                            <td colspan="2" class="px-6 py-4 text-center">Data tidak ditemukan.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- PIE CHART TABLE --}}
+                <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Distribusi Pembalap per Kategori</h3>
+                         <div class="relative overflow-x-auto shadow-md sm:rounded-lg max-h-96">
+                            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 sticky top-0">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3">Kategori</th>
+                                        <th scope="col" class="px-6 py-3 text-right">Total Pembalap Aktif</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse ($pieChartData as $row)
+                                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                {{ $row->nama_kategori }}
+                                            </th>
+                                            <td class="px-6 py-4 text-right font-bold">{{ $row->total }}</td>
+                                        </tr>
+                                    @empty
+                                         <tr class="bg-white border-b dark:bg-gray-800">
+                                            <td colspan="2" class="px-6 py-4 text-center">Data tidak ditemukan.</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{-- ========================================
+                 SECTION 6: KLASEMEN POIN
+                 ======================================== --}}
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Klasemen Poin Tertinggi</h3>
+                    
+                    <div class="mb-4">
+                        <label for="category_filter" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Filter Peringkat per Kategori:</label>
+                        <select id="category_filter" onchange="if(this.value) window.location.href='/leaderboard/' + this.value"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
+                            <option value="">Pilih Kategori...</option>
+                            @foreach ($categories as $category)
+                                <option value="{{ $category->id }}">{{ $category->nama_kategori }} ({{ $category->kode_kategori }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    
+                    <h4 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">Klasemen Umum (10 Besar)</h4>
+
+                    <div class="flow-root">
+                        <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
+                            @forelse ($overallLeaderboard as $result)
+                                <li class="py-3 sm:py-4">
+                                    <div class="flex items-center space-x-4">
+                                        <div class="flex-shrink-0">
+                                            <span class="flex items-center justify-center h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-bold text-xs">
+                                                {{ $loop->iteration }}
+                                            </span>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
+                                                {{ $result->nama_pembalap }}
+                                            </p>
+                                            <p class="text-sm text-gray-500 truncate dark:text-gray-400">
+                                                {{ $result->kategori }}
+                                            </p>
+                                        </div>
+                                        <div class="inline-flex items-center text-base font-semibold text-primary-600 dark:text-primary-400">
+                                            {{ $result->total_poin }}
+                                        </div>
+                                    </div>
+                                </li>
+                            @empty
+                                <li class="py-3 sm:py-4">
+                                    <p class="text-center text-sm text-gray-500 dark:text-gray-400">Belum ada poin tercatat.</p>
+                                </li>
+                            @endforelse
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            {{-- ========================================
+                 REMINDER: DATA SEEDER 2024
+                 ======================================== --}}
+            <div class="bg-yellow-50 dark:bg-gray-800 border-l-4 border-yellow-400 p-4 rounded-lg">
+                <div class="flex">
+                    <svg class="w-5 h-5 text-yellow-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                    <div>
+                        <p class="text-sm font-medium text-yellow-800 dark:text-yellow-300">
+                            <strong>Reminder:</strong> Untuk menampilkan perbandingan Year-over-Year (2024 vs 2025), silakan buat data seeder untuk tahun 2024.
+                        </p>
+                        <p class="text-xs text-yellow-700 dark:text-yellow-400 mt-1">
+                            Fitur YoY Comparison akan aktif setelah data historis tersedia.
+                        </p>
                     </div>
                 </div>
             </div>
