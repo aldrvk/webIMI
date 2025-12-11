@@ -48,34 +48,26 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/kis/apply', [KisApplicationController::class, 'create'])->name('kis.apply');
     Route::post('/kis/apply', [KisApplicationController::class, 'store'])->name('kis.store');
-    Route::get('/events', [EventControllerPembalap::class, 'index'])
-        ->middleware('kis.active')
-        ->name('events.index');
-    Route::get('/leaderboard', [LeaderboardController::class, 'index'])
-        ->middleware('kis.active')
-        ->name('leaderboard.index');
-    Route::get('/leaderboard/{category}', [LeaderboardController::class, 'show'])
-        ->middleware('kis.active')
-        ->name('leaderboard.show');
-    Route::get('/events/{event}', [EventControllerPembalap::class, 'show'])
-        ->middleware('kis.active')
-        ->name('events.show');
-    Route::post('/events/{event}/register', [EventRegistrationController::class, 'store'])
-        ->name('events.register')
-        ->middleware('kis.active');
-    Route::get('/events/{event}/results', [EventControllerPembalap::class, 'results'])
-        ->middleware('kis.active')
-        ->name('events.results');
+    
+    // Protected routes - Requires Active KIS
+    Route::middleware('kis.active')->group(function () {
+        Route::get('/events', [EventControllerPembalap::class, 'index'])->name('events.index');
+        Route::get('/events/{event}', [EventControllerPembalap::class, 'show'])->name('events.show');
+        Route::post('/events/{event}/register', [EventRegistrationController::class, 'store'])->name('events.register');
+        Route::get('/events/{event}/results', [EventControllerPembalap::class, 'results'])->name('events.results');
+        
+        Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
+        Route::get('/leaderboard/{category}', [LeaderboardController::class, 'show'])->name('leaderboard.show');
+
+        // History Pembalap Routes - PROTECTED WITH KIS.ACTIVE
+        Route::get('/racers/history', [RacerHistoryController::class, 'index'])->name('racers.history.index');
+        Route::get('/racers/{user}/history', [RacerHistoryController::class, 'show'])->name('racers.history.show');
+    });
+
     Route::get('/registrations/{registration}/payment', [EventRegistrationController::class, 'showPayment'])
         ->name('events.payment');
     Route::patch('/registrations/{registration}/payment', [EventRegistrationController::class, 'storePayment'])
         ->name('events.payment.store');
-
-    // Route History Pembalap (accessible by all authenticated users)
-    Route::get('/racers/history', [RacerHistoryController::class, 'index'])
-        ->name('racers.history.index');
-    Route::get('/racers/{user}/history', [RacerHistoryController::class, 'show'])
-        ->name('racers.history.show');
 
     // Route Pengurus IMI
     Route::middleware('role:pengurus_imi')->prefix('admin')->name('admin.')->group(function () {
