@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Club;    
 use App\Models\ClubDues;  
 use Illuminate\Support\Facades\Storage; 
+use Illuminate\Support\Str;
 
 class PublicIuranController extends Controller
 {
@@ -17,9 +18,14 @@ class PublicIuranController extends Controller
         // 1. Ambil semua klub untuk ditampilkan di dropdown
         $clubs = Club::orderBy('nama_klub', 'asc')->get();
 
+        // Generate token unik untuk form ini
+        $formToken = Str::random(40);
+        session(['iuran_form_token' => $formToken]);
+
         // 2. Tampilkan view form publik
         return view('iuran.create', [
-            'clubs' => $clubs
+            'clubs' => $clubs,
+            'formToken' => $formToken
         ]);
     }
 
@@ -28,20 +34,30 @@ class PublicIuranController extends Controller
      */
     public function store(Request $request)
     {
-        // 1. Validasi Input (WAJIB)
+        // Validasi form token
+        if (!$request->session()->has('iuran_form_token') || 
+            $request->input('form_token') !== $request->session()->get('iuran_form_token')) {
+            return redirect()->route('iuran.create')
+                ->with('error', 'Sesi formulir tidak valid. Silakan isi formulir kembali.');
+        }
+
+        // Hapus token setelah digunakan
+        $request->session()->forget('iuran_form_token');
+
+        // Validasi Input
         $validatedData = $request->validate([
             'club_id' => 'required|integer|exists:clubs,id',
             'payment_year' => 'required|integer|digits:4|min:' . (now()->year - 1), 
             'payment_date' => 'required|date',
             'amount_paid' => 'required|numeric|min:0',
-            'payment_proof_url' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048', // "Nota"
+            'payment_proof_url' => 'required|file|mimes:pdf,jpg,jpeg,png|max:2048',
             'persetujuan' => 'required|accepted', 
         ]);
 
-        // 2. Upload File "Nota"
+        // Upload File
         $path_nota = $request->file('payment_proof_url')->store('iuran_bukti', 'public');
 
-        // 3. Simpan ke Database
+        // Simpan ke Database
         try {
             ClubDues::create([
                 'club_id' => $validatedData['club_id'],
@@ -52,14 +68,14 @@ class PublicIuranController extends Controller
                 'status' => 'Pending', 
             ]);
 
-            // 4. Redirect
-            return redirect()->route('login')->with('status', 'Bukti iuran Anda berhasil diunggah dan sedang menunggu persetujuan.');
+            return redirect()->route('login')
+                ->with('status', 'Bukti iuran Anda berhasil diunggah dan sedang menunggu persetujuan.');
 
         } catch (\Exception $e) {
-            // 5. Jika gagal, hapus file
             Storage::disk('public')->delete($path_nota);
             
-            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan. Gagal menyimpan data: ' . $e->getMessage());
+            return redirect()->back()->withInput()
+                ->with('error', 'Terjadi kesalahan. Gagal menyimpan data: ' . $e->getMessage());
         }
     }
 }

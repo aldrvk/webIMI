@@ -31,6 +31,11 @@ Route::get('/', function () {
 // --- RUTE PUBLIK IURAN KLUB (BARU) ---
 Route::get('/iuran/submit', [PublicIuranController::class, 'create'])->name('iuran.create');
 Route::post('/iuran/store', [PublicIuranController::class, 'store'])->name('iuran.store');
+
+// Redirect jika ada yang coba akses GET ke /iuran/store
+Route::get('/iuran/store', function () {
+    return redirect()->route('iuran.create')->with('warning', 'Silakan isi formulir terlebih dahulu.');
+});
 // --- AKHIR RUTE BARU ---
 
 /*
