@@ -123,13 +123,10 @@ class UserController extends Controller
         // Hanya validate role jika bukan pembalap
         if ($user->role !== 'pembalap') {
             $rules['role'] = 'required|in:super_admin,pengurus_imi,pimpinan_imi,penyelenggara_event';
+            $rules['club_id'] = 'nullable|required_if:role,penyelenggara_event|exists:clubs,id';
         }
         
         $validated = $request->validate($rules);
-        
-        // Pisahkan data password
-        $password = $validated['password'];
-        unset($validated['password']);
 
         // Update data utama
         $user->name = $validated['name'];
@@ -138,10 +135,18 @@ class UserController extends Controller
         // Hanya update role jika bukan pembalap
         if ($user->role !== 'pembalap' && isset($validated['role'])) {
             $user->role = $validated['role'];
+            
+            // Set club_id
+            if ($validated['role'] === 'penyelenggara_event') {
+                $user->club_id = $validated['club_id'];
+            } else {
+                $user->club_id = null;
+            }
         }
         
-        if (!empty($validated['password'])) {
-            $user->password = bcrypt($validated['password']);
+        // Update password jika diisi
+        if (!empty($request->password)) {
+            $user->password = Hash::make($request->password);
         }
         
         $user->save();
