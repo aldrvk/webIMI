@@ -142,7 +142,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware('role:super_admin')->prefix('superadmin')->name('superadmin.')->group(function () {
         Route::resource('users', SuperAdminUserController::class);
         Route::get('logs', [LogController::class, 'index'])->name('logs.index');
-
+        Route::get('logs/{log}', [LogController::class, 'show'])->name('logs.show');
     });
 
 });
