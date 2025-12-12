@@ -21,6 +21,7 @@ use App\Http\Controllers\SuperAdmin\UserController as SuperAdminUserController;
 use App\Http\Controllers\Penyelenggara\EventResultController;
 use App\Http\Controllers\Pimpinan\DashboardController as PimpinanDashboardController;
 use App\Http\Controllers\Pimpinan\ExportController;
+use App\Http\Controllers\Pimpinan\PimpinanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,9 +41,13 @@ Route::post('/iuran/store', [PublicIuranController::class, 'store'])->name('iura
 | Rute Terotentikasi (User Login)
 |--------------------------------------------------------------------------
 */
-Route::get('/dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth', 'verified'])->name('dashboard');
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
+    
+    // Dashboard route sesuai role
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
+    // Dashboard Pimpinan dengan filter tahun
+    Route::get('/dashboard-pimpinan', [PimpinanController::class, 'dashboard'])->name('dashboard.pimpinan');
 
     // Route Pembalap 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -122,7 +127,7 @@ Route::middleware('auth')->group(function () {
 
     // Route Pimpinan IMI
     Route::middleware('role:pimpinan_imi')->prefix('pimpinan')->name('pimpinan.')->group(function () {
-        Route::get('/dashboard', [PimpinanDashboardController::class, 'index'])->name('dashboard');
+        // Route dashboard sudah ada di atas (dashboard.pimpinan)
         
         // Export routes
         Route::get('/export/pembalap/pdf', [ExportController::class, 'pembalapPdf'])->name('export.pembalap.pdf');

@@ -2,77 +2,75 @@
 
 namespace App\Exports;
 
-use App\Models\User;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithTitle;
 use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithColumnWidths;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 
-class PembalapExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithColumnWidths
+class PembalapExport implements FromCollection, WithHeadings, WithMapping, WithTitle, WithStyles
 {
+    protected $pembalap;
     protected $year;
 
-    public function __construct($year)
+    public function __construct($pembalap, $year)
     {
+        $this->pembalap = $pembalap;
         $this->year = $year;
     }
 
     public function collection()
     {
-        return User::where('role', 'pembalap')
-            ->with(['profile.club', 'profile.kisLicense'])
-            ->orderBy('name')
-            ->get();
+        return $this->pembalap;
     }
 
     public function headings(): array
     {
         return [
             'No',
-            'Nama',
+            'Nama Pembalap',
             'Email',
             'Klub',
+            'Telepon',
             'No. KIS',
-            'Status',
-            'Tanggal Daftar'
+            'Kategori',
+            'Tanggal Daftar',
+            'Tanggal Expired',
+            'Status'
         ];
     }
 
-    public function map($user): array
+    public function map($pembalap): array
     {
-        static $no = 0;
-        $no++;
-
+        static $row = 0;
+        $row++;
+        
         return [
-            $no,
-            $user->name,
-            $user->email,
-            optional($user->profile)->club->nama_klub ?? '-',
-            optional(optional($user->profile)->kisLicense)->kis_number ?? '-',
-            ucfirst($user->status),
-            $user->created_at->format('d/m/Y')
+            $row,
+            $pembalap->nama,
+            $pembalap->email,
+            $pembalap->nama_klub,
+            $pembalap->phone_number ?? '-',
+            $pembalap->kis_number ?? '-',
+            $pembalap->nama_kategori ?? '-',
+            $pembalap->issued_date ? \Carbon\Carbon::parse($pembalap->issued_date)->format('d/m/Y') : '-',
+            $pembalap->expiry_date ? \Carbon\Carbon::parse($pembalap->expiry_date)->format('d/m/Y') : '-',
+            $pembalap->status_kis
         ];
     }
 
     public function styles(Worksheet $sheet)
     {
         return [
-            1 => ['font' => ['bold' => true]],
+            1 => ['font' => ['bold' => true], 'fill' => ['fillType' => 'solid', 'color' => ['rgb' => '4472C4']]],
         ];
     }
 
-    public function columnWidths(): array
+    public function title(): string
     {
-        return [
-            'A' => 5,
-            'B' => 25,
-            'C' => 30,
-            'D' => 25,
-            'E' => 15,
-            'F' => 12,
-            'G' => 15,
-        ];
+        return $this->year === 'overall' 
+            ? 'Data Pembalap Overall' 
+            : 'Data Pembalap ' . $this->year;
     }
 }

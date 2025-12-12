@@ -82,14 +82,9 @@
                         $hasActiveKis = $user->kisLicense && $user->kisLicense->expiry_date >= now()->toDateString();
                     @endphp
 
-                    <a href="{{ route('dashboard') }}" class="block px-4 py-3 rounded-md text-sm font-medium {{ request()->routeIs('dashboard') ? 'bg-primary-700 text-white' : 'text-gray-200 hover:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-700' }}">
-                        <span class="flex items-center">
-                            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-                            </svg>
-                            Dashboard
-                        </span>
-                    </a>
+                    <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard') || request()->routeIs('dashboard.pimpinan')">
+                        {{ __('Dashboard') }}
+                    </x-nav-link>
 
                     @if($hasActiveKis)
                         <a href="{{ route('events.index') }}" class="block px-4 py-3 rounded-md text-sm font-medium {{ request()->routeIs('events.*') && !request()->routeIs('events.results') ? 'bg-primary-700 text-white' : 'text-gray-200 hover:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-700' }}">
@@ -126,7 +121,7 @@
                                 </svg>
                                 Kalender Event
                                 <svg class="ml-auto w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2-2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
                                 </svg>
                             </span>
                         </div>
@@ -150,7 +145,7 @@
                                 </svg>
                                 History Pembalap
                                 <svg class="ml-auto w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+                                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2-2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
                                 </svg>
                             </span>
                         </div>

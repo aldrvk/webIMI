@@ -2,29 +2,25 @@
 
 namespace App\Exports;
 
-use App\Models\ClubDues;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
-use Maatwebsite\Excel\Concerns\WithStyles;
-use Maatwebsite\Excel\Concerns\WithColumnWidths;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use Maatwebsite\Excel\Concerns\WithTitle;
 
-class IuranExport implements FromCollection, WithHeadings, WithMapping, WithStyles, WithColumnWidths
+class IuranExport implements FromCollection, WithHeadings, WithMapping, WithTitle
 {
+    protected $iuran;
     protected $year;
 
-    public function __construct($year)
+    public function __construct($iuran, $year)
     {
+        $this->iuran = $iuran;
         $this->year = $year;
     }
 
     public function collection()
     {
-        return ClubDues::where('payment_year', $this->year)
-            ->with('club')
-            ->orderBy('payment_date', 'desc')
-            ->get();
+        return $this->iuran;
     }
 
     public function headings(): array
@@ -32,54 +28,32 @@ class IuranExport implements FromCollection, WithHeadings, WithMapping, WithStyl
         return [
             'No',
             'Nama Klub',
-            'Tahun',
+            'Tahun Pembayaran',
             'Tanggal Bayar',
-            'Jumlah (Rp)',
+            'Jumlah',
             'Status'
         ];
     }
 
-    public function map($dues): array
+    public function map($iuran): array
     {
-        static $no = 0;
-        $no++;
-
-        // Pastikan payment_date ada sebelum di-format
-        $tanggalBayar = '-';
-        if ($dues->payment_date) {
-            try {
-                $tanggalBayar = \Carbon\Carbon::parse($dues->payment_date)->format('d/m/Y');
-            } catch (\Exception $e) {
-                $tanggalBayar = '-';
-            }
-        }
-
+        static $row = 0;
+        $row++;
+        
         return [
-            $no,
-            $dues->club->nama_klub ?? 'Klub Tidak Ditemukan',
-            $dues->payment_year ?? '-',
-            $tanggalBayar,
-            $dues->amount_paid ?? 0,
-            $dues->status ?? 'Unknown'
+            $row,
+            $iuran->nama_klub,
+            $iuran->payment_year,
+            \Carbon\Carbon::parse($iuran->payment_date)->format('d/m/Y'),
+            'Rp ' . number_format($iuran->amount_paid, 0, ',', '.'),
+            $iuran->status
         ];
     }
 
-    public function styles(Worksheet $sheet)
+    public function title(): string
     {
-        return [
-            1 => ['font' => ['bold' => true]],
-        ];
-    }
-
-    public function columnWidths(): array
-    {
-        return [
-            'A' => 5,
-            'B' => 30,
-            'C' => 10,
-            'D' => 15,
-            'E' => 15,
-            'F' => 15,
-        ];
+        return $this->year === 'overall' 
+            ? 'Data Iuran Overall' 
+            : 'Data Iuran ' . $this->year;
     }
 }

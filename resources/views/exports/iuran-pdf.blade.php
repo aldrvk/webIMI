@@ -112,7 +112,7 @@
             @foreach($iuran as $index => $i)
             <tr>
                 <td style="text-align: center;">{{ $index + 1 }}</td>
-                <td>{{ optional($i->club)->nama_klub ?? 'Klub Tidak Ditemukan' }}</td>
+                <td>{{ $i->club_name }}</td>
                 <td style="text-align: center;">{{ $i->payment_year ?? '-' }}</td>
                 <td>
                     @if($i->payment_date)

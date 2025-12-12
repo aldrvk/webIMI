@@ -1,9 +1,23 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex justify-between items-center">
+        <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4">
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('Dashboard Eksekutif IMI Sumut') }}
             </h2>
+            
+            {{-- FILTER TAHUN GLOBAL --}}
+            <div class="flex items-center gap-3">
+                <label for="year-filter" class="text-sm font-medium text-gray-700 dark:text-gray-300">Filter Tahun:</label>
+                <select id="year-filter" onchange="window.location.href='?year=' + this.value"
+                        class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                    <option value="overall" {{ $selectedYear === 'overall' ? 'selected' : '' }}>📊 Overall (Semua Tahun)</option>
+                    @foreach($availableYears as $year)
+                        <option value="{{ $year }}" {{ $selectedYear == $year ? 'selected' : '' }}>
+                            📅 Tahun {{ $year }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
         </div>
     </x-slot>
 
@@ -20,12 +34,12 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                         <div class="flex-1">
-                            <h3 class="text-lg font-bold mb-2">Ringkasan Eksekutif</h3>
+                            <h3 class="text-lg font-bold mb-2">Ringkasan Eksekutif {{ $selectedYear === 'overall' ? '(All Time)' : 'Tahun ' . $selectedYear }}</h3>
                             <p class="text-sm leading-relaxed">
                                 Per <strong>{{ now()->translatedFormat('d F Y') }}</strong>, IMI Sumut memiliki 
                                 <strong>{{ $kpi_pembalap_aktif }} pembalap aktif</strong> dari 
                                 <strong>{{ $kpi_klub_total }} klub</strong>. 
-                                Total revenue YTD: <strong>Rp {{ number_format($total_revenue_ytd, 0, ',', '.') }}</strong>.
+                                Total revenue: <strong>Rp {{ number_format($total_revenue_ytd, 2, ',', '.') }}</strong>.
                                 Terdapat <strong class="text-yellow-300">{{ $kpi_kis_pending }} pengajuan KIS pending</strong> yang perlu diproses.
                             </p>
                         </div>
@@ -80,8 +94,10 @@
                 <div class="p-6 bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg border-l-4 border-yellow-500">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">Revenue YTD</h4>
-                            <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">Rp {{ number_format($total_revenue_ytd / 1000000, 1) }}jt</p>
+                            <h4 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase">Revenue {{ $selectedYear === 'overall' ? 'Total' : 'YTD' }}</h4>
+                            <p class="mt-2 text-2xl font-bold text-gray-900 dark:text-white">
+                                Rp {{ number_format($total_revenue_ytd / 1000000, 2, ',', '.') }}jt
+                            </p>
                         </div>
                         <svg class="w-12 h-12 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -113,9 +129,9 @@
                             <svg class="w-6 h-6 mr-2 text-primary-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
-                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Export Laporan {{ now()->year }}</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Export Laporan</h3>
                         </div>
-                        <p class="text-sm text-gray-500 dark:text-gray-400">Unduh laporan dalam format PDF atau Excel</p>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Pilih tahun per laporan</p>
                     </div>
                     
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -127,21 +143,30 @@
                                 </svg>
                                 Data Pembalap
                             </h4>
+                            
+                            {{-- Filter Tahun Per Card --}}
+                            <select id="export-pembalap-year" class="mb-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <option value="overall">Overall (Semua Tahun)</option>
+                                @foreach($availableYears as $year)
+                                    <option value="{{ $year }}" {{ $year == now()->year ? 'selected' : '' }}>Tahun {{ $year }}</option>
+                                @endforeach
+                            </select>
+                            
                             <div class="flex gap-2">
-                                <a href="{{ route('pimpinan.export.pembalap.pdf', ['year' => now()->year]) }}" 
-                                   class="flex-1 inline-flex justify-center items-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800 transition-all duration-200">
+                                <button onclick="exportPembalap('pdf')" 
+                                   class="flex-1 inline-flex justify-center items-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all duration-200">
                                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"/>
                                     </svg>
                                     PDF
-                                </a>
-                                <a href="{{ route('pimpinan.export.pembalap.excel', ['year' => now()->year]) }}" 
-                                   class="flex-1 inline-flex justify-center items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 transition-all duration-200">
+                                </button>
+                                <button onclick="exportPembalap('excel')" 
+                                   class="flex-1 inline-flex justify-center items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all duration-200">
                                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h5a1 1 0 000-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM13 16a1 1 0 102 0v-5.586l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L13 10.414V16z"/>
                                     </svg>
                                     Excel
-                                </a>
+                                </button>
                             </div>
                         </div>
 
@@ -153,21 +178,29 @@
                                 </svg>
                                 Data Event
                             </h4>
+                            
+                            <select id="export-event-year" class="mb-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <option value="overall">Overall (Semua Tahun)</option>
+                                @foreach($availableYears as $year)
+                                    <option value="{{ $year }}" {{ $year == now()->year ? 'selected' : '' }}>Tahun {{ $year }}</option>
+                                @endforeach
+                            </select>
+                            
                             <div class="flex gap-2">
-                                <a href="{{ route('pimpinan.export.event.pdf', ['year' => now()->year]) }}" 
-                                   class="flex-1 inline-flex justify-center items-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800 transition-all duration-200">
+                                <button onclick="exportEvent('pdf')" 
+                                   class="flex-1 inline-flex justify-center items-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all duration-200">
                                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"/>
                                     </svg>
                                     PDF
-                                </a>
-                                <a href="{{ route('pimpinan.export.event.excel', ['year' => now()->year]) }}" 
-                                   class="flex-1 inline-flex justify-center items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 transition-all duration-200">
+                                </button>
+                                <button onclick="exportEvent('excel')" 
+                                   class="flex-1 inline-flex justify-center items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all duration-200">
                                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h5a1 1 0 000-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM13 16a1 1 0 102 0v-5.586l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L13 10.414V16z"/>
                                     </svg>
                                     Excel
-                                </a>
+                                </button>
                             </div>
                         </div>
 
@@ -180,21 +213,29 @@
                                 </svg>
                                 Data Iuran
                             </h4>
+                            
+                            <select id="export-iuran-year" class="mb-3 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <option value="overall">Overall (Semua Tahun)</option>
+                                @foreach($availableYears as $year)
+                                    <option value="{{ $year }}" {{ $year == now()->year ? 'selected' : '' }}>Tahun {{ $year }}</option>
+                                @endforeach
+                            </select>
+                            
                             <div class="flex gap-2">
-                                <a href="{{ route('pimpinan.export.iuran.pdf', ['year' => now()->year]) }}" 
-                                   class="flex-1 inline-flex justify-center items-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800 transition-all duration-200">
+                                <button onclick="exportIuran('pdf')" 
+                                   class="flex-1 inline-flex justify-center items-center px-3 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all duration-200">
                                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z"/>
                                     </svg>
                                     PDF
-                                </a>
-                                <a href="{{ route('pimpinan.export.iuran.excel', ['year' => now()->year]) }}" 
-                                   class="flex-1 inline-flex justify-center items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800 transition-all duration-200">
+                                </button>
+                                <button onclick="exportIuran('excel')" 
+                                   class="flex-1 inline-flex justify-center items-center px-3 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-all duration-200">
                                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
                                         <path d="M3 3a1 1 0 000 2h11a1 1 0 100-2H3zM3 7a1 1 0 000 2h5a1 1 0 000-2H3zM3 11a1 1 0 100 2h4a1 1 0 100-2H3zM13 16a1 1 0 102 0v-5.586l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 101.414 1.414L13 10.414V16z"/>
                                     </svg>
                                     Excel
-                                </a>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -205,7 +246,7 @@
                                 <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                             </svg>
                             <p class="text-sm text-blue-800 dark:text-blue-300">
-                                <strong>Tip:</strong> File PDF cocok untuk dicetak, sedangkan Excel cocok untuk analisis data lebih lanjut.
+                                <strong>Tip:</strong> Pilih tahun untuk setiap jenis laporan. "Overall" akan mengekspor semua data dari semua tahun.
                             </p>
                         </div>
                     </div>
@@ -233,9 +274,11 @@
                                 </svg>
                                 <div>
                                     <p class="text-sm font-medium text-gray-900 dark:text-white">
-                                        <strong>{{ $kis_belum_diperbaharui }}</strong> KIS belum diperbaharui sejak tahun lalu
+                                        <strong>{{ $kis_belum_diperbaharui ?? 0 }}</strong> KIS belum diperbaharui sejak tahun lalu
                                     </p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">Pembalap dengan KIS expired & belum daftar ulang tahun ini</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                        {{ $selectedYear === 'overall' ? 'Pembalap dengan KIS expired & belum daftar ulang' : 'Pembalap dengan KIS expired & belum daftar ulang tahun ini' }}
+                                    </p>
                                 </div>
                             </li>
                             <li class="flex items-start p-3 bg-orange-50 dark:bg-gray-700 rounded-lg">
@@ -244,9 +287,11 @@
                                 </svg>
                                 <div>
                                     <p class="text-sm font-medium text-gray-900 dark:text-white">
-                                        <strong>{{ $klub_belum_bayar_iuran }}</strong> Klub belum bayar iuran tahun ini
+                                        <strong>{{ $klub_belum_bayar_iuran ?? 0 }}</strong> Klub belum bayar iuran {{ $selectedYear === 'overall' ? '' : 'tahun ini' }}
                                     </p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">Tenggat: 31 Desember {{ now()->year }}</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                        {{ $selectedYear === 'overall' ? 'Total klub yang belum bayar iuran' : 'Tenggat: 31 Desember ' . $selectedYear }}
+                                    </p>
                                 </div>
                             </li>
                             <li class="flex items-start p-3 bg-yellow-50 dark:bg-gray-700 rounded-lg">
@@ -255,9 +300,11 @@
                                 </svg>
                                 <div>
                                     <p class="text-sm font-medium text-gray-900 dark:text-white">
-                                        <strong>{{ $event_low_registration }}</strong> Event dengan peserta < 10 orang
+                                        <strong>{{ $event_low_registration ?? 0 }}</strong> Event dengan peserta < 10 orang
                                     </p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400">Event yang akan datang dengan registrasi rendah</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                        {{ $selectedYear === 'overall' ? 'Event dengan registrasi rendah' : 'Event tahun ' . $selectedYear . ' yang akan datang dengan registrasi rendah' }}
+                                    </p>
                                 </div>
                             </li>
                         </ul>
@@ -512,26 +559,33 @@
                     </div>
                 </div>
             </div>
-
-            {{-- ========================================
-                 REMINDER: DATA SEEDER 2024
-                 ======================================== --}}
-            <div class="bg-yellow-50 dark:bg-gray-800 border-l-4 border-yellow-400 p-4 rounded-lg">
-                <div class="flex">
-                    <svg class="w-5 h-5 text-yellow-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                    </svg>
-                    <div>
-                        <p class="text-sm font-medium text-yellow-800 dark:text-yellow-300">
-                            <strong>Reminder:</strong> Untuk menampilkan perbandingan Year-over-Year (2024 vs 2025), silakan buat data seeder untuk tahun 2024.
-                        </p>
-                        <p class="text-xs text-yellow-700 dark:text-yellow-400 mt-1">
-                            Fitur YoY Comparison akan aktif setelah data historis tersedia.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
+
+    {{-- JavaScript untuk Export dengan Filter Tahun --}}
+    <script>
+        function exportPembalap(format) {
+            const year = document.getElementById('export-pembalap-year').value;
+            const baseUrl = format === 'pdf' 
+                ? '{{ route("pimpinan.export.pembalap.pdf") }}'
+                : '{{ route("pimpinan.export.pembalap.excel") }}';
+            window.location.href = baseUrl + '?year=' + year;
+        }
+
+        function exportEvent(format) {
+            const year = document.getElementById('export-event-year').value;
+            const baseUrl = format === 'pdf' 
+                ? '{{ route("pimpinan.export.event.pdf") }}'
+                : '{{ route("pimpinan.export.event.excel") }}';
+            window.location.href = baseUrl + '?year=' + year;
+        }
+
+        function exportIuran(format) {
+            const year = document.getElementById('export-iuran-year').value;
+            const baseUrl = format === 'pdf' 
+                ? '{{ route("pimpinan.export.iuran.pdf") }}'
+                : '{{ route("pimpinan.export.iuran.excel") }}';
+            window.location.href = baseUrl + '?year=' + year;
+        }
+    </script>
 </x-app-layout>
