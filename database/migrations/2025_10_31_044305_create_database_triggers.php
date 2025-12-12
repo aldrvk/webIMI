@@ -29,9 +29,14 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::unprepared('DROP TRIGGER IF EXISTS `auto_create_kis_license_on_approval`');
-        DB::unprepared('DROP TRIGGER IF EXISTS `log_kis_application_insert`');
-        DB::unprepared('DROP TRIGGER IF EXISTS `log_kis_application_update`');
+        // Drop all triggers in reverse order
+        DB::unprepared('DROP TRIGGER IF EXISTS `log_club_dues_update`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `log_club_dues_insert`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `log_event_registration_update`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `log_event_registration_insert`');
         DB::unprepared('DROP TRIGGER IF EXISTS `log_event_insert`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `log_kis_application_update`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `log_kis_application_insert`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `auto_create_kis_license_on_approval`');
     }
 };
