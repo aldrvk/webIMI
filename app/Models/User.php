@@ -37,9 +37,16 @@ class User extends Authenticatable
 
     // === RELASI ANDA YANG LAIN (Sudah Benar) ===
     
+    // Gunakan alias 'profile' untuk konsistensi
     public function profile()
     {
-        return $this->hasOne(PembalapProfile::class);
+        return $this->hasOne(RacerProfile::class);
+    }
+
+    // Alias untuk backward compatibility
+    public function racerProfile()
+    {
+        return $this->profile();
     }
 
     public function kisApplications()

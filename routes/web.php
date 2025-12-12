@@ -19,6 +19,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Penyelenggara\DashboardController as PenyelenggaraDashboardController;
 use App\Http\Controllers\SuperAdmin\UserController as SuperAdminUserController;
 use App\Http\Controllers\Penyelenggara\EventResultController;
+use App\Http\Controllers\Pimpinan\DashboardController as PimpinanDashboardController;
+use App\Http\Controllers\Pimpinan\ExportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,11 +33,6 @@ Route::get('/', function () {
 // --- RUTE PUBLIK IURAN KLUB (BARU) ---
 Route::get('/iuran/submit', [PublicIuranController::class, 'create'])->name('iuran.create');
 Route::post('/iuran/store', [PublicIuranController::class, 'store'])->name('iuran.store');
-
-// Redirect jika ada yang coba akses GET ke /iuran/store
-Route::get('/iuran/store', function () {
-    return redirect()->route('iuran.create')->with('warning', 'Silakan isi formulir terlebih dahulu.');
-});
 // --- AKHIR RUTE BARU ---
 
 /*
@@ -123,6 +120,19 @@ Route::middleware('auth')->group(function () {
             ->name('registrations.reject');
     });
 
+    // Route Pimpinan IMI
+    Route::middleware('role:pimpinan_imi')->prefix('pimpinan')->name('pimpinan.')->group(function () {
+        Route::get('/dashboard', [PimpinanDashboardController::class, 'index'])->name('dashboard');
+        
+        // Export routes
+        Route::get('/export/pembalap/pdf', [ExportController::class, 'pembalapPdf'])->name('export.pembalap.pdf');
+        Route::get('/export/pembalap/excel', [ExportController::class, 'pembalapExcel'])->name('export.pembalap.excel');
+        Route::get('/export/event/pdf', [ExportController::class, 'eventPdf'])->name('export.event.pdf');
+        Route::get('/export/event/excel', [ExportController::class, 'eventExcel'])->name('export.event.excel');
+        Route::get('/export/iuran/pdf', [ExportController::class, 'iuranPdf'])->name('export.iuran.pdf');
+        Route::get('/export/iuran/excel', [ExportController::class, 'iuranExcel'])->name('export.iuran.excel');
+    });
+
     // Route Super Admin
     Route::middleware('role:super_admin')->prefix('superadmin')->name('superadmin.')->group(function () {
         Route::resource('users', SuperAdminUserController::class);
@@ -130,6 +140,20 @@ Route::middleware('auth')->group(function () {
 
     });
 
+});
+
+// Route test PDF Iuran (HAPUS SETELAH BERHASIL)
+Route::get('/test-iuran-pdf', function() {
+    $year = now()->year;
+    $iuran = \App\Models\ClubDues::where('payment_year', $year)
+        ->with('club')
+        ->orderBy('payment_date', 'desc')
+        ->get();
+    
+    return view('exports.iuran-pdf', [
+        'iuran' => $iuran,
+        'year' => $year
+    ]);
 });
 
 require __DIR__ . '/auth.php';
