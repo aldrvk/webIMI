@@ -83,9 +83,11 @@ class DashboardController extends Controller
             $revenue_iuran = ClubDues::where('status', 'Approved')
                 ->sum('amount_paid');
             
-            $revenue_event = DB::table('event_registrations')
-                ->where('status', 'Confirmed')
-                ->sum('amount_paid');
+                $revenue_event = DB::table('event_registrations as er')
+                ->join('events as e', 'er.event_id', '=', 'e.id')
+                ->where('er.status', 'Confirmed')
+                ->selectRaw('SUM(e.biaya_pendaftaran) as total')
+                ->value('total') ?? 0;
         } else {
             $revenue_kis = DB::table('kis_applications as ka')
                 ->join('kis_categories as kc', 'ka.kis_category_id', '=', 'kc.id')
@@ -97,11 +99,12 @@ class DashboardController extends Controller
                 ->where('payment_year', $selectedYear)
                 ->sum('amount_paid');
             
-            $revenue_event = DB::table('event_registrations as er')
+                $revenue_event = DB::table('event_registrations as er')
                 ->join('events as e', 'er.event_id', '=', 'e.id')
                 ->where('er.status', 'Confirmed')
                 ->whereYear('e.event_date', $selectedYear)
-                ->sum('er.amount_paid');
+                ->selectRaw('SUM(e.biaya_pendaftaran) as total')
+                ->value('total') ?? 0;
         }
         $total_revenue_ytd = $revenue_kis + $revenue_iuran + $revenue_event;
 

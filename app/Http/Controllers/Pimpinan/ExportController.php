@@ -16,7 +16,7 @@ class ExportController extends Controller
     public function pembalapPdf(Request $request)
     {
         $year = $request->input('year', 'overall');
-        
+
         // Query SAMA PERSIS dengan KPI Dashboard
         $baseQuery = DB::table('pembalap_profiles as pp')
             ->join('users as u', 'pp.user_id', '=', 'u.id')
@@ -44,15 +44,15 @@ class ExportController extends Controller
             $yearInt = (int) $year;
             // Hanya pembalap yang KIS-nya issued di tahun ini DAN masih aktif per 1 Jan tahun tersebut
             $baseQuery->whereYear('kl.issued_date', '=', $yearInt)
-                      ->where('kl.expiry_date', '>=', "$yearInt-01-01");
+                ->where('kl.expiry_date', '>=', "$yearInt-01-01");
         } else {
             // Overall: Semua pembalap dengan KIS aktif sekarang
             $baseQuery->where('kl.expiry_date', '>=', now());
         }
 
         $pembalap = $baseQuery->orderBy('u.name')->get();
-        
-        $fileName = $year === 'overall' 
+
+        $fileName = $year === 'overall'
             ? 'data-pembalap-imi-overall.pdf'
             : 'data-pembalap-imi-' . $year . '.pdf';
 
@@ -67,7 +67,7 @@ class ExportController extends Controller
     public function pembalapExcel(Request $request)
     {
         $year = $request->input('year', 'overall');
-        
+
         $baseQuery = DB::table('pembalap_profiles as pp')
             ->join('users as u', 'pp.user_id', '=', 'u.id')
             ->join('clubs as c', 'pp.club_id', '=', 'c.id')
@@ -92,14 +92,14 @@ class ExportController extends Controller
         if ($year !== 'overall') {
             $yearInt = (int) $year;
             $baseQuery->whereYear('kl.issued_date', '=', $yearInt)
-                      ->where('kl.expiry_date', '>=', "$yearInt-01-01");
+                ->where('kl.expiry_date', '>=', "$yearInt-01-01");
         } else {
             $baseQuery->where('kl.expiry_date', '>=', now());
         }
 
         $pembalap = $baseQuery->orderBy('u.name')->get();
-        
-        $fileName = $year === 'overall' 
+
+        $fileName = $year === 'overall'
             ? 'data-pembalap-imi-overall.xlsx'
             : 'data-pembalap-imi-' . $year . '.xlsx';
 
@@ -112,7 +112,7 @@ class ExportController extends Controller
     public function eventPdf(Request $request)
     {
         $year = $request->input('year', 'overall');
-        
+
         $query = DB::table('events as e')
             ->leftJoin('clubs as c', 'e.proposing_club_id', '=', 'c.id')
             ->select(
@@ -122,17 +122,17 @@ class ExportController extends Controller
                 'e.biaya_pendaftaran',
                 'c.nama_klub as penyelenggara',
                 DB::raw('(SELECT COUNT(*) FROM event_registrations WHERE event_id = e.id AND status = "Confirmed") as total_peserta'),
-                DB::raw('(SELECT COALESCE(SUM(amount_paid), 0) FROM event_registrations WHERE event_id = e.id AND status = "Confirmed") as total_revenue')
+                DB::raw('(e.biaya_pendaftaran * (SELECT COUNT(*) FROM event_registrations WHERE event_id = e.id AND status = "Confirmed")) as total_revenue')
             )
             ->where('e.is_published', true);
 
         if ($year !== 'overall') {
-            $query->whereYear('e.event_date', '=', (int)$year);
+            $query->whereYear('e.event_date', '=', (int) $year);
         }
 
         $events = $query->orderBy('e.event_date', 'desc')->get();
-        
-        $fileName = $year === 'overall' 
+
+        $fileName = $year === 'overall'
             ? 'data-event-imi-overall.pdf'
             : 'data-event-imi-' . $year . '.pdf';
 
@@ -147,7 +147,7 @@ class ExportController extends Controller
     public function eventExcel(Request $request)
     {
         $year = $request->input('year', 'overall');
-        
+
         $query = DB::table('events as e')
             ->leftJoin('clubs as c', 'e.proposing_club_id', '=', 'c.id')
             ->select(
@@ -157,17 +157,18 @@ class ExportController extends Controller
                 'e.biaya_pendaftaran',
                 'c.nama_klub as penyelenggara',
                 DB::raw('(SELECT COUNT(*) FROM event_registrations WHERE event_id = e.id AND status = "Confirmed") as total_peserta'),
-                DB::raw('(SELECT COALESCE(SUM(amount_paid), 0) FROM event_registrations WHERE event_id = e.id AND status = "Confirmed") as total_revenue')
+                // ✅ QUERY BARU
+                DB::raw('(e.biaya_pendaftaran * (SELECT COUNT(*) FROM event_registrations WHERE event_id = e.id AND status = "Confirmed")) as total_revenue')
             )
             ->where('e.is_published', true);
 
         if ($year !== 'overall') {
-            $query->whereYear('e.event_date', '=', (int)$year);
+            $query->whereYear('e.event_date', '=', (int) $year);
         }
 
         $events = $query->orderBy('e.event_date', 'desc')->get();
-        
-        $fileName = $year === 'overall' 
+
+        $fileName = $year === 'overall'
             ? 'data-event-imi-overall.xlsx'
             : 'data-event-imi-' . $year . '.xlsx';
 
@@ -180,7 +181,7 @@ class ExportController extends Controller
     public function iuranPdf(Request $request)
     {
         $year = $request->get('year', 'overall');
-        
+
         // Build query with proper column aliasing
         $iuranData = DB::table('club_dues as cd')
             ->join('clubs as c', 'cd.club_id', '=', 'c.id')
@@ -193,26 +194,26 @@ class ExportController extends Controller
                 'cd.status'
             )
             ->where('cd.status', 'Approved');
-        
+
         // Apply year filter if not 'overall'
         if ($year !== 'overall') {
             $iuranData->where('cd.payment_year', $year);
         }
-        
+
         $iuranData = $iuranData->orderBy('cd.payment_date', 'desc')->get();
-        
+
         $pdf = Pdf::loadView('exports.iuran-pdf', [
             'iuran' => $iuranData,
             'year' => $year
         ]);
-        
+
         return $pdf->download('laporan-iuran-' . ($year === 'overall' ? 'semua-tahun' : $year) . '.pdf');
     }
 
     public function iuranExcel(Request $request)
     {
         $year = $request->input('year', 'overall');
-        
+
         $iuranData = DB::table('club_dues as cd')
             ->join('clubs as c', 'cd.club_id', '=', 'c.id')
             ->select(
@@ -226,12 +227,12 @@ class ExportController extends Controller
             ->where('cd.status', 'Approved');
 
         if ($year !== 'overall') {
-            $iuranData->where('cd.payment_year', '=', (int)$year);
+            $iuranData->where('cd.payment_year', '=', (int) $year);
         }
 
         $iuranData = $iuranData->orderBy('cd.payment_date', 'desc')->get();
-        
-        $fileName = $year === 'overall' 
+
+        $fileName = $year === 'overall'
             ? 'data-iuran-imi-overall.xlsx'
             : 'data-iuran-imi-' . $year . '.xlsx';
 

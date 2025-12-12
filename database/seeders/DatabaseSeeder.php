@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             FullStorySeeder::class,
             SettingSeeder::class,
+            Historical2024Seeder::class,
         ]);
     }
 }

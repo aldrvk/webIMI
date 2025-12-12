@@ -48,9 +48,11 @@ class PimpinanController extends Controller
                 ->where('ka.status', 'Approved')
                 ->sum('kc.biaya_kis');
 
-            $revenue_event = DB::table('event_registrations as er')
+                $revenue_event = DB::table('event_registrations as er')
+                ->join('events as e', 'er.event_id', '=', 'e.id')
                 ->where('er.status', 'Confirmed')
-                ->sum('er.amount_paid');
+                ->selectRaw('SUM(e.biaya_pendaftaran) as total')
+                ->value('total') ?? 0;
 
         } else {
             // KPI Per Tahun
@@ -88,11 +90,12 @@ class PimpinanController extends Controller
                 ->whereYear('ka.approved_at', $year)
                 ->sum('kc.biaya_kis');
 
-            $revenue_event = DB::table('event_registrations as er')
+                $revenue_event = DB::table('event_registrations as er')
                 ->join('events as e', 'er.event_id', '=', 'e.id')
                 ->where('er.status', 'Confirmed')
                 ->whereYear('e.event_date', $year)
-                ->sum('er.amount_paid');
+                ->selectRaw('SUM(e.biaya_pendaftaran) as total')
+                ->value('total') ?? 0;
         }
 
         $total_revenue_ytd = $revenue_iuran + $revenue_kis + $revenue_event;
@@ -297,10 +300,11 @@ class PimpinanController extends Controller
                 ) as total_registrants
             ')
             ->selectRaw('
-                (SELECT COALESCE(SUM(er.amount_paid), 0)
-                 FROM event_registrations er 
-                 WHERE er.event_id = e.id 
-                 AND er.status = "Confirmed"
+                (e.biaya_pendaftaran * 
+                 (SELECT COUNT(*) 
+                  FROM event_registrations er 
+                  WHERE er.event_id = e.id 
+                  AND er.status = "Confirmed")
                 ) as total_revenue
             ')
             ->selectRaw('

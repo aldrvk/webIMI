@@ -1,8 +1,12 @@
+-- File ini untuk execute manual di phpMyAdmin
+-- Untuk Laravel migration, lihat file migration yang terpisah
+
 DROP TRIGGER IF EXISTS `auto_create_kis_license_on_approval`;
 DROP TRIGGER IF EXISTS `log_kis_application_insert`;
 DROP TRIGGER IF EXISTS `log_kis_application_update`;
 DROP TRIGGER IF EXISTS `log_event_insert`;
 
+DELIMITER $$
 
 CREATE TRIGGER `auto_create_kis_license_on_approval`
 AFTER UPDATE ON `kis_applications`
@@ -109,3 +113,5 @@ BEGIN
         NOW()
     );
 END$$
+
+DELIMITER ;
