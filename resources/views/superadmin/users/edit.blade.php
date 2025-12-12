@@ -49,6 +49,7 @@
                             @error('email') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
                         
+                        @if($user->role !== 'pembalap')
                         {{-- Role Akun --}}
                         <div>
                             <label for="role" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Role Akun</label>
@@ -82,6 +83,19 @@
                             </select>
                             @error('club_id') <p class="mt-2 text-sm text-red-600 dark:text-red-500">{{ $message }}</p> @enderror
                         </div>
+                        @else
+                        {{-- Hidden input untuk mempertahankan role pembalap --}}
+                        <input type="hidden" name="role" value="pembalap">
+
+                        <div class="md:col-span-2">
+                            <div class="p-4 bg-blue-900/20 border border-blue-700 rounded-lg">
+                                <p class="text-sm text-blue-300">
+                                    <i class="fas fa-info-circle mr-2"></i>
+                                    Role akun: <strong>Pembalap</strong>
+                                </p>
+                            </div>
+                        </div>
+                        @endif
 
                         <hr class="md:col-span-2 my-2 border-gray-200 dark:border-gray-700">
 

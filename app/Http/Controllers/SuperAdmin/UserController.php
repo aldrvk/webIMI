@@ -114,43 +114,37 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         // Validasi data berbeda dari 'store')
-        $validatedData = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => [
-                'required', 
-                'string', 
-                'email', 
-                'max:255', 
-                Rule::unique('users')->ignore($user->id)
-            ],
-            'role' => [
-                'required', 
-                'string', 
-                Rule::in(['super_admin', 'pengurus_imi', 'pimpinan_imi', 'penyelenggara_event'])
-            ],
-            'password' => ['nullable', 'confirmed', Rules\Password::defaults()], 
-            'club_id' => [
-                'nullable',
-                'required_if:role,penyelenggara_event',
-                'exists:clubs,id'
-            ],
-        ]);
-        if ($request->role !== 'penyelenggara_event') {
-            $validatedData['club_id'] = null;
+        $rules = [
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
+        ];
+        
+        // Hanya validate role jika bukan pembalap
+        if ($user->role !== 'pembalap') {
+            $rules['role'] = 'required|in:super_admin,pengurus_imi,pimpinan_imi,penyelenggara_event';
         }
-
+        
+        $validated = $request->validate($rules);
+        
         // Pisahkan data password
-        $password = $validatedData['password'];
-        unset($validatedData['password']);
+        $password = $validated['password'];
+        unset($validated['password']);
 
         // Update data utama
-        $user->update($validatedData);
-
-        // Hanya update password JIKA diisi
-        if ($password) {
-            $user->password = $password;
-            $user->save();
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        
+        // Hanya update role jika bukan pembalap
+        if ($user->role !== 'pembalap' && isset($validated['role'])) {
+            $user->role = $validated['role'];
         }
+        
+        if (!empty($validated['password'])) {
+            $user->password = bcrypt($validated['password']);
+        }
+        
+        $user->save();
 
         // Redirect kembali ke halaman index
         return redirect()->route('superadmin.users.index')->with('status', 'Data user berhasil diperbarui!');
