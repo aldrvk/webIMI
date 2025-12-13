@@ -33,5 +33,6 @@ return new class extends Migration
         DB::unprepared('DROP PROCEDURE IF EXISTS `Proc_ApplyForKIS`');
         DB::unprepared('DROP PROCEDURE IF EXISTS `Proc_GetLeaderboard`');
         DB::unprepared('DROP PROCEDURE IF EXISTS `Proc_RegisterPembalap`');
+        DB::unprepared('DROP PROCEDURE IF EXISTS `Proc_RegisterPembalapToEvent`');
     }
 };

@@ -131,4 +131,80 @@ class EventRegistrationController extends Controller
 
         return back()->with('error', 'Gagal mengupload file.');
     }
+    
+    /**
+     * Mendaftarkan pembalap ke event menggunakan Stored Procedure (alternatif method store)
+     */
+    public function storeWithProcedure(Request $request, Event $event)
+    {
+        $user = Auth::user();
+
+        // 1. Validasi Deadline 
+        if ($event->registration_deadline && $event->registration_deadline->isPast()) {
+             return back()->with('error', 'Pendaftaran untuk event ini sudah ditutup.');
+        }
+
+        // 2. Validasi KIS Aktif 
+        $activeKis = $user->kisLicense()->with('kisCategory')->where('expiry_date', '>=', now())->first();
+        if (!$activeKis) {
+            return back()->with('error', 'Anda tidak memiliki KIS (Kartu Izin Start) yang aktif.');
+        }
+        
+        $racerCategoryId = $activeKis->kis_category_id;
+        $racerCategoryName = $activeKis->kisCategory->nama_kategori;
+        
+        // 3. Validasi kategori event
+        $eventCategoryIds = $event->kisCategories->pluck('id')->toArray();
+        if (!in_array($racerCategoryId, $eventCategoryIds)) {
+            return back()->with('error', 'Gagal: Lisensi KIS Anda ('. $racerCategoryName .') tidak valid untuk mendaftar di kelas manapun pada event ini.');
+        }
+
+        // 4. CEK STATUS PENDAFTARAN LAMA
+        $existingReg = EventRegistration::where('event_id', $event->id)
+                                        ->where('pembalap_user_id', $user->id)
+                                        ->first();
+
+        if ($existingReg) {
+            switch ($existingReg->status) {
+                case 'Pending Payment':
+                case 'Rejected':
+                    return redirect()->route('events.payment', $existingReg->id)
+                                     ->with('info', 'Silakan selesaikan pendaftaran Anda.');
+                case 'Pending Confirmation':
+                    return back()->with('info', 'Pendaftaran Anda sedang menunggu konfirmasi panitia.');
+                case 'Confirmed':
+                    return back()->with('info', 'Anda SUDAH terdaftar di event ini.');
+            }
+        }
+
+        try {
+            // 5. Panggil Stored Procedure 'Proc_RegisterPembalapToEvent'
+            DB::select(
+                'CALL Proc_RegisterPembalapToEvent(?, ?, ?, ?)',
+                [
+                    $event->id,
+                    $user->id,
+                    $racerCategoryId,
+                    null // payment_proof_url (null untuk registrasi awal)
+                ]
+            );
+
+            // 6. Ambil registrasi yang baru dibuat untuk redirect
+            $registration = EventRegistration::where('event_id', $event->id)
+                                            ->where('pembalap_user_id', $user->id)
+                                            ->first();
+
+            // 7. REDIRECT SESUAI STATUS
+            if ($registration && $registration->status == 'Pending Payment') {
+                return redirect()->route('events.payment', $registration->id)
+                                 ->with('status', 'Pendaftaran dimulai! Silakan upload bukti pembayaran.');
+            } else {
+                return back()->with('status', 'Selamat! Anda berhasil terdaftar (Event Gratis).');
+            }
+
+        } catch (\Exception $e) {
+            \Log::error('Gagal mendaftar event (Proc_RegisterPembalapToEvent): ' . $e->getMessage());
+            return back()->with('error', 'Gagal mendaftar. Terjadi kesalahan database.');
+        }
+    }
 }

@@ -147,4 +147,40 @@ class LeaderboardController extends Controller
             'dnfDsq' => $dnfDsq
         ]);
     }
+    
+    /**
+     * Menampilkan leaderboard keseluruhan (semua event) berdasarkan kategori menggunakan Stored Procedure
+     */
+    public function overall(Request $request)
+    {
+        // Ambil semua kategori KIS untuk dropdown
+        $categories = KisCategory::orderBy('nama_kategori')->get();
+        
+        // Default kategori (bisa dari query string atau kategori pertama)
+        $selectedCategoryId = $request->input('category_id', $categories->first()->id ?? null);
+        
+        $leaderboardData = [];
+        
+        if ($selectedCategoryId) {
+            try {
+                // Panggil Stored Procedure 'Proc_GetLeaderboard'
+                $results = DB::select(
+                    'CALL Proc_GetLeaderboard(?)',
+                    [$selectedCategoryId]
+                );
+                
+                $leaderboardData = $results;
+                
+            } catch (\Exception $e) {
+                \Log::error('Gagal mengambil data leaderboard (Proc_GetLeaderboard): ' . $e->getMessage());
+                return back()->with('error', 'Gagal memuat data leaderboard.');
+            }
+        }
+        
+        return view('leaderboard.overall', [
+            'categories' => $categories,
+            'selectedCategoryId' => $selectedCategoryId,
+            'leaderboardData' => $leaderboardData
+        ]);
+    }
 }

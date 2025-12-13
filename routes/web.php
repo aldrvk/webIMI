@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\IuranApprovalController;
 use App\Http\Controllers\Admin\KisApprovalController;
 use App\Http\Controllers\Admin\PembalapController;
+use App\Http\Controllers\Admin\PembalapRegistrationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventControllerPembalap;
 use App\Http\Controllers\EventRegistrationController;
@@ -61,12 +62,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/events', [EventControllerPembalap::class, 'index'])->name('events.index');
         Route::get('/events/{event}', [EventControllerPembalap::class, 'show'])->name('events.show');
         Route::post('/events/{event}/register', [EventRegistrationController::class, 'store'])->name('events.register');
+        Route::post('/events/{event}/register-sp', [EventRegistrationController::class, 'storeWithProcedure'])->name('events.register.sp');
         Route::get('/events/{event}/results', [EventControllerPembalap::class, 'results'])->name('events.results');
         
         // Leaderboard / Hasil Event Flow
         Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
         Route::get('/leaderboard/event/{event}', [LeaderboardController::class, 'showEvent'])->name('leaderboard.event');
         Route::get('/leaderboard/event/{event}/kategori/{category}', [LeaderboardController::class, 'show'])->name('leaderboard.show');
+        Route::get('/leaderboard/overall', [LeaderboardController::class, 'overall'])->name('leaderboard.overall');
 
         // History Pembalap Routes - PROTECTED WITH KIS.ACTIVE
         Route::get('/racers/history', [RacerHistoryController::class, 'index'])->name('racers.history.index');
@@ -106,6 +109,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/pembalap/{profile}', [PembalapController::class, 'show'])->name('pembalap.show');
         Route::patch('/pembalap/{user}/deactivate', [PembalapController::class, 'deactivate'])->name('pembalap.deactivate');
         Route::patch('/pembalap/{user}/activate', [PembalapController::class, 'activate'])->name('pembalap.activate');
+        
+        // Registrasi Pembalap dengan Stored Procedure
+        Route::get('/pembalap/register/create', [PembalapRegistrationController::class, 'create'])->name('pembalap.register.create');
+        Route::post('/pembalap/register', [PembalapRegistrationController::class, 'store'])->name('pembalap.register.store');
+        Route::put('/pembalap/{user}/update-sp', [PembalapRegistrationController::class, 'update'])->name('pembalap.update.sp');
 
         Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
         Route::patch('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'update'])->name('settings.update');
