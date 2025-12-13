@@ -178,5 +178,22 @@ Route::get('/test-iuran-pdf', function() {
         'year' => $year
     ]);
 });
+//test rbac
+Route::get('/test-db-rbac', function () {
+    if (!Auth::check()) {
+        return 'Please login first';
+    }
+    
+    $user = Auth::user();
+    $connection = config('database.default');
+    $currentDbUser = DB::selectOne('SELECT USER() as db_user');
+    
+    return response()->json([
+        'user_name' => $user->name,
+        'user_role' => $user->role,
+        'connection' => $connection,
+        'db_user' => $currentDbUser->db_user,
+    ]);
+})->middleware(['auth']);
 
 require __DIR__ . '/auth.php';
