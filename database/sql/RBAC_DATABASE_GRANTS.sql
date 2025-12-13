@@ -131,12 +131,13 @@ GRANT SELECT ON imi.users TO 'penyelenggara'@'%';
 GRANT SELECT ON imi.pembalap_profiles TO 'penyelenggara'@'%';
 GRANT SELECT ON imi.kis_licenses TO 'penyelenggara'@'%';
 GRANT SELECT ON imi.kis_categories TO 'penyelenggara'@'%';
+GRANT SELECT ON imi.kis_applications TO 'penyelenggara'@'%';
 GRANT SELECT ON imi.clubs TO 'penyelenggara'@'%';
 
 -- NOTE: event_results table tidak ada, data hasil event ada di event_registrations (result_position, points_earned)
 
--- Tables: UPDATE untuk payment approval
-GRANT UPDATE ON imi.event_registrations TO 'penyelenggara'@'%';
+-- Tables: INSERT untuk create test registration, UPDATE untuk payment approval & hasil
+GRANT INSERT, UPDATE ON imi.event_registrations TO 'penyelenggara'@'%';
 
 -- Views: SELECT (Event-related views only)
 GRANT SELECT ON imi.View_Finished_Events TO 'penyelenggara'@'%';
