@@ -89,103 +89,239 @@
                         <p class="text-gray-700 dark:text-gray-300 text-lg mb-8">
                             Informasi resmi, pendaftaran KTA/KIS, dan kalender event terlengkap di Sumatera Utara.
                         </p>
-                        <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
-                            {{-- Tombol Aksi (Danger/Merah) --}}
+                        <div>
+                            {{-- Tombol Daftar KIS --}}
                             <a href="{{ route('register') }}"
-                                class="inline-flex justify-center items-center px-6 py-3 text-base font-medium text-center text-white bg-danger-600 rounded-lg hover:bg-danger-700 focus:ring-4 focus:ring-danger-300 shadow-md transform hover:scale-105 transition-all duration-300 dark:focus:ring-danger-800">
+                                class="inline-flex justify-center items-center px-8 py-4 text-base font-bold text-white bg-primary-700 hover:bg-primary-800 rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl">
+                                <i class="fas fa-user-plus mr-2"></i>
                                 Daftar KIS
-                            </a>
-                            {{-- Tombol Aksi (Primary) --}}
-                            <a href="#"
-                                class="inline-flex justify-center items-center px-6 py-3 text-base font-medium text-center text-white bg-primary-800 rounded-lg hover:bg-primary-900 focus:ring-4 focus:ring-primary-300 shadow-md transform hover:scale-105 transition-all duration-300 dark:bg-primary-700 dark:hover:bg-primary-800 dark:focus:ring-primary-900">
-                                Lihat Agenda Event
                             </a>
                         </div>
                     </div>
-
-                    <div class="hidden md:block">
-                        <img src="{{ asset('images/banner-imi-hero.jpg') }}" alt="Aksi Balap IMI Sumut"
-                            class="w-full h-full object-cover">
-                    </div>
-
                 </div>
             </div>
         </section>
 
 
+        {{-- Section Struktur Pengurus --}}
+        <section class="bg-white dark:bg-primary-900 py-20">
+            <div class="container mx-auto px-4">
+                
+                {{-- Section Title --}}
+                <div class="text-center mb-16">
+                    <h2 class="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">
+                        Struktur Pengurus
+                    </h2>
+                    {{-- Blue Underline --}}
+                    <div class="w-32 h-1 bg-primary-600 dark:bg-primary-500 mx-auto mb-4"></div>
+                    <p class="text-gray-600 dark:text-gray-300 text-lg">
+                        Pengurus Provinsi Sumatera Utara Periode 2021-2025
+                    </p>
+                </div>
+
+                {{-- Grid Pengurus --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    
+                    {{-- Ketua --}}
+                    <div class="group">
+                        <div class="bg-gray-100 dark:bg-primary-800 rounded-2xl shadow-lg overflow-hidden transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+                            {{-- Foto --}}
+                            <div class="aspect-square bg-gray-200 dark:bg-primary-700 flex items-center justify-center overflow-hidden">
+                                <img src="{{ asset('images/pengurus/ketua.jpg') }}" 
+                                     alt="Ketua IMI Sumut"
+                                     class="w-full h-full object-cover"
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22400%22 height=%22400%22/%3E%3Ctext fill=%22%239ca3af%22 font-family=%22sans-serif%22 font-size=%2224%22 text-anchor=%22middle%22 x=%22200%22 y=%22210%22%3EKetua%3C/text%3E%3C/svg%3E';">
+                            </div>
+                            {{-- Info --}}
+                            <div class="p-6 text-center">
+
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                                    Harun Mustafa Nasution
+                                </h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">
+                                    Ketua IMI Pengprov Sumut
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Ketua Harian --}}
+                    <div class="group">
+                        <div class="bg-gray-100 dark:bg-primary-800 rounded-2xl shadow-lg overflow-hidden transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+                            {{-- Foto --}}
+                            <div class="aspect-square bg-gray-200 dark:bg-primary-700 flex items-center justify-center overflow-hidden">
+                                <img src="{{ asset('images/pengurus/ketua-harian.jpg') }}" 
+                                     alt="Ketua Harian IMI Sumut"
+                                     class="w-full h-full object-cover"
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22400%22 height=%22400%22/%3E%3Ctext fill=%22%239ca3af%22 font-family=%22sans-serif%22 font-size=%2220%22 text-anchor=%22middle%22 x=%22200%22 y=%22210%22%3EKetua Harian%3C/text%3E%3C/svg%3E';">
+                            </div>
+                            {{-- Info --}}
+                            <div class="p-6 text-center">
+
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                                    [Nama Ketua Harian]
+                                </h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">
+                                    Ketua Harian IMI Pengprov Sumut
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Sekretaris --}}
+                    <div class="group">
+                        <div class="bg-gray-100 dark:bg-primary-800 rounded-2xl shadow-lg overflow-hidden transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+                            {{-- Foto --}}
+                            <div class="aspect-square bg-gray-200 dark:bg-primary-700 flex items-center justify-center overflow-hidden">
+                                <img src="{{ asset('images/pengurus/sekretaris.jpg') }}" 
+                                     alt="Sekretaris IMI Sumut"
+                                     class="w-full h-full object-cover"
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22400%22 height=%22400%22/%3E%3Ctext fill=%22%239ca3af%22 font-family=%22sans-serif%22 font-size=%2224%22 text-anchor=%22middle%22 x=%22200%22 y=%22210%22%3ESekretaris%3C/text%3E%3C/svg%3E';">
+                            </div>
+                            {{-- Info --}}
+                            <div class="p-6 text-center">
+
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                                    Ahmad Syauki Anas
+                                </h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">
+                                    Sekretaris IMI Pengprov Sumut
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Wakil Sekretaris --}}
+                    <div class="group">
+                        <div class="bg-gray-100 dark:bg-primary-800 rounded-2xl shadow-lg overflow-hidden transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+                            {{-- Foto --}}
+                            <div class="aspect-square bg-gray-200 dark:bg-primary-700 flex items-center justify-center overflow-hidden">
+                                <img src="{{ asset('images/pengurus/wakil-sekretaris.jpg') }}" 
+                                     alt="Wakil Sekretaris IMI Sumut"
+                                     class="w-full h-full object-cover"
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22400%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22400%22 height=%22400%22/%3E%3Ctext fill=%22%239ca3af%22 font-family=%22sans-serif%22 font-size=%2218%22 text-anchor=%22middle%22 x=%22200%22 y=%22210%22%3EWakil Sekretaris%3C/text%3E%3C/svg%3E';">
+                            </div>
+                            {{-- Info --}}
+                            <div class="p-6 text-center">
+
+                                <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                                    [Nama Wakil Sekretaris]
+                                </h3>
+                                <p class="text-sm text-gray-600 dark:text-gray-300">
+                                    Wakil Sekretaris IMI Pengprov Sumut
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+        {{-- Section Tentang IMI Sumut --}}
         <section class="bg-gray-100 dark:bg-primary-950 py-20">
             <div class="container mx-auto px-4">
-
-                <div class="flex justify-center mb-12">
-                    <h2
-                        class="bg-white dark:bg-primary-900 text-gray-900 dark:text-white font-bold tracking-widest text-sm rounded-full px-6 py-3 shadow-lg uppercase">
-                        UPCOMING EVENT
-                    </h2>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-8">
-
-                    {{-- Event Card 1 --}}
-                    <div
-                        class="bg-white dark:bg-primary-900 rounded-2xl shadow-lg p-6 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6 transition-all duration-300 transform hover:scale-[1.02]">
-                        <div class="flex-grow">
-                            <h3 class="text-2xl font-extrabold text-gray-900 dark:text-white mb-2 uppercase">KEJURNAS
-                                SPRINT RALLY PUTARAN 6</h3>
-                            <div class="flex items-center text-sm text-gray-600 dark:text-gray-300 mb-1">
-                                <i
-                                    class="fas fa-map-marker-alt w-4 text-center mr-2 text-primary-500 dark:text-yellow-400"></i>
-                                Hidzie Sirkuit, Cikembar, Sukabumi
-                            </div>
-                            <div class="flex items-center text-sm text-gray-600 dark:text-gray-300 mb-4">
-                                <i
-                                    class="fas fa-calendar-alt w-4 text-center mr-2 text-primary-500 dark:text-yellow-400"></i>
-                                7 - 9 November 2025
-                            </div>
-                            <a href="#"
-                                class="inline-block bg-primary-700 hover:bg-primary-800 text-white dark:text-yellow-300 font-bold py-2 px-5 rounded-md text-sm transition-colors duration-300">
-                                Event Detail
-                            </a>
-                        </div>
-                        <div class="flex-shrink-0 mt-4 md:mt-0">
-                            <img src="{{ asset('images/poster-sprint-rally.png') }}" alt="Poster Sprint Rally"
-                                class="h-32 md:h-40">
-                        </div>
+                
+                {{-- Sejarah --}}
+                <div class="mb-20">
+                    {{-- Title --}}
+                    <div class="text-center mb-12">
+                        <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
+                            Sejarah IMI Sumatera Utara
+                        </h2>
+                        <div class="w-24 h-1 bg-primary-600 dark:bg-primary-600 mx-auto"></div>
                     </div>
 
-                    {{-- Event Card 2 --}}
-                    <div
-                        class="bg-white dark:bg-primary-900 rounded-2xl shadow-lg p-6 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6 transition-all duration-300 transform hover:scale-[1.02]">
-                        <div class="flex-grow">
-                            <h3 class="text-2xl font-extrabold text-gray-900 dark:text-white mb-2 uppercase">KEJURNAS
-                                SPEED OFF ROAD ROUND 3</h3>
-                            <div class="flex items-center text-sm text-gray-600 dark:text-gray-300 mb-1">
-                                <i
-                                    class="fas fa-map-marker-alt w-4 text-center mr-2 text-primary-500 dark:text-yellow-400"></i>
-                                Hidzie Sirkuit, Cikembar, Sukabumi
+                    {{-- Content --}}
+                    <div class="max-w-4xl mx-auto">
+                        <div class="bg-white dark:bg-primary-900 rounded-2xl shadow-xl p-8 md:p-12">
+                            <div class="prose prose-lg dark:prose-invert max-w-none">
+                                <p class="text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+                                    <span class="text-6xl font-bold text-primary-600 dark:text-primary-400 float-left mr-4 leading-none">I</span>
+                                    Ikatan Motor Indonesia (IMI) Sumatera Utara berdiri sebagai kepanjangan tangan dari IMI Pusat untuk mengatur, mengawasi, serta mengembangkan kegiatan olahraga otomotif dan mobilitas di wilayah Sumut. Dalam sejarahnya, Sumatera Utara dikenal sebagai salah satu daerah yang melahirkan pembalap-pembalap berbakat, penyelenggara event handal, serta komunitas otomotif yang solid dan aktif.
+                                </p>
+                                
+                                <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                                    Didirikan dengan semangat mempersatukan dan memajukan insan otomotif, IMI Sumut secara konsisten menyelenggarakan kegiatan balap legal, pelatihan teknis, edukasi keselamatan berkendara, serta menjalin kerja sama dengan pihak swasta dan pemerintah.
+                                </p>
+
+                                {{-- Timeline Highlight --}}
+                                <div class="mt-8 pt-8 border-t border-gray-200 dark:border-primary-700">
+                                    <div class="flex justify-center">
+                                        <div class="text-center">
+                                            <div class="text-5xl md:text-6xl font-bold text-primary-600 dark:text-primary-400 mb-3"> Tahun 2000</div>
+                                            <p class="text-base text-gray-600 dark:text-gray-400">Berdirinya IMI Sumut</p>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="flex items-center text-sm text-gray-600 dark:text-gray-300 mb-4">
-                                <i
-                                    class="fas fa-calendar-alt w-4 text-center mr-2 text-primary-500 dark:text-yellow-400"></i>
-                                7 - 9 November 2025
-                            </div>
-                            <a href="#"
-                                class="inline-block bg-primary-700 hover:bg-primary-800 text-white dark:text-yellow-300 font-bold py-2 px-5 rounded-md text-sm transition-colors duration-300">
-                                Event Detail
-                            </a>
-                        </div>
-                        <div class="flex-shrink-0 mt-4 md:mt-0">
-                            <img src="{{ asset('images/poster-speed-offroad.png') }}" alt="Poster Speed Off Road"
-                                class="h-32 md:h-40">
                         </div>
                     </div>
-
                 </div>
 
-                <div class="text-center mt-12">
-                    <a href="#"
-                        class="bg-white dark:bg-gray-200 text-primary-950 dark:text-primary-950 font-bold py-3 px-8 rounded-md transition-colors duration-300 hover:bg-gray-100 dark:hover:bg-white">
-                        View All Events
-                    </a>
+                {{-- Visi & Misi --}}
+                <div>
+                    {{-- Title --}}
+                    <div class="text-center mb-12">
+                        <h2 class="text-4xl font-extrabold text-gray-900 dark:text-white mb-4">
+                            Visi & Misi
+                        </h2>
+                        <div class="w-24 h-1 bg-primary-600 dark:bg-primary-600 mx-auto"></div>
+                    </div>
+
+                    {{-- Content --}}
+                    <div class="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                        
+                        {{-- Visi --}}
+                        <div class="group">
+                            <div class="bg-white dark:bg-primary-900 rounded-2xl shadow-xl p-8 h-full transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+                                <div class="flex items-center mb-6">
+                                    <div class="w-16 h-16 bg-primary-600 dark:bg-primary-600 rounded-full flex items-center justify-center mr-4">
+                                        <i class="fas fa-eye text-white dark:text-gray-900 text-2xl"></i>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Visi</h3>
+                                </div>
+                                <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                                    Menjadi organisasi otomotif daerah yang modern, profesional, dan kompetitif di tingkat nasional maupun internasional.
+                                </p>
+                            </div>
+                        </div>
+
+                        {{-- Misi --}}
+                        <div class="group">
+                            <div class="bg-white dark:bg-primary-900 rounded-2xl shadow-xl p-8 h-full transition-all duration-300 transform hover:scale-105 hover:shadow-2xl">
+                                <div class="flex items-center mb-6">
+                                    <div class="w-16 h-16 bg-primary-600 dark:bg-primary-600 rounded-full flex items-center justify-center mr-4">
+                                        <i class="fas fa-bullseye text-white dark:text-gray-900 text-2xl"></i>
+                                    </div>
+                                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white">Misi</h3>
+                                </div>
+                                <ul class="space-y-3 text-gray-700 dark:text-gray-300">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-primary-600 dark:text-primary-400 mt-1 mr-3"></i>
+                                        <span>Mengembangkan olahraga otomotif melalui pembinaan atlet dan pelatihan teknis yang berkelanjutan</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-primary-600 dark:text-primary-400 mt-1 mr-3"></i>
+                                        <span>Mewujudkan budaya berkendara yang aman, tertib, dan bertanggung jawab</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-primary-600 dark:text-primary-400 mt-1 mr-3"></i>
+                                        <span>Membangun ekosistem otomotif berbasis komunitas dan industri kreatif</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-primary-600 dark:text-primary-400 mt-1 mr-3"></i>
+                                        <span>Menyelenggarakan event otomotif berstandar nasional dan internasional</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-check-circle text-primary-600 dark:text-primary-400 mt-1 mr-3"></i>
+                                        <span>Menjadi jembatan antara klub, komunitas, pemerintah, dan sektor swasta dalam pengembangan otomotif di Sumut</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                    </div>
                 </div>
 
             </div>
@@ -193,62 +329,75 @@
 
     </main>
 
-    {{-- Footer (Tetap gelap di kedua mode, tapi gunakan palet baru) --}}
-    <footer class="bg-primary-950 text-gray-300 mt-12">
-        <div class="container mx-auto px-4 py-12">
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
+    {{-- Footer --}}
+    <footer class="bg-primary-950 text-gray-300 mt-16">
+        <div class="container mx-auto px-6 py-16">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 max-w-6xl mx-auto">
 
-                <div class="col-span-1 md:col-span-2 flex flex-col items-center mb-8 md:mb-0">
+                {{-- Kolom 1: Logo & Info IMI Sumut --}}
+                <div class="flex flex-col items-center md:items-start space-y-6">
                     <img src="{{ asset('storage/imi_family.png') }}" alt="IMI Sumut Logo Footer"
-                        class="h-16 mb-4">
-                    <div class="text-center text-white font-bold text-xl">
-                        IKATAN MOTOR INDONESIA <br>
-                        <span class="text-sm font-normal">PENGURUS PROVINSI SUMATERA UTARA</span>
+                        class="h-24 mb-2">
+                    <div class="text-center md:text-left">
+                        <h3 class="text-white font-bold text-xl mb-2">
+                            IKATAN MOTOR INDONESIA
+                        </h3>
+                        <p class="text-gray-300 text-sm font-medium mb-4">
+                            PENGURUS PROVINSI SUMATERA UTARA
+                        </p>
+                        <p class="text-gray-400 text-sm leading-relaxed max-w-md">
+                            Organisasi yang memfasilitasi dan mengembangkan industri olahraga otomotif di Sumatera Utara.
+                        </p>
                     </div>
                 </div>
-                <div>
-                    <h4 class="text-white font-bold text-lg mb-4">IMPORTANT LINKS</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white">Syarat Pembuatan Kartu Izin Start (KIS)</a></li>
-                        <li><a href="#" class="hover:text-white">Syarat Pendaftaran Anggota Klub IMI Sumut</a></li>
-                        <li><a href="#" class="hover:text-white">Syarat Pengajuan Rekomendasi Kegiatan</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-white font-bold text-lg mb-4">CATEGORIES</h4>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="hover:text-white">Hasil Lomba</a></li>
-                        <li><a href="#" class="hover:text-white">Pengumuman & Informasi</a></li>
-                        <li><a href="#" class="hover:text-white">Press Release</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="text-white font-bold text-lg mb-4">TENTANG IMI SUMUT</h4>
-                    <p class="text-sm mb-4">IMI Pengprov Sumut bertindak sebagai organisasi yang memfasilitasi industri
-                        olahraga otomotif.</p>
-                    <ul class="space-y-2 text-sm">
-                        <li><i class="fas fa-map-marker-alt mr-2"></i> Jln. Taruma No 52 Medan</li>
-                        <li><i class="fas fa-phone mr-2"></i> Phone: +62 61 - 452 0672</li>
-                    </ul>
-                    <div class="flex space-x-3 mt-4">
-                        <a href="#"
-                            class="w-8 h-8 flex items-center justify-center bg-primary-700 hover:bg-primary-600 rounded-full"><i
-                                class="fab fa-facebook-f"></i></a>
-                        <a href="#"
-                            class="w-8 h-8 flex items-center justify-center bg-primary-500 hover:bg-primary-400 rounded-full"><i
-                                class="fab fa-twitter"></i></a>
-                        <a href="#"
-                            class="w-8 h-8 flex items-center justify-center bg-danger-600 hover:bg-danger-500 rounded-full"><i
-                                class="fab fa-youtube"></i></a>
-                        <a href="#"
-                            class="w-8 h-8 flex items-center justify-center bg-pink-600 hover:bg-pink-500 rounded-full"><i
-                                class="fab fa-instagram"></i></a>
+
+                {{-- Kolom 2: Contact & Social Media --}}
+                <div class="flex flex-col items-center md:items-start space-y-6">
+                    <div>
+                        <h4 class="text-white font-bold text-lg mb-5">HUBUNGI KAMI</h4>
+                        <ul class="space-y-4 text-sm">
+                            <li class="flex items-start">
+                                <i class="fas fa-map-marker-alt text-primary-400 mt-1 mr-4 w-5 flex-shrink-0"></i>
+                                <span class="leading-relaxed">Jln. Taruma No 52, Medan, Sumatera Utara</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-phone text-primary-400 mt-1 mr-4 w-5 flex-shrink-0"></i>
+                                <span>+62 61 - 452 0672</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-envelope text-primary-400 mt-1 mr-4 w-5 flex-shrink-0"></i>
+                                <span>info@imisumut.or.id</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    {{-- Social Media --}}
+                    <div>
+                        <h5 class="text-white font-semibold text-sm mb-4">IKUTI KAMI</h5>
+                        <div class="flex space-x-4">
+                            <a href="https://www.facebook.com/share/17iAqXqceu/" target="_blank" rel="noopener noreferrer" title="Facebook IMI Sumut"
+                                class="w-11 h-11 flex items-center justify-center bg-primary-700 hover:bg-primary-600 rounded-full transition-all duration-200 transform hover:scale-110">
+                                <i class="fab fa-facebook-f text-lg"></i>
+                            </a>
+                            <a href="https://x.com/IMISumut" target="_blank" rel="noopener noreferrer" title="Twitter/X IMI Sumut"
+                                class="w-11 h-11 flex items-center justify-center bg-primary-700 hover:bg-primary-600 rounded-full transition-all duration-200 transform hover:scale-110">
+                                <i class="fab fa-twitter text-lg"></i>
+                            </a>
+                            <a href="https://www.instagram.com/imi_sumut/" target="_blank" rel="noopener noreferrer" title="Instagram IMI Sumut"
+                                class="w-11 h-11 flex items-center justify-center bg-gradient-to-br from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 rounded-full transition-all duration-200 transform hover:scale-110">
+                                <i class="fab fa-instagram text-lg"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
+
             </div>
 
-            <div class="border-t border-primary-800 mt-8 pt-6 text-center text-sm text-gray-400">
-                &copy; 2017 Ikatan Motor Indonesia - Pengurus Provinsi Sumatera Utara. All rights reserved
+            {{-- Copyright --}}
+            <div class="border-t border-primary-800 mt-12 pt-8 text-center">
+                <p class="text-sm text-gray-400">
+                    &copy; 2017 Ikatan Motor Indonesia - Pengurus Provinsi Sumatera Utara. All rights reserved.
+                </p>
             </div>
         </div>
     </footer>

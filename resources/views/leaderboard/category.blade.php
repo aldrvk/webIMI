@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 Hasil: {{ $category->kode_kategori }} - {{ $category->nama_kategori }}
             </h2>
-            <a href="{{ route('leaderboard.event', $event) }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+            <a href="{{ route('leaderboard.event', $event) }}" class="inline-flex items-center text-sm text-blue-400 hover:text-blue-300 transition-colors duration-200">
                 ← Kembali ke Event
             </a>
         </div>
