@@ -307,13 +307,7 @@ class PimpinanController extends Controller
                   AND er.status = "Confirmed")
                 ) as total_revenue
             ')
-            ->selectRaw('
-                CASE 
-                    WHEN e.event_date < NOW() THEN "Selesai"
-                    WHEN e.event_date = CURDATE() THEN "Sedang Berjalan"
-                    ELSE "Akan Datang"
-                END as status_event
-            ')
+            ->selectRaw('Func_Get_Event_Status(e.event_date, e.registration_deadline, e.is_published) as status_event')
             ->where('e.is_published', true);
 
         if ($selectedYear !== 'overall') {

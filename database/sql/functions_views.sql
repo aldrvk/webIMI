@@ -54,3 +54,24 @@ LEFT JOIN kis_categories AS kc ON er.kis_category_id = kc.id
 GROUP BY er.pembalap_user_id, u.name, kc.nama_kategori, kc.id
 ORDER BY kategori ASC, total_poin DESC
 $$
+
+DROP FUNCTION IF EXISTS `Func_Get_Event_Status`$$
+
+CREATE FUNCTION `Func_Get_Event_Status`(
+    p_event_date DATE, 
+    p_registration_deadline DATE, 
+    p_is_published BOOLEAN
+) 
+RETURNS VARCHAR(20) CHARSET utf8mb4
+DETERMINISTIC
+BEGIN
+    IF p_is_published = 0 THEN
+        RETURN 'Draft';
+    ELSEIF p_registration_deadline >= CURDATE() THEN
+        RETURN 'Open Registration';
+    ELSEIF p_event_date >= CURDATE() THEN
+        RETURN 'Registration Closed';
+    ELSE
+        RETURN 'Finished';
+    END IF;
+END$$

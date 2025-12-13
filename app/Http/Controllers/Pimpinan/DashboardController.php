@@ -294,11 +294,7 @@ class DashboardController extends Controller
                 'e.id',
                 'e.event_name',
                 'e.event_date',
-                DB::raw('CASE 
-                    WHEN e.event_date < CURDATE() THEN "Selesai"
-                    WHEN e.event_date = CURDATE() THEN "Sedang Berjalan"
-                    ELSE "Akan Datang"
-                END as status_event'),
+                DB::raw('Func_Get_Event_Status(e.event_date, e.registration_deadline, e.is_published) as status_event'),
                 DB::raw('COUNT(er.id) as total_registrants'),
                 DB::raw('COALESCE(SUM(er.amount_paid), 0) as total_revenue')
             ])
