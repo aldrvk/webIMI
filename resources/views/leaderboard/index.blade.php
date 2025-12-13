@@ -7,121 +7,144 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            
+            {{-- Alert Messages --}}
+            @if (session('status'))
+                <div class="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+                    <span class="font-medium">Berhasil!</span> {{ session('status') }}
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+                    <span class="font-medium">Error!</span> {{ session('error') }}
+                </div>
+            @endif
 
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-100">
+            {{-- Header Section --}}
+            <div class="bg-slate-800/50 dark:bg-slate-900/50 overflow-hidden shadow-sm sm:rounded-lg mb-6 p-6 border border-slate-600">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-2xl font-bold text-white mb-1">Event Yang Sudah Selesai</h3>
+                        <p class="text-sm text-gray-400">Lihat hasil dan peringkat dari event yang sudah berlalu</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm text-gray-400">Total Event</p>
+                        <p class="text-4xl font-bold text-white">{{ $events->total() }}</p>
+                    </div>
+                </div>
+            </div>
 
-                    {{-- 1. HEADER & FILTER --}}
-                    <form method="GET" action="{{ route('leaderboard.index') }}" class="mb-6">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            
-                            {{-- Filter Nama Pembalap --}}
-                            <div>
-                                <label for="search" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Pembalap</label>
-                                <input type="search" id="search" name="search"
-                                    class="mt-1 block w-full p-2.5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                    placeholder="Cari nama pembalap..." value="{{ $search ?? '' }}">
-                            </div>
-                            <input type="search" id="search" name="search"
-                                class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                                placeholder="Telusuri berdasarkan Nama Event..." value="{{ $search ?? '' }}">
-                            <button type="submit"
-                                class="text-white absolute end-2.5 bottom-2.5 bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
-                                Telusuri
-                            </button>
+            {{-- Search Section --}}
+            <div class="bg-slate-800/50 dark:bg-slate-900/50 rounded-lg shadow-sm mb-6 p-4 border border-slate-600">
+                <form method="GET" action="{{ route('leaderboard.index') }}" class="flex gap-3">
+                    <div class="relative flex-1">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                            </svg>
                         </div>
-                    </form>
+                        <input 
+                            type="text" 
+                            name="search" 
+                            id="search" 
+                            value="{{ request('search') }}"
+                            placeholder="Telusuri berdasarkan Nama Event atau Lokasi..." 
+                            class="w-full pl-10 pr-4 py-2.5 bg-slate-700/50 border border-slate-600/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                        >
+                    </div>
+                    <button 
+                        type="submit" 
+                        class="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors duration-200 whitespace-nowrap">
+                        Telusuri
+                    </button>
+                    @if(request('search'))
+                        <a 
+                            href="{{ route('leaderboard.index') }}" 
+                            class="px-4 py-2.5 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center whitespace-nowrap"
+                            title="Reset pencarian">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </a>
+                    @endif
+                </form>
+                
+                @if(request('search'))
+                    <div class="mt-3 px-3 py-2 bg-indigo-600/20 border border-indigo-500/30 rounded-lg">
+                        <p class="text-sm text-indigo-300">
+                            <span class="font-semibold">{{ $events->total() }}</span> hasil untuk: 
+                            <span class="font-bold">"{{ request('search') }}"</span>
+                        </p>
+                    </div>
+                @endif
+            </div>
 
-                    {{-- 2. DAFTAR EVENT (YANG SUDAH SELESAI) --}}
-                    <div class="space-y-6">
-                        @forelse($events as $event)
-                            <div
-                                class="block p-6 bg-gray-50 border border-gray-200 rounded-lg shadow dark:bg-gray-900 dark:border-gray-700">
-                                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                                    {{-- Info Event --}}
-                                    <div>
-                                        <span class="text-sm font-medium text-red-600 dark:text-red-400">
-                                            {{ $event->event_date ? $event->event_date->translatedFormat('l, d F Y') : 'TBD' }}
-                                            (Selesai)
-                                        </span>
-                                        <h5
-                                            class="mt-2 mb-1 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                            {{ $event->event_name }}
-                                        </h5>
-                                        <p class="font-normal text-gray-700 dark:text-gray-400">{{ $event->location }}</p>
-                                        <p class="text-sm font-normal text-gray-500 dark:text-gray-500">Penyelenggara:
-                                            {{ $event->proposing_club_name ?? 'N/A' }}
-                                        </p>
+            {{-- Event List (Horizontal Cards) --}}
+            <div class="space-y-4">
+                @forelse($events as $event)
+                    <div class="bg-slate-800/50 dark:bg-slate-900/50 border border-slate-600 dark:border-slate-700 rounded-lg overflow-hidden hover:border-green-500/70 transition-all duration-200">
+                        <div class="p-6">
+                            <div class="flex items-start justify-between">
+                                {{-- Left: Event Info --}}
+                                <div class="flex-1">
+                                    {{-- Date Badge --}}
+                                    <div class="inline-block bg-indigo-600/80 text-white px-3 py-1 rounded text-sm font-medium mb-3">
+                                        {{ $event->event_date->translatedFormat('l, d F Y') }}
                                     </div>
-
-                                    <div class="mt-4 md:mt-0 md:flex md:items-center">
-                                        <a href="{{ route('events.results', ['event' => $event->id, 'source' => 'leaderboard']) }}"
-                                            class="inline-flex items-center px-4 py-2 bg-green-700 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-600 focus:bg-green-600 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                            Lihat Hasil
-                                        </a>
+                                    
+                                    {{-- Event Name --}}
+                                    <h3 class="text-2xl font-bold text-white mb-2">
+                                        {{ $event->event_name }}
+                                        <span class="ml-2 text-xs bg-green-500 text-white px-2 py-1 rounded-full font-semibold">SELESAI</span>
+                                    </h3>
+                                    
+                                    {{-- Location --}}
+                                    <p class="text-gray-300 mb-1">{{ $event->location }}</p>
+                                    
+                                    {{-- Organizer --}}
+                                    <p class="text-sm text-gray-400 mb-3">Penyelenggara: {{ $event->proposingClub->nama_klub ?? 'N/A' }}</p>
+                                    
+                                    {{-- Categories --}}
+                                    <div class="flex flex-wrap gap-2">
+                                        @foreach($event->kisCategories as $category)
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-bold bg-blue-600/80 text-white">
+                                                {{ $category->kode_kategori }}
+                                            </span>
+                                        @endforeach
                                     </div>
+                                </div>
 
+                                {{-- Right: Button --}}
+                                <div class="ml-6 flex-shrink-0">
+                                    <a href="{{ route('leaderboard.event', $event) }}" 
+                                       class="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 uppercase text-sm">
+                                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                                        </svg>
+                                        Lihat Hasil
+                                    </a>
                                 </div>
                             </div>
                         </div>
-                    </form>
-
-                    {{-- 2. TABEL PAPAN PERINGKAT (DARI VIEW) --}}
-                    <div class="overflow-x-auto relative shadow-md sm:rounded-lg">
-                        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                <tr>
-                                    <th scope="col" class="py-3 px-6">Peringkat</th>
-                                    <th scope="col" class="py-3 px-6">Nama Pembalap</th>
-                                    <th scope="col" class="py-3 px-6">Kategori</th>
-                                    <th scope="col" class="py-3 px-6">Total Poin</th>
-                                    <th scope="col" class="py-3 px-6">Jumlah Balapan</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{-- Data $leaderboard ini diambil dari View_Leaderboard --}}
-                                @forelse($leaderboard as $index => $entry)
-                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                                        <th scope="row" class="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            {{-- Rumus untuk peringkat yang benar di tiap halaman paginasi --}}
-                                            {{ ($leaderboard->currentPage() - 1) * $leaderboard->perPage() + $index + 1 }}
-                                        </th>
-                                        <td class="py-4 px-6 font-medium text-gray-900 dark:text-white">
-                                            {{ $entry->nama_pembalap ?? 'N/A' }}
-                                        </td>
-                                        <td class="py-4 px-6">
-                                            {{ $entry->kategori ?? 'N/A' }}
-                                        </td>
-                                        <td class="py-4 px-6 font-bold">
-                                            {{ $entry->total_points ?? '0' }}
-                                        </td>
-                                        <td class="py-4 px-6">
-                                            {{ $entry->jumlah_balapan ?? '0' }}
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                                        <td colspan="5" class="py-4 px-6 text-center">
-                                            Tidak ada data pembalap yang ditemukan
-                                            @if($search || $selectedKategori)
-                                                dengan filter ini.
-                                            @else
-                                                .
-                                            @endif
-                                        </td>
-                                    </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
                     </div>
-
-                    {{-- Pagination --}}
-                    <div class="mt-6">
-                        {{ $leaderboard->links() }}
+                @empty
+                    <div class="bg-slate-800/50 dark:bg-slate-900/50 border border-slate-600 rounded-lg p-12 text-center">
+                        <svg class="w-24 h-24 mx-auto text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <h3 class="text-lg font-medium text-white mb-2">Belum Ada Event Yang Selesai</h3>
+                        <p class="text-gray-400">Hasil event akan muncul setelah event selesai.</p>
                     </div>
-
-                </div>
+                @endforelse
             </div>
+
+            {{-- Pagination --}}
+            @if($events->hasPages())
+                <div class="mt-8">
+                    {{ $events->links() }}
+                </div>
+            @endif
+
         </div>
     </div>
 </x-app-layout>

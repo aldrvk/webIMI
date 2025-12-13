@@ -63,8 +63,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/events/{event}/register', [EventRegistrationController::class, 'store'])->name('events.register');
         Route::get('/events/{event}/results', [EventControllerPembalap::class, 'results'])->name('events.results');
         
+        // Leaderboard / Hasil Event Flow
         Route::get('/leaderboard', [LeaderboardController::class, 'index'])->name('leaderboard.index');
-        Route::get('/leaderboard/{category}', [LeaderboardController::class, 'show'])->name('leaderboard.show');
+        Route::get('/leaderboard/event/{event}', [LeaderboardController::class, 'showEvent'])->name('leaderboard.event');
+        Route::get('/leaderboard/event/{event}/kategori/{category}', [LeaderboardController::class, 'show'])->name('leaderboard.show');
 
         // History Pembalap Routes - PROTECTED WITH KIS.ACTIVE
         Route::get('/racers/history', [RacerHistoryController::class, 'index'])->name('racers.history.index');
