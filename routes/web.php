@@ -23,6 +23,7 @@ use App\Http\Controllers\Penyelenggara\EventResultController;
 use App\Http\Controllers\Pimpinan\DashboardController as PimpinanDashboardController;
 use App\Http\Controllers\Pimpinan\ExportController;
 use App\Http\Controllers\Pimpinan\PimpinanController;
+use App\Http\Controllers\Pimpinan\AnalyticsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -138,6 +139,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Route Pimpinan IMI
     Route::middleware('role:pimpinan_imi')->prefix('pimpinan')->name('pimpinan.')->group(function () {
         // Route dashboard sudah ada di atas (dashboard.pimpinan)
+        
+        // Analytics routes - Menggunakan 8 Views
+        Route::get('/analytics/event-revenue', [AnalyticsController::class, 'eventRevenueRanking'])->name('analytics.event-revenue');
+        Route::get('/analytics/alerts', [AnalyticsController::class, 'operationalAlerts'])->name('analytics.alerts');
+        Route::get('/analytics/revenue-ytd', [AnalyticsController::class, 'revenueBreakdownYTD'])->name('analytics.revenue-ytd');
+        Route::get('/analytics/top-clubs', [AnalyticsController::class, 'topClubsPerformance'])->name('analytics.top-clubs');
+        Route::get('/analytics/dashboard-widgets', [AnalyticsController::class, 'dashboardWidgets'])->name('analytics.widgets');
         
         // Export routes
         Route::get('/export/pembalap/pdf', [ExportController::class, 'pembalapPdf'])->name('export.pembalap.pdf');

@@ -50,10 +50,16 @@ class DashboardController extends Controller
                 return redirect()->route('superadmin.users.index');
 
             case 'pengurus_imi':
-                $data['pendingKisCount'] = KisApplication::where('status', 'Pending')->count();
+                // Menggunakan View_Dashboard_KPIs untuk KPI utama
+                $kpis = DB::table('View_Dashboard_KPIs')->first();
+                $data['pendingKisCount'] = $kpis->total_kis_pending ?? 0;
+                $data['totalKlub'] = $kpis->total_klub ?? 0;
+                $data['totalPembalap'] = $kpis->total_pembalap_aktif ?? 0;
+                
+                // Menggunakan View_Operational_Alerts untuk alerts
+                $data['operationalAlerts'] = DB::table('View_Operational_Alerts')->get();
+                
                 $data['pendingIuranCount'] = ClubDues::where('status', 'Pending')->count();
-                $data['totalKlub'] = Club::count();
-                $data['totalPembalap'] = PembalapProfile::count();
                 $data['latestPendingKis'] = KisApplication::where('status', 'Pending')->with('pembalap')->latest()->take(5)->get();
                 $data['latestPendingIuran'] = ClubDues::where('status', 'Pending')->with('club')->latest()->take(5)->get();
                 $data['upcomingEvents'] = Event::where('is_published', true)->where('event_date', '>=', now()->toDateString())->with('proposingClub')->orderBy('event_date', 'asc')->take(5)->get();
