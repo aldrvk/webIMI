@@ -12,6 +12,11 @@ return new class extends Migration
         DB::unprepared('DROP TRIGGER IF EXISTS `log_kis_application_insert`');
         DB::unprepared('DROP TRIGGER IF EXISTS `log_kis_application_update`');
         DB::unprepared('DROP TRIGGER IF EXISTS `log_event_insert`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `log_event_registration_insert`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `log_event_registration_update`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `log_club_dues_insert`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `log_club_dues_update`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `log_user_role_update`');
 
         // Trigger 1: Auto create KIS license on approval
         DB::unprepared("
@@ -130,6 +135,139 @@ return new class extends Migration
                 );
             END
         ");
+
+        // Trigger 5: Log event registration insert
+        DB::unprepared("
+            CREATE TRIGGER `log_event_registration_insert`
+            AFTER INSERT ON `event_registrations`
+            FOR EACH ROW
+            BEGIN
+                DECLARE v_event_name VARCHAR(255);
+                
+                SELECT event_name INTO v_event_name
+                FROM events
+                WHERE id = NEW.event_id;
+                
+                INSERT INTO logs (action_type, table_name, record_id, new_value, user_id, created_at, updated_at)
+                VALUES (
+                    'INSERT',
+                    'event_registrations',
+                    NEW.id,
+                    CONCAT('Pendaftaran event: ', v_event_name, ' (Status: ', NEW.status, ')'),
+                    NEW.pembalap_user_id,
+                    NOW(),
+                    NOW()
+                );
+            END
+        ");
+
+        // Trigger 6: Log event registration update
+        DB::unprepared("
+            CREATE TRIGGER `log_event_registration_update`
+            AFTER UPDATE ON `event_registrations`
+            FOR EACH ROW
+            BEGIN
+                IF OLD.status <> NEW.status THEN
+                    INSERT INTO logs (action_type, table_name, record_id, old_value, new_value, user_id, created_at, updated_at)
+                    VALUES (
+                        'UPDATE',
+                        'event_registrations',
+                        NEW.id,
+                        CONCAT('Status lama: ', OLD.status),
+                        CONCAT('Status baru: ', NEW.status),
+                        COALESCE(NEW.payment_processed_by_user_id, NEW.pembalap_user_id),
+                        NOW(),
+                        NOW()
+                    );
+                END IF;
+                
+                IF (OLD.result_position IS NULL AND NEW.result_position IS NOT NULL) 
+                    OR (OLD.result_position <> NEW.result_position) 
+                    OR (OLD.points_earned <> NEW.points_earned) THEN
+                    INSERT INTO logs (action_type, table_name, record_id, old_value, new_value, user_id, created_at, updated_at)
+                    VALUES (
+                        'UPDATE',
+                        'event_registrations',
+                        NEW.id,
+                        CONCAT('Hasil lama - Posisi: ', IFNULL(OLD.result_position, 'Belum ada'), ', Poin: ', OLD.points_earned),
+                        CONCAT('Hasil baru - Posisi: ', NEW.result_position, ', Poin: ', NEW.points_earned, ', Status: ', IFNULL(NEW.result_status, 'Finished')),
+                        NEW.payment_processed_by_user_id,
+                        NOW(),
+                        NOW()
+                    );
+                END IF;
+            END
+        ");
+
+        // Trigger 7: Log club dues insert
+        DB::unprepared("
+            CREATE TRIGGER `log_club_dues_insert`
+            AFTER INSERT ON `club_dues`
+            FOR EACH ROW
+            BEGIN
+                DECLARE v_club_name VARCHAR(255);
+                
+                SELECT nama_klub INTO v_club_name
+                FROM clubs
+                WHERE id = NEW.club_id;
+                
+                INSERT INTO logs (action_type, table_name, record_id, new_value, user_id, created_at, updated_at)
+                VALUES (
+                    'INSERT',
+                    'club_dues',
+                    NEW.id,
+                    CONCAT('Iuran klub: ', v_club_name, ' tahun ', NEW.payment_year, ' - Rp', FORMAT(NEW.amount_paid, 0)),
+                    NEW.processed_by_user_id,
+                    NOW(),
+                    NOW()
+                );
+            END
+        ");
+
+        // Trigger 8: Log club dues update
+        DB::unprepared("
+            CREATE TRIGGER `log_club_dues_update`
+            AFTER UPDATE ON `club_dues`
+            FOR EACH ROW
+            BEGIN
+                IF OLD.status <> NEW.status THEN
+                    INSERT INTO logs (action_type, table_name, record_id, old_value, new_value, user_id, created_at, updated_at)
+                    VALUES (
+                        'UPDATE',
+                        'club_dues',
+                        NEW.id,
+                        CONCAT('Status lama: ', OLD.status),
+                        CONCAT('Status baru: ', NEW.status, IF(NEW.rejection_reason IS NOT NULL, CONCAT(' - Alasan: ', NEW.rejection_reason), '')),
+                        NEW.processed_by_user_id,
+                        NOW(),
+                        NOW()
+                    );
+                END IF;
+            END
+        ");
+
+        // Trigger 9: Log user role update (is_active akan di-handle di migration terpisah)
+        DB::unprepared("
+            CREATE TRIGGER `log_user_role_update`
+            AFTER UPDATE ON `users`
+            FOR EACH ROW
+            BEGIN
+                -- Log perubahan role saja (is_active belum ada di tabel users saat ini)
+                IF OLD.role <> NEW.role THEN
+                    INSERT INTO logs (action_type, table_name, record_id, old_value, new_value, user_id, created_at, updated_at)
+                    VALUES (
+                        'UPDATE',
+                        'users',
+                        NEW.id,
+                        CONCAT('Role lama: ', OLD.role),
+                        CONCAT('Role baru: ', NEW.role, ' untuk user: ', NEW.email),
+                        NEW.id,
+                        NOW(),
+                        NOW()
+                    );
+                END IF;
+            END
+        ");
     }
 
     public function down()
@@ -138,5 +276,10 @@ return new class extends Migration
         DB::unprepared('DROP TRIGGER IF EXISTS `log_kis_application_insert`');
         DB::unprepared('DROP TRIGGER IF EXISTS `log_kis_application_update`');
         DB::unprepared('DROP TRIGGER IF EXISTS `log_event_insert`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `log_event_registration_insert`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `log_event_registration_update`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `log_club_dues_insert`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `log_club_dues_update`');
+        DB::unprepared('DROP TRIGGER IF EXISTS `log_user_role_update`');
     }
 };
