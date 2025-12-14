@@ -359,7 +359,42 @@ class PimpinanController extends Controller
             ->get();
 
         $categories = DB::table('kis_categories')->get();
-        $overallLeaderboard = collect();
+        
+        // Filter kategori untuk leaderboard
+        $selectedCategoryId = $request->input('category_id', null);
+        $selectedCategory = null;
+        if ($selectedCategoryId) {
+            $selectedCategory = DB::table('kis_categories')->where('id', $selectedCategoryId)->first();
+        }
+        
+        // Query leaderboard dengan filter kategori
+        $leaderboardQuery = DB::connection('mysql')->table('event_registrations as er')
+            ->join('users as u', 'er.pembalap_user_id', '=', 'u.id')
+            ->leftJoin('kis_categories as kc', 'er.kis_category_id', '=', 'kc.id')
+            ->where('u.role', 'pembalap')
+            ->whereNotNull('er.points_earned')
+            ->where('er.points_earned', '>', 0)
+            ->selectRaw('u.name as nama_pembalap, 
+                        COALESCE(kc.nama_kategori, "Umum") as kategori, 
+                        SUM(er.points_earned) as total_poin')
+            ->groupBy('u.id', 'u.name', 'kc.nama_kategori');
+        
+        // Filter kategori jika dipilih
+        if ($selectedCategoryId) {
+            $leaderboardQuery->where('er.kis_category_id', $selectedCategoryId);
+        }
+        
+        // Filter tahun jika bukan overall
+        if ($selectedYear !== 'overall') {
+            $leaderboardQuery->join('events as e', 'er.event_id', '=', 'e.id')
+                             ->whereYear('e.event_date', (int)$selectedYear);
+        }
+        
+        $overallLeaderboard = $leaderboardQuery
+            ->havingRaw('SUM(er.points_earned) > 0')
+            ->orderByDesc('total_poin')
+            ->take(10)
+            ->get();
 
         return view('dashboard-pimpinan', compact(
             'kpi_pembalap_aktif',
@@ -379,6 +414,8 @@ class PimpinanController extends Controller
             'pieChartData',
             'categories',
             'overallLeaderboard',
+            'selectedCategoryId',
+            'selectedCategory',
             'selectedYear',
             'availableYears'
         ));

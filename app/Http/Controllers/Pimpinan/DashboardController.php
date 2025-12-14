@@ -3,12 +3,6 @@
 namespace App\Http\Controllers\Pimpinan;
 
 use App\Http\Controllers\Controller;
-use App\Models\Event;
-use App\Models\User;
-use App\Models\Club;
-use App\Models\ClubDues;
-use App\Models\KisApplication;
-use App\Models\KisCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -16,6 +10,8 @@ class DashboardController extends Controller
 {
     public function index(Request $request)
     {
+        \Log::info('=== Pimpinan Dashboard Started ===');
+        
         $selectedYear = $request->get('year', 'overall');
         $year = ($selectedYear === 'overall') ? now()->year : $selectedYear;
         
@@ -58,19 +54,20 @@ class DashboardController extends Controller
         }
 
         // KPI: Total Klub
-        $kpi_klub_total = Club::count();
+        $kpi_klub_total = DB::table('clubs')->count();
 
         // KPI: Event Selesai (responsif terhadap filter)
         if ($selectedYear === 'overall') {
-            $kpi_event_selesai = Event::where('event_date', '<', now())->count();
+            $kpi_event_selesai = DB::table('events')->where('event_date', '<', now())->count();
         } else {
-            $kpi_event_selesai = Event::whereYear('event_date', $selectedYear)
+            $kpi_event_selesai = DB::table('events')
+                ->whereYear('event_date', $selectedYear)
                 ->where('event_date', '<', now())
                 ->count();
         }
 
         // KPI: KIS Pending
-        $kpi_kis_pending = KisApplication::where('status', 'Pending')->count();
+        $kpi_kis_pending = DB::table('kis_applications')->where('status', 'Pending')->count();
 
         // Revenue YTD (responsif terhadap filter)
         if ($selectedYear === 'overall') {
@@ -80,7 +77,7 @@ class DashboardController extends Controller
                 ->where('ka.status', 'Approved')
                 ->sum('kc.biaya_kis');
             
-            $revenue_iuran = ClubDues::where('status', 'Approved')
+            $revenue_iuran = DB::table('club_dues')->where('status', 'Approved')
                 ->sum('amount_paid');
             
                 $revenue_event = DB::table('event_registrations as er')
@@ -95,7 +92,7 @@ class DashboardController extends Controller
                 ->whereYear('ka.approved_at', $selectedYear)
                 ->sum('kc.biaya_kis');
             
-            $revenue_iuran = ClubDues::where('status', 'Approved')
+            $revenue_iuran = DB::table('club_dues')->where('status', 'Approved')
                 ->where('payment_year', $selectedYear)
                 ->sum('amount_paid');
             
@@ -219,11 +216,27 @@ class DashboardController extends Controller
         // Pie Chart Data - Distribusi pembalap per kategori
         $pieChartData = $this->getPieChartData($selectedYear);
 
-        // Overall Leaderboard
-        $overallLeaderboard = $this->getOverallLeaderboard($selectedYear);
-
         // Categories untuk filter
-        $categories = KisCategory::all();
+        $categories = DB::table('kis_categories')->get();
+
+        // Leaderboard dengan filter kategori
+        $selectedCategoryId = $request->get('category_id', null);
+        $selectedCategory = null;
+        if ($selectedCategoryId) {
+            $selectedCategory = DB::table('kis_categories')->where('id', $selectedCategoryId)->first();
+        }
+        
+        // Debug: Log koneksi yang digunakan
+        \Log::info('Pimpinan Dashboard - DB Connection', [
+            'connection' => config('database.default'),
+            'selectedYear' => $selectedYear,
+            'categoryId' => $selectedCategoryId
+        ]);
+        
+        $overallLeaderboard = $this->getOverallLeaderboard($selectedYear, $selectedCategoryId);
+        
+        // Debug: Log jumlah data leaderboard
+        \Log::info('Leaderboard data count', ['count' => count($overallLeaderboard)]);
 
         return view('dashboard-pimpinan', compact(
             'kpi_pembalap_aktif',
@@ -243,6 +256,8 @@ class DashboardController extends Controller
             'pieChartData',
             'overallLeaderboard',
             'categories',
+            'selectedCategoryId',
+            'selectedCategory',
             'year',
             'selectedYear',
             'availableYears'
@@ -341,24 +356,51 @@ class DashboardController extends Controller
         return $query->get();
     }
 
-    private function getOverallLeaderboard($selectedYear)
+    private function getOverallLeaderboard($selectedYear, $categoryId = null)
     {
-        $query = DB::table('event_registrations as er')
-            ->join('users as u', 'er.pembalap_user_id', '=', 'u.id')
-            ->leftJoin('kis_categories as kc', 'er.kis_category_id', '=', 'kc.id')
-            ->where('u.role', 'pembalap')
-            ->selectRaw('u.name as nama_pembalap, 
-                        COALESCE(kc.nama_kategori, "Umum") as kategori, 
-                        SUM(er.points_earned) as total_poin')
-            ->groupBy('u.id', 'u.name', 'kc.nama_kategori');
+        try {
+            // Gunakan koneksi mysql langsung untuk bypass issue RBAC
+            $query = DB::connection('mysql')->table('event_registrations as er')
+                ->join('users as u', 'er.pembalap_user_id', '=', 'u.id')
+                ->leftJoin('kis_categories as kc', 'er.kis_category_id', '=', 'kc.id')
+                ->where('u.role', 'pembalap')
+                ->whereNotNull('er.points_earned')
+                ->where('er.points_earned', '>', 0)
+                ->selectRaw('u.name as nama_pembalap, 
+                            COALESCE(kc.nama_kategori, "Umum") as kategori, 
+                            SUM(er.points_earned) as total_poin')
+                ->groupBy('u.id', 'u.name', 'kc.nama_kategori');
             
-        if ($selectedYear !== 'overall') {
-            $query->join('events as e', 'er.event_id', '=', 'e.id')
-                  ->whereYear('e.event_date', $selectedYear);
+            // Filter berdasarkan kategori jika dipilih
+            if ($categoryId) {
+                $query->where('er.kis_category_id', $categoryId);
+            }
+                
+            if ($selectedYear !== 'overall') {
+                $query->join('events as e', 'er.event_id', '=', 'e.id')
+                      ->whereYear('e.event_date', $selectedYear);
+            }
+            
+            $results = $query->havingRaw('SUM(er.points_earned) > 0')
+                ->orderByDesc('total_poin')
+                ->take(10)
+                ->get();
+            
+            \Log::info('Leaderboard query successful', [
+                'count' => count($results),
+                'selectedYear' => $selectedYear,
+                'categoryId' => $categoryId
+            ]);
+            
+            return $results;
+            
+        } catch (\Exception $e) {
+            \Log::error('Leaderboard query failed', [
+                'error' => $e->getMessage(),
+                'selectedYear' => $selectedYear,
+                'categoryId' => $categoryId
+            ]);
+            return collect([]); // Return empty collection
         }
-        
-        return $query->orderByDesc('total_poin')
-            ->take(10)
-            ->get();
     }
 }

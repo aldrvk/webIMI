@@ -517,16 +517,22 @@
                     
                     <div class="mb-4">
                         <label for="category_filter" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Filter Peringkat per Kategori:</label>
-                        <select id="category_filter" onchange="if(this.value) window.location.href='/leaderboard/' + this.value"
+                        <select id="category_filter" onchange="filterLeaderboard(this.value)"
                                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white">
-                            <option value="">Pilih Kategori...</option>
+                            <option value="">Semua Kategori (Overall)</option>
                             @foreach ($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->nama_kategori }} ({{ $category->kode_kategori }})</option>
+                                <option value="{{ $category->id }}" {{ request('category_id') == $category->id ? 'selected' : '' }}>{{ $category->nama_kategori }} ({{ $category->kode_kategori }})</option>
                             @endforeach
                         </select>
                     </div>
                     
-                    <h4 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">Klasemen Umum (10 Besar)</h4>
+                    <h4 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                        @if(isset($selectedCategory) && $selectedCategory)
+                            Klasemen {{ $selectedCategory->nama_kategori }} (10 Besar)
+                        @else
+                            Klasemen Umum (10 Besar)
+                        @endif
+                    </h4>
 
                     <div class="flow-root">
                         <ul role="list" class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -565,6 +571,16 @@
 
     {{-- JavaScript untuk Export dengan Filter Tahun --}}
     <script>
+        function filterLeaderboard(categoryId) {
+            const url = new URL(window.location.href);
+            if (categoryId) {
+                url.searchParams.set('category_id', categoryId);
+            } else {
+                url.searchParams.delete('category_id');
+            }
+            window.location.href = url.toString();
+        }
+
         function exportPembalap(format) {
             const year = document.getElementById('export-pembalap-year').value;
             const baseUrl = format === 'pdf' 
