@@ -66,13 +66,21 @@ END$$
 
 CREATE VIEW `View_Leaderboard` AS
 SELECT 
-    u.name AS nama_pembalap, kc.nama_kategori AS kategori, kc.id AS kategori_id,
-    SUM(er.points_earned) AS total_poin, COUNT(er.id) AS jumlah_balapan
+    u.name AS nama_pembalap, 
+    c.nama_klub,
+    kc.nama_kategori AS kategori, 
+    kc.id AS kategori_id,
+    SUM(er.points_earned) AS total_poin, 
+    COUNT(er.id) AS jumlah_balapan
 FROM event_registrations AS er
 JOIN users AS u ON er.pembalap_user_id = u.id
+JOIN pembalap_profiles AS pp ON u.id = pp.user_id
+JOIN clubs AS c ON pp.club_id = c.id
+JOIN kis_licenses AS kl ON u.id = kl.pembalap_user_id AND kl.expiry_date >= CURDATE()
 LEFT JOIN kis_categories AS kc ON er.kis_category_id = kc.id
-GROUP BY er.pembalap_user_id, u.name, kc.nama_kategori, kc.id
-ORDER BY kategori ASC, total_poin DESC
+WHERE er.points_earned > 0
+GROUP BY er.pembalap_user_id, u.name, c.nama_klub, kc.nama_kategori, kc.id
+ORDER BY total_poin DESC
 $$
 
 DROP FUNCTION IF EXISTS `Func_Get_Event_Status`$$

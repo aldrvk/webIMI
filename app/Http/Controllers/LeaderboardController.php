@@ -12,11 +12,11 @@ class LeaderboardController extends Controller
 {
     /**
      * Step 1: Tampilkan list event yang sudah selesai
+     * Menggunakan View_Finished_Events
      */
     public function index(Request $request)
     {
-        $query = Event::with('proposingClub')
-            ->where('event_date', '<', now());
+        $query = DB::table('View_Finished_Events');
         
         // Handle search
         if ($request->filled('search')) {
@@ -149,21 +149,23 @@ class LeaderboardController extends Controller
     }
     
     /**
-     * Menampilkan leaderboard keseluruhan (semua event) berdasarkan kategori menggunakan Stored Procedure
+     * Menampilkan leaderboard keseluruhan (semua event) berdasarkan kategori
+     * - Tanpa filter: Menggunakan View_Leaderboard
+     * - Dengan filter kategori: Menggunakan Stored Procedure Proc_GetLeaderboard
      */
     public function overall(Request $request)
     {
         // Ambil semua kategori KIS untuk dropdown
         $categories = KisCategory::orderBy('nama_kategori')->get();
         
-        // Default kategori (bisa dari query string atau kategori pertama)
-        $selectedCategoryId = $request->input('category_id', $categories->first()->id ?? null);
+        // Default: null untuk semua kategori, atau dari query string
+        $selectedCategoryId = $request->input('category_id', null);
         
         $leaderboardData = [];
         
         if ($selectedCategoryId) {
             try {
-                // Panggil Stored Procedure 'Proc_GetLeaderboard'
+                // Dengan filter kategori: Panggil Stored Procedure 'Proc_GetLeaderboard'
                 $results = DB::select(
                     'CALL Proc_GetLeaderboard(?)',
                     [$selectedCategoryId]
@@ -175,6 +177,13 @@ class LeaderboardController extends Controller
                 \Log::error('Gagal mengambil data leaderboard (Proc_GetLeaderboard): ' . $e->getMessage());
                 return back()->with('error', 'Gagal memuat data leaderboard.');
             }
+        } else {
+            // Tanpa filter: Menggunakan View_Leaderboard untuk semua kategori
+            $leaderboardData = DB::table('View_Leaderboard')
+                ->orderByDesc('total_poin')
+                ->limit(50)
+                ->get()
+                ->toArray();
         }
         
         return view('leaderboard.overall', [

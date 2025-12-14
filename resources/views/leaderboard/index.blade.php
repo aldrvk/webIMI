@@ -89,7 +89,7 @@
                                 <div class="flex-1">
                                     {{-- Date Badge --}}
                                     <div class="inline-block bg-indigo-600/80 text-white px-3 py-1 rounded text-sm font-medium mb-3">
-                                        {{ $event->event_date->translatedFormat('l, d F Y') }}
+                                        {{ \Carbon\Carbon::parse($event->event_date)->translatedFormat('l, d F Y') }}
                                     </div>
                                     
                                     {{-- Event Name --}}
@@ -102,21 +102,14 @@
                                     <p class="text-gray-300 mb-1">{{ $event->location }}</p>
                                     
                                     {{-- Organizer --}}
-                                    <p class="text-sm text-gray-400 mb-3">Penyelenggara: {{ $event->proposingClub->nama_klub ?? 'N/A' }}</p>
+                                    <p class="text-sm text-gray-400 mb-3">Penyelenggara: {{ $event->proposing_club_name ?? 'N/A' }}</p>
                                     
-                                    {{-- Categories --}}
-                                    <div class="flex flex-wrap gap-2">
-                                        @foreach($event->kisCategories as $category)
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-bold bg-blue-600/80 text-white">
-                                                {{ $category->kode_kategori }}
-                                            </span>
-                                        @endforeach
-                                    </div>
+                                    {{-- Categories tidak tersedia dari View, skip --}}
                                 </div>
 
                                 {{-- Right: Button --}}
                                 <div class="ml-6 flex-shrink-0">
-                                    <a href="{{ route('leaderboard.event', $event) }}" 
+                                    <a href="{{ route('leaderboard.event', $event->id) }}" 
                                        class="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-200 uppercase text-sm">
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>

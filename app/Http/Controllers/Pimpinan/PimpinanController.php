@@ -22,21 +22,15 @@ class PimpinanController extends Controller
             ->toArray();
         
         if ($selectedYear === 'overall') {
-            // KPI Overall (All Time)
-            $kpi_pembalap_aktif = DB::table('kis_licenses')
-                ->where('expiry_date', '>=', now())
-                ->count();
+            // ============================================
+            // KPI Overall - Menggunakan View_Dashboard_KPIs
+            // ============================================
+            $kpis = DB::table('View_Dashboard_KPIs')->first();
             
-            $kpi_klub_total = DB::table('clubs')->count();
-            
-            $kpi_event_selesai = DB::table('events')
-                ->where('event_date', '<', now())
-                ->where('is_published', true)
-                ->count();
-            
-            $kpi_kis_pending = DB::table('kis_applications')
-                ->where('status', 'Pending')
-                ->count();
+            $kpi_pembalap_aktif = $kpis->total_pembalap_aktif ?? 0;
+            $kpi_klub_total = $kpis->total_klub ?? 0;
+            $kpi_event_selesai = $kpis->total_event_selesai ?? 0;
+            $kpi_kis_pending = $kpis->total_kis_pending ?? 0;
 
             // Revenue Overall
             $revenue_iuran = DB::table('club_dues')
@@ -187,137 +181,152 @@ class PimpinanController extends Controller
         }
 
         // ============================================
-        // TOP CLUBS (FIXED - Tanpa Alias di SELECT)
+        // TOP CLUBS
+        // - Overall: Menggunakan View_Top_Clubs_Performance
+        // - Per Tahun: Query manual (View tidak support year filter)
         // ============================================
-        $yearCondition = $selectedYear === 'overall' ? '' : 'AND YEAR(kl.issued_date) = ' . (int)$selectedYear;
-        $eventYearCondition = $selectedYear === 'overall' ? '' : 'AND YEAR(events.event_date) = ' . (int)$selectedYear;
-        $iuranYear = $selectedYear === 'overall' ? $currentYear : (int)$selectedYear;
+        if ($selectedYear === 'overall') {
+            // Menggunakan View untuk konsistensi
+            $top_clubs = DB::table('View_Top_Clubs_Performance')
+                ->select([
+                    'club_id as id',
+                    'nama_klub',
+                    'total_events_organized as total_event_tahun_ini',
+                    'total_participants as total_anggota_aktif',
+                    'club_status as status_iuran',
+                    'total_dues_paid'
+                ])
+                ->orderByDesc('total_events_organized')
+                ->limit(3)
+                ->get()
+                ->map(function($club) {
+                    $club->status_iuran = $club->status_iuran === 'Active' ? 'Lunas' : 'Belum Lunas';
+                    // Hitung score_klub: anggota*10 + event*50 + (lunas?100:0)
+                    $club->score_klub = ($club->total_anggota_aktif * 10) 
+                                      + ($club->total_event_tahun_ini * 50) 
+                                      + ($club->status_iuran === 'Lunas' ? 100 : 0);
+                    return $club;
+                });
+        } else {
+            // Query manual untuk filter per tahun (View tidak support)
+            $yearCondition = 'AND YEAR(kl.issued_date) = ' . (int)$selectedYear;
+            $eventYearCondition = 'AND YEAR(events.event_date) = ' . (int)$selectedYear;
+            $iuranYear = (int)$selectedYear;
 
-        $top_clubs = DB::table('clubs')
-            ->select('clubs.*')
-            ->selectRaw("
-                (SELECT COUNT(DISTINCT pp.user_id) 
-                 FROM pembalap_profiles pp
-                 JOIN kis_licenses kl ON kl.pembalap_user_id = pp.user_id
-                 WHERE pp.club_id = clubs.id 
-                 AND kl.expiry_date >= NOW()
-                 $yearCondition
-                ) as total_anggota_aktif
-            ")
-            ->selectRaw("
-                (SELECT COUNT(*) 
-                 FROM events 
-                 WHERE events.proposing_club_id = clubs.id
-                 $eventYearCondition
-                ) as total_event_tahun_ini
-            ")
-            ->selectRaw("
-                (SELECT cd.status 
-                 FROM club_dues cd 
-                 WHERE cd.club_id = clubs.id 
-                 AND cd.payment_year = $iuranYear
-                 ORDER BY cd.payment_year DESC 
-                 LIMIT 1
-                ) as status_iuran
-            ")
-            ->selectRaw("
-                (
+            $top_clubs = DB::table('clubs')
+                ->select('clubs.*')
+                ->selectRaw("
                     (SELECT COUNT(DISTINCT pp.user_id) 
                      FROM pembalap_profiles pp
                      JOIN kis_licenses kl ON kl.pembalap_user_id = pp.user_id
                      WHERE pp.club_id = clubs.id 
                      AND kl.expiry_date >= NOW()
                      $yearCondition
-                    ) * 10
-                ) + 
-                (
+                    ) as total_anggota_aktif
+                ")
+                ->selectRaw("
                     (SELECT COUNT(*) 
                      FROM events 
                      WHERE events.proposing_club_id = clubs.id
                      $eventYearCondition
-                    ) * 50
-                ) + 
-                (
-                    CASE 
-                        WHEN (SELECT cd.status 
-                              FROM club_dues cd 
-                              WHERE cd.club_id = clubs.id 
-                              AND cd.payment_year = $iuranYear
-                              ORDER BY cd.payment_year DESC 
-                              LIMIT 1) = 'Approved' 
-                        THEN 100 
-                        ELSE 0 
-                    END
-                ) as score_klub
-            ")
-            ->orderByRaw("
-                (
-                    (SELECT COUNT(DISTINCT pp.user_id) 
-                     FROM pembalap_profiles pp
-                     JOIN kis_licenses kl ON kl.pembalap_user_id = pp.user_id
-                     WHERE pp.club_id = clubs.id 
-                     AND kl.expiry_date >= NOW()
-                     $yearCondition
-                    ) * 10
-                ) + 
-                (
-                    (SELECT COUNT(*) 
-                     FROM events 
-                     WHERE events.proposing_club_id = clubs.id
-                     $eventYearCondition
-                    ) * 50
-                ) + 
-                (
-                    CASE 
-                        WHEN (SELECT cd.status 
-                              FROM club_dues cd 
-                              WHERE cd.club_id = clubs.id 
-                              AND cd.payment_year = $iuranYear
-                              ORDER BY cd.payment_year DESC 
-                              LIMIT 1) = 'Approved' 
-                        THEN 100 
-                        ELSE 0 
-                    END
-                ) DESC
-            ")
-            ->limit(3)
-            ->get()
-            ->map(function($club) {
-                $club->status_iuran = $club->status_iuran === 'Approved' ? 'Lunas' : 'Belum Lunas';
-                return $club;
-            });
-
-        // ============================================
-        // TOP EVENTS BY REVENUE (Berdasarkan Filter)
-        // ============================================
-        $topEventsQuery = DB::table('events as e')
-            ->select('e.*')
-            ->selectRaw('
-                (SELECT COUNT(*) 
-                 FROM event_registrations er 
-                 WHERE er.event_id = e.id 
-                 AND er.status = "Confirmed"
-                ) as total_registrants
-            ')
-            ->selectRaw('
-                (e.biaya_pendaftaran * 
-                 (SELECT COUNT(*) 
-                  FROM event_registrations er 
-                  WHERE er.event_id = e.id 
-                  AND er.status = "Confirmed")
-                ) as total_revenue
-            ')
-            ->selectRaw('Func_Get_Event_Status(e.event_date, e.registration_deadline, e.is_published) as status_event')
-            ->where('e.is_published', true);
-
-        if ($selectedYear !== 'overall') {
-            $topEventsQuery->whereYear('e.event_date', (int)$selectedYear);
+                    ) as total_event_tahun_ini
+                ")
+                ->selectRaw("
+                    (SELECT cd.status 
+                     FROM club_dues cd 
+                     WHERE cd.club_id = clubs.id 
+                     AND cd.payment_year = $iuranYear
+                     ORDER BY cd.payment_year DESC 
+                     LIMIT 1
+                    ) as status_iuran
+                ")
+                ->selectRaw("
+                    (
+                        (SELECT COUNT(DISTINCT pp.user_id) 
+                         FROM pembalap_profiles pp
+                         JOIN kis_licenses kl ON kl.pembalap_user_id = pp.user_id
+                         WHERE pp.club_id = clubs.id 
+                         AND kl.expiry_date >= NOW()
+                         $yearCondition
+                        ) * 10
+                    ) + 
+                    (
+                        (SELECT COUNT(*) 
+                         FROM events 
+                         WHERE events.proposing_club_id = clubs.id
+                         $eventYearCondition
+                        ) * 50
+                    ) + 
+                    (
+                        CASE 
+                            WHEN (SELECT cd.status 
+                                  FROM club_dues cd 
+                                  WHERE cd.club_id = clubs.id 
+                                  AND cd.payment_year = $iuranYear
+                                  ORDER BY cd.payment_year DESC 
+                                  LIMIT 1) = 'Approved' 
+                            THEN 100 
+                            ELSE 0 
+                        END
+                    ) as score_klub
+                ")
+                ->orderByDesc('score_klub')
+                ->limit(3)
+                ->get()
+                ->map(function($club) {
+                    $club->status_iuran = $club->status_iuran === 'Approved' ? 'Lunas' : 'Belum Lunas';
+                    return $club;
+                });
         }
 
-        $top_events_revenue = $topEventsQuery
-            ->orderBy('total_revenue', 'desc')
-            ->limit(5)
-            ->get();
+        // ============================================
+        // TOP EVENTS BY REVENUE
+        // - Overall: Menggunakan View_Event_Revenue_Ranking
+        // - Per Tahun: Query manual dengan Func_Get_Event_Status
+        // ============================================
+        if ($selectedYear === 'overall') {
+            // Menggunakan View untuk konsistensi
+            $top_events_revenue = DB::table('View_Event_Revenue_Ranking')
+                ->select([
+                    'event_id as id',
+                    'event_name',
+                    'event_date',
+                    'proposing_club as proposing_club_name',
+                    'confirmed_count as total_registrants',
+                    'estimated_revenue as total_revenue'
+                ])
+                ->selectRaw("
+                    Func_Get_Event_Status(event_date, event_date, 1) as status_event
+                ")
+                ->orderByDesc('estimated_revenue')
+                ->limit(5)
+                ->get();
+        } else {
+            // Query manual untuk filter per tahun
+            $top_events_revenue = DB::table('events as e')
+                ->select('e.*')
+                ->selectRaw('
+                    (SELECT COUNT(*) 
+                     FROM event_registrations er 
+                     WHERE er.event_id = e.id 
+                     AND er.status = "Confirmed"
+                    ) as total_registrants
+                ')
+                ->selectRaw('
+                    (e.biaya_pendaftaran * 
+                     (SELECT COUNT(*) 
+                      FROM event_registrations er 
+                      WHERE er.event_id = e.id 
+                      AND er.status = "Confirmed")
+                    ) as total_revenue
+                ')
+                ->selectRaw('Func_Get_Event_Status(e.event_date, e.registration_deadline, e.is_published) as status_event')
+                ->where('e.is_published', true)
+                ->whereYear('e.event_date', (int)$selectedYear)
+                ->orderBy('total_revenue', 'desc')
+                ->limit(5)
+                ->get();
+        }
 
         // ============================================
         // LINE CHART & PIE CHART DATA

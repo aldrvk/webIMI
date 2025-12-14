@@ -254,6 +254,60 @@
             </div>
 
             {{-- ========================================
+                 SECTION: ANALYTICS MENU (Menggunakan Database Views)
+                 ======================================== --}}
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 mr-2 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Analytics Dashboard</h3>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {{-- Event Revenue Ranking --}}
+                        <a href="{{ route('pimpinan.analytics.event-revenue') }}" class="block p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-lg hover:border-indigo-500 transition-all duration-200 group">
+                            <div class="flex items-center mb-2">
+                                <span class="text-2xl mr-2">💰</span>
+                                <h4 class="font-medium text-gray-900 dark:text-white group-hover:text-indigo-600">Event Revenue</h4>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Ranking event berdasarkan pendapatan</p>
+                        </a>
+                        
+                        {{-- Operational Alerts --}}
+                        <a href="{{ route('pimpinan.analytics.alerts') }}" class="block p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-lg hover:border-yellow-500 transition-all duration-200 group">
+                            <div class="flex items-center mb-2">
+                                <span class="text-2xl mr-2">🚨</span>
+                                <h4 class="font-medium text-gray-900 dark:text-white group-hover:text-yellow-600">Alerts</h4>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Notifikasi operasional penting</p>
+                        </a>
+                        
+                        {{-- Revenue Breakdown YTD --}}
+                        <a href="{{ route('pimpinan.analytics.revenue-ytd') }}" class="block p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-lg hover:border-green-500 transition-all duration-200 group">
+                            <div class="flex items-center mb-2">
+                                <span class="text-2xl mr-2">📈</span>
+                                <h4 class="font-medium text-gray-900 dark:text-white group-hover:text-green-600">Revenue YTD</h4>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Breakdown revenue year-to-date</p>
+                        </a>
+                        
+                        {{-- Top Clubs Performance --}}
+                        <a href="{{ route('pimpinan.analytics.top-clubs') }}" class="block p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-lg hover:border-purple-500 transition-all duration-200 group">
+                            <div class="flex items-center mb-2">
+                                <span class="text-2xl mr-2">🏆</span>
+                                <h4 class="font-medium text-gray-900 dark:text-white group-hover:text-purple-600">Top Clubs</h4>
+                            </div>
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Performa klub terbaik</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            {{-- ========================================
                  SECTION 3: ALERTS & FINANCIAL
                  ======================================== --}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
